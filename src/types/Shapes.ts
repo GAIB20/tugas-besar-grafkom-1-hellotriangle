@@ -1,8 +1,15 @@
+type Color = {
+    r: number;
+    g: number;
+    b: number;
+    a: number;
+}
+
 type Point = {
     type: 'point'
     x: number;
     y: number;
-    color: string;
+    color: Color;
 }
 
 type Line = {
@@ -10,7 +17,7 @@ type Line = {
     id: string;
     start: Point
     end: Point;
-    color: string;
+    color: Color;
 }
 
 type Square = {
@@ -18,7 +25,7 @@ type Square = {
     id: string;
     start: Point;
     sideLength: number;
-    color: string;
+    color: Color;
 }
 
 type Rectangle = {
@@ -27,16 +34,16 @@ type Rectangle = {
     start: Point;
     width: number;
     height: number;
-    color: string;
+    color: Color;
 }
 
 type Polygon = {
     type: 'polygon';
     id: string;
     vertices: Point[];
-    color: string;
+    color: Color;
 }
 
 type Shape = Line | Square | Rectangle | Polygon;
 
-export type { Point, Shape, Line, Square, Rectangle, Polygon }
+export type { Color, Point, Shape, Line, Square, Rectangle, Polygon }

@@ -2,6 +2,7 @@ import { Shape, Line } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscClose } from "react-icons/vsc"
+import colorToRGBA from "@/lib/func"
 
 interface LineConfigProps {
     shapes: Shape[]
@@ -31,6 +32,72 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <VscClose />
                             </button>
                         </div>
+
+                        {/* RGBA Color */}
+                        <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                            
+                            <div className="flex items-center gap-2.5">    
+                                <div
+                                    style={{ backgroundColor: colorToRGBA(line.color) }}
+                                    className="mb-0.5 aspect-square size-3 rounded-full"
+                                />
+                                <p className="mb-1 font-mono">rgba</p>
+                            </div>
+
+                            <div className="flex w-full items-center gap-0.5">
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={line.color.r}
+                                    onChange={(e) => {
+                                        const newLines = [...lines]
+                                        newLines[index].color.r = parseInt(e.target.value)
+                                        setShapes(newLines)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={line.color.g}
+                                    onChange={(e) => {
+                                        const newLines = [...lines]
+                                        newLines[index].color.g = parseInt(e.target.value)
+                                        setShapes(newLines)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={line.color.b}
+                                    onChange={(e) => {
+                                        const newLines = [...lines]
+                                        newLines[index].color.b = parseInt(e.target.value)
+                                        setShapes(newLines)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={1}
+                                    step={0.01}
+                                    value={line.color.a}
+                                    onChange={(e) => {
+                                        const newLines = [...lines]
+                                        newLines[index].color.a = parseFloat(e.target.value)
+                                        setShapes(newLines)
+                                    }}
+                                />
+                            </div>
+
+                        </div> 
+                        
                         <div className="flex w-full gap-4">
                             <div className="flex items-center gap-2.5">
                                 <p className="text-sm">X1</p>
@@ -87,6 +154,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     }} />
                             </div>
                         </div>
+
                         {/* Line Separator */}
                         {index < lines.length - 1 && (
                             <div className="mt-4 w-full rounded border-t border-stone-800"/>
@@ -103,7 +171,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                             type: 'line',
                             start: { x: 0, y: 0 },
                             end: { x: 0, y: 0 },
-                            color: '#ffffff'
+                            color: { r: 255, g: 255, b: 255, a: 1},
                         } as Line])
                     }}
                 >

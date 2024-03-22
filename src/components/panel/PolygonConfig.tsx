@@ -2,6 +2,7 @@ import { Shape, Polygon, Point } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscClose } from "react-icons/vsc"
+import colorToRGBA from "@/lib/func"
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -31,35 +32,70 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                 <VscClose />
                             </button>
                         </div>
-                        
-                        {/* <div className="flex w-full gap-4">
-                            <div className="flex items-center gap-2.5">
-                                <p className="text-sm">X1</p>
+
+                        <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                            
+                            <div className="flex items-center gap-2.5">    
+                                <div
+                                    style={{ backgroundColor: colorToRGBA(polygon.color) }}
+                                    className="mb-0.5 aspect-square size-3 rounded-full"
+                                />
+                                <p className="mb-1 font-mono">rgba</p>
+                            </div>
+
+                            <div className="flex w-full items-center gap-0.5">
                                 <Input
-                                    className="w-full border-gray-700 text-gray-200"
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                     type="number"
                                     min={0}
-                                    value={polygon.start.x}
+                                    max={255}
+                                    value={polygon.color.r}
                                     onChange={(e) => {
-                                        const newPolygons = [...polygons]
-                                        newPolygons[index].start.x = parseInt(e.target.value)
-                                        setShapes(newPolygons)
-                                    }} />
-                            </div>
-                            <div className="flex items-center gap-2.5">
-                                <p className="text-sm">Y1</p>
+                                        const newpolygons = [...polygons]
+                                        newpolygons[index].color.r = parseInt(e.target.value)
+                                        setShapes(newpolygons)
+                                    }}
+                                />
                                 <Input
-                                    className="w-full border-gray-700 text-gray-200"
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                     type="number"
                                     min={0}
-                                    value={polygon.start.y}
+                                    max={255}
+                                    value={polygon.color.g}
                                     onChange={(e) => {
-                                        const newPolygons = [...polygons]
-                                        newPolygons[index].start.y = parseInt(e.target.value)
-                                        setShapes(newPolygons)
-                                    }} />
+                                        const newpolygons = [...polygons]
+                                        newpolygons[index].color.g = parseInt(e.target.value)
+                                        setShapes(newpolygons)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={polygon.color.b}
+                                    onChange={(e) => {
+                                        const newpolygons = [...polygons]
+                                        newpolygons[index].color.b = parseInt(e.target.value)
+                                        setShapes(newpolygons)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={1}
+                                    step={0.01}
+                                    value={polygon.color.a}
+                                    onChange={(e) => {
+                                        const newpolygons = [...polygons]
+                                        newpolygons[index].color.a = parseFloat(e.target.value)
+                                        setShapes(newpolygons)
+                                    }}
+                                />
                             </div>
-                        </div> */}
+
+                        </div> 
 
                         {polygon.vertices.map((vertex, vertexIndex) => (
                             <div key={vertexIndex} className="flex w-full gap-2">
@@ -132,7 +168,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                         setShapes([...shapes, {
                             type: 'polygon',
                             vertices: [{ x: 0, y: 0 }],
-                            color: '#ffffff'
+                            color: {r: 255, g: 255, b: 255, a: 1}
                         } as Polygon])
                     }}
                 >

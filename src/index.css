@@ -133,6 +133,11 @@
   cursor: pointer;
 }
 
+input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
 .grid-pattern {
   background-image: linear-gradient(0deg, transparent 24px, rgba(255, 255, 255, 0.03) 25px),
                     linear-gradient(90deg, transparent 24px, rgba(255, 255, 255, 0.03) 25px);

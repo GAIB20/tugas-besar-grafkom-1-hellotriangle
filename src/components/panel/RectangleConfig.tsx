@@ -3,6 +3,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscClose } from "react-icons/vsc"
 import { Slider } from "../ui/slider"
+import colorToRGBA from "@/lib/func"
 
 interface RectangleConfigProps {
     shapes: Shape[]
@@ -32,6 +33,71 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 <VscClose />
                             </button>
                         </div>
+
+                        <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                            
+                            <div className="flex items-center gap-2.5">    
+                                <div
+                                    style={{ backgroundColor: colorToRGBA(rectangle.color) }}
+                                    className="mb-0.5 aspect-square size-3 rounded-full"
+                                />
+                                <p className="mb-1 font-mono">rgba</p>
+                            </div>
+
+                            <div className="flex w-full items-center gap-0.5">
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={rectangle.color.r}
+                                    onChange={(e) => {
+                                        const newrectangles = [...rectangles]
+                                        newrectangles[index].color.r = parseInt(e.target.value)
+                                        setShapes(newrectangles)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={rectangle.color.g}
+                                    onChange={(e) => {
+                                        const newrectangles = [...rectangles]
+                                        newrectangles[index].color.g = parseInt(e.target.value)
+                                        setShapes(newrectangles)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={rectangle.color.b}
+                                    onChange={(e) => {
+                                        const newrectangles = [...rectangles]
+                                        newrectangles[index].color.b = parseInt(e.target.value)
+                                        setShapes(newrectangles)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={1}
+                                    step={0.01}
+                                    value={rectangle.color.a}
+                                    onChange={(e) => {
+                                        const newrectangles = [...rectangles]
+                                        newrectangles[index].color.a = parseFloat(e.target.value)
+                                        setShapes(newrectangles)
+                                    }}
+                                />
+                            </div>
+
+                        </div> 
+
                         <div className="flex w-full gap-4">
                             <div className="flex items-center gap-2.5">
                                 <p className="text-sm">X</p>
@@ -60,24 +126,27 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     }} />
                             </div>
                         </div>
-                        <div className="mt-1 flex w-full flex-col gap-4">
-                            <p className="text-sm">Width</p>
-                            <Slider
-                                className="h-fit w-full rounded-md bg-gray-300"
-                                defaultValue={[rectangle.width]} 
-                                min={1} 
-                                max={200} 
-                                step={1} />
+                        <div className="mt-2 flex w-full items-center gap-3">
+                            <div className="flex w-full flex-col gap-4">
+                                <p className="text-sm">Width</p>
+                                <Slider
+                                    className="h-fit w-full rounded-md bg-gray-300"
+                                    defaultValue={[rectangle.width]} 
+                                    min={1} 
+                                    max={200} 
+                                    step={1} />
+                            </div>
+                            <div className="flex w-full flex-col gap-4">
+                                <p className="text-sm">Height</p>
+                                <Slider
+                                    className="h-fit w-full rounded-md bg-gray-300"
+                                    defaultValue={[rectangle.height]} 
+                                    min={1} 
+                                    max={200} 
+                                    step={1} />
+                            </div>
                         </div>
-                        <div className="mt-4 flex w-full flex-col gap-4">
-                            <p className="text-sm">Height</p>
-                            <Slider
-                                className="h-fit w-full rounded-md bg-gray-300"
-                                defaultValue={[rectangle.height]} 
-                                min={1} 
-                                max={200} 
-                                step={1} />
-                        </div>
+
                         {/* Line Separator */}
                         {index < rectangles.length - 1 && (
                             <div className="mt-4 w-full rounded border-t border-stone-800"/>
@@ -95,7 +164,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                             start: { x: 0, y: 0 },
                             width: 10,
                             height: 10,
-                            color: '#ffffff'
+                            color: {r: 255, g: 255, b: 255, a: 1}
                         } as Rectangle])
                     }}
                 >

@@ -3,6 +3,7 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscClose } from "react-icons/vsc"
 import { Slider } from "../ui/slider"
+import colorToRGBA from "@/lib/func"
 
 interface SquareConfigProps {
     shapes: Shape[]
@@ -32,6 +33,71 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 <VscClose />
                             </button>
                         </div>
+
+                        <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                            
+                            <div className="flex items-center gap-2.5">    
+                                <div
+                                    style={{ backgroundColor: colorToRGBA(square.color) }}
+                                    className="mb-0.5 aspect-square size-3 rounded-full"
+                                />
+                                <p className="mb-1 font-mono">rgba</p>
+                            </div>
+
+                            <div className="flex w-full items-center gap-0.5">
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={square.color.r}
+                                    onChange={(e) => {
+                                        const newsquares = [...squares]
+                                        newsquares[index].color.r = parseInt(e.target.value)
+                                        setShapes(newsquares)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={square.color.g}
+                                    onChange={(e) => {
+                                        const newsquares = [...squares]
+                                        newsquares[index].color.g = parseInt(e.target.value)
+                                        setShapes(newsquares)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={255}
+                                    value={square.color.b}
+                                    onChange={(e) => {
+                                        const newsquares = [...squares]
+                                        newsquares[index].color.b = parseInt(e.target.value)
+                                        setShapes(newsquares)
+                                    }}
+                                />
+                                <Input
+                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                    type="number"
+                                    min={0}
+                                    max={1}
+                                    step={0.01}
+                                    value={square.color.a}
+                                    onChange={(e) => {
+                                        const newsquares = [...squares]
+                                        newsquares[index].color.a = parseFloat(e.target.value)
+                                        setShapes(newsquares)
+                                    }}
+                                />
+                            </div>
+
+                        </div> 
+
                         <div className="flex w-full gap-4">
                             <div className="flex items-center gap-2.5">
                                 <p className="text-sm">X</p>
@@ -69,7 +135,8 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 max={200} 
                                 step={1} />
                         </div>
-                        {/* Line Separator */}
+
+                        {/* square Separator */}
                         {index < squares.length - 1 && (
                             <div className="mt-4 w-full rounded border-t border-stone-800"/>
                         )}
@@ -85,7 +152,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                             type: 'square',
                             start: { x: 0, y: 0 },
                             sideLength: 10,
-                            color: '#ffffff'
+                            color: {r: 255, g: 255, b: 255, a: 1}
                         } as Square])
                     }}
                 >
