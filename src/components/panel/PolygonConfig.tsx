@@ -62,7 +62,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                         </div> */}
 
                         {polygon.vertices.map((vertex, vertexIndex) => (
-                            <div key={vertexIndex} className="flex w-full gap-4">
+                            <div key={vertexIndex} className="flex w-full gap-2">
                                 <div className="flex items-center gap-2.5">
                                     <p className="text-sm">X{vertexIndex+1}</p>
                                     <Input
@@ -89,6 +89,16 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                             setShapes(newPolygons)
                                         }} />
                                 </div>
+                                <button
+                                    className="text-gray-600 transition-all duration-200 ease-in-out hover:text-red-500"
+                                    onClick={() => {
+                                        const newPolygons = [...polygons]
+                                        newPolygons[index].vertices.splice(vertexIndex, 1)
+                                        setShapes(newPolygons)
+                                    }}
+                                >
+                                    <VscClose />
+                                </button>
                             </div>
                         ))}
 
