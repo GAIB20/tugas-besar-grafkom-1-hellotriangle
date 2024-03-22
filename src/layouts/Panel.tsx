@@ -86,7 +86,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
             {shapePanel === "line" ? (
                 <LineConfig shapes={shapes} setShapes={setShapes} />
             ) : shapePanel === "square" ? (
-                <SquareConfig />
+                <SquareConfig shapes={shapes} setShapes={setShapes} />
             ) : shapePanel === "rectangle" ? (
                 <RectangleConfig />
             ) : (

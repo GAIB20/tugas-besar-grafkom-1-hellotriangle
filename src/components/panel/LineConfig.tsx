@@ -71,6 +71,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                             type: 'line',
                             start: { x: 0, y: 0 },
                             end: { x: 0, y: 0 },
+                            color: '#ffffff'
                         } as Line])
                     }}
                 >
