@@ -14,9 +14,9 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
     return (
         <div className="flex size-full flex-col items-center justify-between">
             {/* Lines Config */}
-            <div className="flex size-full flex-col gap-8 overflow-y-scroll pb-4 text-gray-100">
+            <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-4 text-gray-100">
                 {lines.map((line, index) => (
-                    <div key={index} className="flex w-full flex-col gap-3 pr-2">
+                    <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
                         <div className="flex w-full justify-between">
                             <h1 className="font-medium">Line {index+1}</h1>
                             <button className="transition-all duration-200 ease-in-out hover:text-red-500"
@@ -59,6 +59,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     }} />
                             </div>
                         </div>
+                        {/* Line Separator */}
+                        {index < lines.length - 1 && (
+                            <div className="mt-4 w-full rounded border-t border-stone-800"/>
+                        )}
                     </div>
                 ))}
             </div>
