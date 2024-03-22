@@ -82,7 +82,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
             </TooltipProvider>
         </div>
 
-        <div className="flex size-full flex-col justify-center bg-zinc-900 px-4 py-5">
+        <div className="flex size-full flex-col justify-center bg-zinc-900 py-5 pl-4 pr-1">
             {shapePanel === "line" ? (
                 <LineConfig shapes={shapes} setShapes={setShapes} />
             ) : shapePanel === "square" ? (
