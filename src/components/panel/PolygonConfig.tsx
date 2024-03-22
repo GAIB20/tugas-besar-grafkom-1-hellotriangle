@@ -1,8 +1,14 @@
 import { Shape, Polygon, Point } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import { VscClose } from "react-icons/vsc"
+import { VscClose, VscCircuitBoard } from "react-icons/vsc"
 import colorToRGBA from "@/lib/func"
+import {
+    Tooltip,
+    TooltipContent,
+    TooltipProvider,
+    TooltipTrigger,
+  } from "@/components/ui/tooltip"
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -19,7 +25,23 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                 {polygons.map((polygon, index) => (
                     <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
                         <div className="mb-1 flex w-full justify-between">
-                            <h1 className="font-medium">Polygon {index+1}</h1>
+                        <div className="flex items-center justify-center gap-2">
+                                <h1 className="font-medium">Polygon {index+1}</h1>
+
+                                <TooltipProvider>
+                                    <Tooltip delayDuration={20}>
+                                        <TooltipTrigger>
+                                            <button className="flex h-full flex-col items-center">
+                                                <VscCircuitBoard className="mb-0.5 animate-pulse text-gray-300" size={16} />
+                                            </button>
+                                        </TooltipTrigger>
+
+                                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                                            <p>Transform Shape</p>
+                                        </TooltipContent>
+                                    </Tooltip>
+                                </TooltipProvider>
+                            </div>
                             <button className="transition-all duration-200 ease-in-out hover:text-red-500"
                                 onClick={
                                     () => {
