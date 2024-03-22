@@ -90,7 +90,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
             ) : shapePanel === "rectangle" ? (
                 <RectangleConfig shapes={shapes} setShapes={setShapes} />
             ) : (
-                <PolygonConfig />
+                <PolygonConfig shapes={shapes} setShapes={setShapes} />
             )}
         </div>
     </div>
