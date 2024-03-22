@@ -33,7 +33,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                             <BiMinus size={16} className="text-gray-300" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-900/90 text-white shadow-md">
+                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
                         <p>Line</p>
                     </TooltipContent>
                 </Tooltip>
@@ -47,7 +47,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                             <BiSquare size={16} className="text-gray-300" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-900/90 text-white shadow-md">
+                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
                         <p>Square</p>
                     </TooltipContent>
                 </Tooltip>
@@ -61,7 +61,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                             <BiRectangle size={16} className="text-gray-300" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-900/90 text-white shadow-md">
+                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
                         <p>Rectangle</p>
                     </TooltipContent>
                 </Tooltip>
@@ -75,7 +75,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                             <BiPolygon size={16} className="text-gray-300" />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-900/90 text-white shadow-md">
+                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
                         <p>Polygon</p>
                     </TooltipContent>
                 </Tooltip>
