@@ -95,6 +95,12 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         const newPolygons = [...polygons]
                                         newPolygons[index].vertices.splice(vertexIndex, 1)
                                         setShapes(newPolygons)
+
+                                        // If it is the last vertex, remove the polygon
+                                        if (newPolygons[index].vertices.length === 0) {
+                                            newPolygons.splice(index, 1)
+                                            setShapes(newPolygons)
+                                        }
                                     }}
                                 >
                                     <VscClose />
