@@ -1,7 +1,7 @@
 import { Shape, Line } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import { VscCircuitBoard, VscClose } from "react-icons/vsc"
+import { VscWand, VscClose } from "react-icons/vsc"
 import colorToRGBA from "@/lib/func"
 import {
     Tooltip,
@@ -32,7 +32,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     <Tooltip delayDuration={20}>
                                         <TooltipTrigger>
                                             <button className="flex h-full flex-col items-center">
-                                                <VscCircuitBoard className="mb-0.5 animate-pulse text-gray-300" size={16} />
+                                                <VscWand className="mb-0.5 animate-pulse text-gray-300" size={16} />
                                             </button>
                                         </TooltipTrigger>
 

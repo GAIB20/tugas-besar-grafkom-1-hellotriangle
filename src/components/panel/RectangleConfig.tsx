@@ -1,7 +1,7 @@
 import { Shape, Rectangle } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
-import { VscClose, VscCircuitBoard } from "react-icons/vsc"
+import { VscClose, VscWand } from "react-icons/vsc"
 import { Slider } from "../ui/slider"
 import colorToRGBA from "@/lib/func"
 import {
@@ -33,7 +33,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     <Tooltip delayDuration={20}>
                                         <TooltipTrigger>
                                             <button className="flex h-full flex-col items-center">
-                                                <VscCircuitBoard className="mb-0.5 animate-pulse text-gray-300" size={16} />
+                                                <VscWand className="mb-0.5 animate-pulse text-gray-300" size={16} />
                                             </button>
                                         </TooltipTrigger>
 
