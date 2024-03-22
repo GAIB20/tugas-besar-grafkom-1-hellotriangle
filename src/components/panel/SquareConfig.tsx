@@ -18,7 +18,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-8 text-gray-100">
                 {squares.map((square, index) => (
                     <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
-                        <div className="flex w-full justify-between">
+                        <div className="mb-1 flex w-full justify-between">
                             <h1 className="font-medium">Square {index+1}</h1>
                             <button className="transition-all duration-200 ease-in-out hover:text-red-500"
                                 onClick={
@@ -34,7 +34,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                         </div>
                         <div className="flex w-full gap-4">
                             <div className="flex items-center gap-2.5">
-                                <p className="text-sm">X1</p>
+                                <p className="text-sm">X</p>
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
@@ -47,7 +47,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     }} />
                             </div>
                             <div className="flex items-center gap-2.5">
-                                <p className="text-sm">Y1</p>
+                                <p className="text-sm">Y</p>
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
