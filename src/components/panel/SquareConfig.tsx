@@ -10,6 +10,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
   } from "@/components/ui/tooltip"
+import { useEffect, useState } from "react"
 
 interface SquareConfigProps {
     shapes: Shape[]
@@ -17,7 +18,19 @@ interface SquareConfigProps {
 }
 
 export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): JSX.Element {
-    const squares = shapes.filter(shape => shape.type === 'square') as Square[]
+    const [squares, setSquares] = useState<Square[]>(shapes.filter(shape => shape.type === 'square') as Square[])
+
+    // Detect if lines changes, then update the shapes
+    useEffect(() => {
+        // Delete all lines from shapes
+        const newShapes = shapes.filter(shape => shape.type !== 'square') as Shape[]
+
+        // Add new lines to shapes
+        newShapes.push(...squares)
+
+        // Update shapes
+        setShapes(newShapes)
+    })
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -48,7 +61,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     () => {
                                         const newSquares = [...squares]
                                         newSquares.splice(index, 1)
-                                        setShapes(newSquares)
+                                        setSquares(newSquares)
                                     }
                                 }
                             >
@@ -76,7 +89,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     onChange={(e) => {
                                         const newsquares = [...squares]
                                         newsquares[index].color.r = parseInt(e.target.value)
-                                        setShapes(newsquares)
+                                        setSquares(newsquares)
                                     }}
                                 />
                                 <Input
@@ -88,7 +101,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     onChange={(e) => {
                                         const newsquares = [...squares]
                                         newsquares[index].color.g = parseInt(e.target.value)
-                                        setShapes(newsquares)
+                                        setSquares(newsquares)
                                     }}
                                 />
                                 <Input
@@ -100,7 +113,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     onChange={(e) => {
                                         const newsquares = [...squares]
                                         newsquares[index].color.b = parseInt(e.target.value)
-                                        setShapes(newsquares)
+                                        setSquares(newsquares)
                                     }}
                                 />
                                 <Input
@@ -113,7 +126,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     onChange={(e) => {
                                         const newsquares = [...squares]
                                         newsquares[index].color.a = parseFloat(e.target.value)
-                                        setShapes(newsquares)
+                                        setSquares(newsquares)
                                     }}
                                 />
                             </div>
@@ -130,7 +143,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     onChange={(e) => {
                                         const newSquares = [...squares]
                                         newSquares[index].start.x = parseFloat(e.target.value)
-                                        setShapes(newSquares)
+                                        setSquares(newSquares)
                                     }} />
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -142,7 +155,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                     onChange={(e) => {
                                         const newSquares = [...squares]
                                         newSquares[index].start.y = parseFloat(e.target.value)
-                                        setShapes(newSquares)
+                                        setSquares(newSquares)
                                     }} />
                             </div>
                         </div>
@@ -156,7 +169,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 onValueChange={(value) => {
                                     const newSquares = [...squares]
                                     newSquares[index].sideLength = value[0]
-                                    setShapes(newSquares)
+                                    setSquares(newSquares)
                                 }}
                                 step={0.5} />
                         </div>
@@ -173,12 +186,16 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
-                        setShapes([...shapes, {
-                            type: 'square',
-                            start: { x: 0, y: 0 },
-                            sideLength: 10,
-                            color: {r: 255, g: 255, b: 255, a: 1}
-                        } as Square])
+                        setSquares([
+                            ...squares,
+                            {
+                                type: 'square',
+                                id: Math.random().toString(36).substring(7),
+                                start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                sideLength: 10,
+                                color: { r: 255, g: 255, b: 255, a: 1 }
+                            }
+                        ])
                     }}
                 >
                     Add Square
