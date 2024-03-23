@@ -71,20 +71,22 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
     const uColor = gl.getUniformLocation(shaderProgram, 'uColor');
     const scaleUniform = gl.getUniformLocation(shaderProgram, "scale");
 
-    gl.uniform1f(scaleUniform, 0.05)
-    gl.vertexAttribPointer(coordinates, 2, gl.FLOAT, false, 0, 0);
-    gl.enableVertexAttribArray(coordinates);
-
     // Render the shapes
     shapes.forEach((shape) => {
+      // let vertices: Float32Array;
+
       if (shape.type === "line") {
-        renderLine(gl, shape, uColor!)
+        // vertices = new Float32Array([
+        //     shape.start.x, shape.start.y,
+        //     shape.end.x, shape.end.y,
+        // ]);
+        renderLine(gl, shape, coordinates, uColor!, scaleUniform!)
       } else if (shape.type === "square") {
-        renderSquare(gl, shape, uColor!)
+        renderSquare(gl, shape, coordinates, uColor!, scaleUniform!)
       } else if (shape.type === "rectangle") {
-        renderRectangle(gl, shape, uColor!)
+        renderRectangle(gl, shape, coordinates, uColor!, scaleUniform!)
       } else {
-        renderPolygon(gl, shape, uColor!)
+        renderPolygon(gl, shape, coordinates, uColor!, scaleUniform!)
       }
     });
   };

@@ -3,26 +3,33 @@ import { Line, Square, Rectangle, Polygon } from "@/types/Shapes";
 export function renderLine(
     gl: WebGLRenderingContext,
     line: Line,
+    coordinatesAttributePointer: number,
     uColor:  WebGLUniformLocation,
+    scaleUniform: WebGLUniformLocation
 ) {
     const vertices = new Float32Array([
         line.start.x, line.start.y,
         line.end.x, line.end.y,
     ]);
+
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-    // Set the color uniform
+    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(coordinatesAttributePointer);
     gl.uniform4f(uColor, line.color.r / 255, line.color.g / 255, line.color.b / 255, line.color.a);
-
+    gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.LINES, 0, 2);
+    gl.deleteBuffer(buffer);
+
 }
 
 export function renderSquare(
     gl: WebGLRenderingContext,
     square: Square,
-    uColor: WebGLUniformLocation
+    coordinatesAttributePointer: number,
+    uColor: WebGLUniformLocation,
+    scaleUniform: WebGLUniformLocation
 ) {
     const x1 = square.start.x;
     const y1 = square.start.y;
@@ -40,15 +47,20 @@ export function renderSquare(
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
+    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(coordinatesAttributePointer);
     gl.uniform4f(uColor, square.color.r / 255, square.color.g / 255, square.color.b / 255, square.color.a);
+    gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.deleteBuffer(buffer);
 }
 
 export function renderRectangle(
     gl: WebGLRenderingContext,
     rectangle: Rectangle,
-    uColor: WebGLUniformLocation
+    coordinatesAttributePointer: number,
+    uColor: WebGLUniformLocation,
+    scaleUniform: WebGLUniformLocation
 ) {
     const x1 = rectangle.start.x;
     const y1 = rectangle.start.y;
@@ -66,26 +78,35 @@ export function renderRectangle(
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
+    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(coordinatesAttributePointer);
     gl.uniform4f(uColor, rectangle.color.r / 255, rectangle.color.g / 255, rectangle.color.b / 255, rectangle.color.a);
+    gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+    gl.deleteBuffer(buffer);
 }
 
 export function renderPolygon(
     gl: WebGLRenderingContext,
     polygon: Polygon,
-    uColor: WebGLUniformLocation
+    coordinatesAttributePointer: number,
+    uColor: WebGLUniformLocation,
+    scaleUniform: WebGLUniformLocation
 ) {
     const vert: number[] = [];
-    polygon.vertices.forEach(vertex => {
-        vert.push(vertex.x, vertex.y);
-    });
+        polygon.vertices.forEach(vertex => {
+          vert.push(vertex.x, vertex.y);
+        });
 
     const vertices = new Float32Array(vert);
+
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
+    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+    gl.enableVertexAttribArray(coordinatesAttributePointer);
     gl.uniform4f(uColor, polygon.color.r / 255, polygon.color.g / 255, polygon.color.b / 255, polygon.color.a);
+    gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, polygon.vertices.length);
+    gl.deleteBuffer(buffer);
 }
