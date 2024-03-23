@@ -1,16 +1,19 @@
 const vertexShaderSource = `
-    attribute vec2 a_position;
-    void main() {
-        gl_Position = vec4(a_position, 0.0, 1.0);
+    attribute vec2 coordinates;
+    uniform float scale; // Uniform variable for scaling
+        void main(void) {
+    gl_Position = vec4(coordinates * scale, 0.0, 1.0);
     }
 `;
 
 const fragmentShaderSource = `
     precision mediump float;
-    void main() {
-        gl_FragColor = vec4(1.0, 0.0, 0.0, 1.0); // Red color
+    uniform vec4 uColor;
+    void main(void) {
+        gl_FragColor = uColor;
     }
 `;
+
 
 function compileShader(
     gl: WebGLRenderingContext,
@@ -43,7 +46,7 @@ export function initShaders(gl: WebGLRenderingContext) {
 
     if (!vertexShader) {
         console.error("Failed to compile vertex shader");
-        return;
+        return null;
     }
 
     const fragmentShader = compileShader(
@@ -54,18 +57,20 @@ export function initShaders(gl: WebGLRenderingContext) {
 
     if (!fragmentShader) {
         console.error("Failed to compile fragment shader");
-        return;
+        return null;
     }
 
     const shaderProgram = gl.createProgram();
 
     if (!shaderProgram) {
         console.error("Failed to create program");
-        return;
+        return null;
     }
 
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
     gl.linkProgram(shaderProgram);
     gl.useProgram(shaderProgram);
+
+    return shaderProgram
 }
