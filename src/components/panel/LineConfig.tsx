@@ -155,10 +155,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
                                     min={0}
-                                    value={line.start.x}
+                                    value={line.end.x}
                                     onChange={(e) => {
                                         const newLines = [...lines]
-                                        newLines[index].start.x = parseInt(e.target.value)
+                                        newLines[index].end.x = parseInt(e.target.value)
                                         setShapes(newLines)
                                     }} />
                             </div>
@@ -168,10 +168,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
                                     min={0}
-                                    value={line.start.y}
+                                    value={line.end.y}
                                     onChange={(e) => {
                                         const newLines = [...lines]
-                                        newLines[index].start.y = parseInt(e.target.value)
+                                        newLines[index].end.y = parseInt(e.target.value)
                                         setShapes(newLines)
                                     }} />
                             </div>

@@ -24,7 +24,7 @@ function multiplyMatrix(matrix1: number[][], matrix2: number[][]): number[][] {
 
 
 // Fungsi TRANSLASI terhadap sebuah titik
-function translatePoint(point: Point, dx: number, dy: number): Point {
+export function translatePoint(point: Point, dx: number, dy: number): Point {
     const translationMatrix: number[][] = createMatrix();
     translationMatrix[0][0] = 1;
     translationMatrix[1][1] = 1;
@@ -39,7 +39,7 @@ function translatePoint(point: Point, dx: number, dy: number): Point {
 
 
 // Fungsi ROTASI terhadap sebuah titik
-function rotatePoint(point: Point, angle: number): Point {
+export function rotatePoint(point: Point, angle: number): Point {
     const rotationMatrix: number[][] = createMatrix();
     const cosAngle = Math.cos(angle);
     const sinAngle = Math.sin(angle);
@@ -56,7 +56,7 @@ function rotatePoint(point: Point, angle: number): Point {
 }
 
 // Fungsi SCALING terhadap sebuah titik
-function scalePoint(point: Point, sx: number, sy: number): Point {
+export function scalePoint(point: Point, sx: number, sy: number): Point {
     const scalingMatrix: number[][] = createMatrix();
     scalingMatrix[0][0] = sx;
     scalingMatrix[1][1] = sy;
@@ -68,7 +68,7 @@ function scalePoint(point: Point, sx: number, sy: number): Point {
 }
 
 // Fungsi SHEAR terhadap sebuah titik
-function shearPoint(point: Point, shx: number, shy: number): Point {
+export function shearPoint(point: Point, shx: number, shy: number): Point {
     const shearMatrix: number[][] = createMatrix();
     shearMatrix[0][0] = 1;
     shearMatrix[0][1] = shx;
