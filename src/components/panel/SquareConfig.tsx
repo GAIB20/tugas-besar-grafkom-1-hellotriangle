@@ -126,11 +126,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
                                     value={square.start.x}
                                     onChange={(e) => {
                                         const newSquares = [...squares]
-                                        newSquares[index].start.x = parseInt(e.target.value)
+                                        newSquares[index].start.x = parseFloat(e.target.value)
                                         setShapes(newSquares)
                                     }} />
                             </div>
@@ -139,11 +138,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
                                     value={square.start.y}
                                     onChange={(e) => {
                                         const newSquares = [...squares]
-                                        newSquares[index].start.y = parseInt(e.target.value)
+                                        newSquares[index].start.y = parseFloat(e.target.value)
                                         setShapes(newSquares)
                                     }} />
                             </div>
@@ -154,11 +152,16 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 className="h-fit w-full rounded-md bg-gray-300"
                                 defaultValue={[square.sideLength]} 
                                 min={1} 
-                                max={200} 
-                                step={1} />
+                                max={40} 
+                                onValueChange={(value) => {
+                                    const newSquares = [...squares]
+                                    newSquares[index].sideLength = value[0]
+                                    setShapes(newSquares)
+                                }}
+                                step={0.5} />
                         </div>
 
-                        {/* square Separator */}
+                        {/* Square Separator */}
                         {index < squares.length - 1 && (
                             <div className="mt-4 w-full rounded border-t border-stone-800"/>
                         )}

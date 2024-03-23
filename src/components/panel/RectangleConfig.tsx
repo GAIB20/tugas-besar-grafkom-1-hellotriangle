@@ -126,11 +126,10 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
                                     value={rectangle.start.x}
                                     onChange={(e) => {
                                         const newRectangles = [...rectangles]
-                                        newRectangles[index].start.x = parseInt(e.target.value)
+                                        newRectangles[index].start.x = parseFloat(e.target.value)
                                         setShapes(newRectangles)
                                     }} />
                             </div>
@@ -139,11 +138,10 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
                                     value={rectangle.start.y}
                                     onChange={(e) => {
                                         const newRectangles = [...rectangles]
-                                        newRectangles[index].start.y = parseInt(e.target.value)
+                                        newRectangles[index].start.y = parseFloat(e.target.value)
                                         setShapes(newRectangles)
                                     }} />
                             </div>
@@ -155,7 +153,12 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     className="h-fit w-full rounded-md bg-gray-300"
                                     defaultValue={[rectangle.width]} 
                                     min={1} 
-                                    max={200} 
+                                    max={40}
+                                    onValueChange={(value) => {
+                                        const newRectangles = [...rectangles]
+                                        newRectangles[index].width = value[0]
+                                        setShapes(newRectangles)
+                                    }} 
                                     step={1} />
                             </div>
                             <div className="flex w-full flex-col gap-4">
@@ -164,12 +167,17 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     className="h-fit w-full rounded-md bg-gray-300"
                                     defaultValue={[rectangle.height]} 
                                     min={1} 
-                                    max={200} 
+                                    max={40}
+                                    onValueChange={(value) => {
+                                        const newRectangles = [...rectangles]
+                                        newRectangles[index].height = value[0]
+                                        setShapes(newRectangles)
+                                    }} 
                                     step={1} />
                             </div>
                         </div>
 
-                        {/* Line Separator */}
+                        {/* Rectangle Separator */}
                         {index < rectangles.length - 1 && (
                             <div className="mt-4 w-full rounded border-t border-stone-800"/>
                         )}

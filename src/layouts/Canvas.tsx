@@ -74,38 +74,68 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
     shapes.forEach((shape) => {
       let vertices: Float32Array;
 
-      // TODO: Differentiate shape types
       if (shape.type === "line") {
         vertices = new Float32Array([
             shape.start.x, shape.start.y,
             shape.end.x, shape.end.y,
         ]);
-        const buffer = gl.createBuffer();
-        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-        gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-  
-        const coord = gl.getAttribLocation(shaderProgram, "coordinates");
-        gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(coord);
-  
-        // Configure the vertex attribute pointer
-        gl.vertexAttribPointer(coordinates, 2, gl.FLOAT, false, 0, 0);
-        gl.enableVertexAttribArray(coordinates);
-  
-        // Set the color uniform
-        gl.uniform4f(uColor, shape.color.r / 255, shape.color.g / 255, shape.color.b / 255, shape.color.a);
-  
-        // Set the scale uniform
-        gl.uniform1f(scaleUniform, 0.05);
-  
-        // Draw the shape
-        if (shape.type === 'line') {
-            gl.drawArrays(gl.LINES, 0, 2);
-        }
-  
-        // Detach and delete shaders
-        gl.deleteBuffer(buffer);
+      } else if (shape.type === "square") {
+        const x1 = shape.start.x;
+        const y1 = shape.start.y;
+        const x2 = x1 + shape.sideLength;
+        const y2 = y1;
+        const x3 = x1;
+        const y3 = y1 + shape.sideLength;
+        const x4 = x2;
+        const y4 = y3;
+        vertices = new Float32Array([
+            x1, y1, x2, y2, x3, y3,
+            x3, y3, x2, y2, x4, y4
+        ]);
+      } else if (shape.type === "rectangle") {
+        const x1 = shape.start.x;
+        const y1 = shape.start.y;
+        const x2 = x1 + shape.width;
+        const y2 = y1;
+        const x3 = x1;
+        const y3 = y1 + shape.height;
+        const x4 = x2;
+        const y4 = y3;
+        vertices = new Float32Array([
+            x1, y1, x2, y2, x3, y3,
+            x3, y3, x2, y2, x4, y4
+        ]);
       }
+
+      // TODO: Render polygon
+
+      const buffer = gl.createBuffer();
+      gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+      const coord = gl.getAttribLocation(shaderProgram, "coordinates");
+      gl.vertexAttribPointer(coord, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(coord);
+
+      // Configure the vertex attribute pointer
+      gl.vertexAttribPointer(coordinates, 2, gl.FLOAT, false, 0, 0);
+      gl.enableVertexAttribArray(coordinates);
+
+      // Set the color uniform
+      gl.uniform4f(uColor, shape.color.r / 255, shape.color.g / 255, shape.color.b / 255, shape.color.a);
+
+      // Set the scale uniform
+      gl.uniform1f(scaleUniform, 0.05);
+
+      // Draw the shape
+      if (shape.type === 'line') {
+          gl.drawArrays(gl.LINES, 0, 2);
+      } else if (shape.type === 'square' || shape.type === 'rectangle') {
+        gl.drawArrays(gl.TRIANGLES, 0, 6); // Draw 6 vertices = 2 triangles
+      }
+
+      // Detach and delete shaders
+      gl.deleteBuffer(buffer);
       
     });
   };
@@ -113,7 +143,7 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
   useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
-      const gl = canvasRef.current.getContext("webgl");
+      const gl = canvas.getContext("webgl", { antialias: true });
 
       if (gl) {
         // Consider the device pixel ratio for high-DPI displays
