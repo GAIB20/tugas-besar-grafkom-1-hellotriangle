@@ -19,6 +19,7 @@ import {
     DropdownMenuTrigger,
   } from "@/components/ui/dropdown-menu"
 import { ChevronsUpDown } from "lucide-react"
+import { useEffect, useState } from "react"
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -26,7 +27,15 @@ interface PolygonConfigProps {
 }
 
 export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps): JSX.Element {
-    const polygons = shapes.filter(shape => shape.type === 'polygon') as Polygon[]
+    const [polygons, setPolygons] = useState<Polygon[]>(shapes.filter(shape => shape.type === 'polygon') as Polygon[])
+
+    useEffect(() => {
+        const newShapes = shapes.filter(shape => shape.type !== 'polygon') as Shape[]
+
+        newShapes.push(...polygons)
+
+        setShapes(newShapes)
+    })
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -57,7 +66,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     () => {
                                         const newPolygons = [...polygons]
                                         newPolygons.splice(index, 1)
-                                        setShapes(newPolygons)
+                                        setPolygons(newPolygons)
                                     }
                                 }
                             >
@@ -85,7 +94,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     onChange={(e) => {
                                         const newpolygons = [...polygons]
                                         newpolygons[index].color.r = parseInt(e.target.value)
-                                        setShapes(newpolygons)
+                                        setPolygons(newpolygons)
                                     }}
                                 />
                                 <Input
@@ -97,7 +106,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     onChange={(e) => {
                                         const newpolygons = [...polygons]
                                         newpolygons[index].color.g = parseInt(e.target.value)
-                                        setShapes(newpolygons)
+                                        setPolygons(newpolygons)
                                     }}
                                 />
                                 <Input
@@ -109,7 +118,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     onChange={(e) => {
                                         const newpolygons = [...polygons]
                                         newpolygons[index].color.b = parseInt(e.target.value)
-                                        setShapes(newpolygons)
+                                        setPolygons(newpolygons)
                                     }}
                                 />
                                 <Input
@@ -122,7 +131,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     onChange={(e) => {
                                         const newpolygons = [...polygons]
                                         newpolygons[index].color.a = parseFloat(e.target.value)
-                                        setShapes(newpolygons)
+                                        setPolygons(newpolygons)
                                     }}
                                 />
                             </div>
@@ -141,7 +150,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         onChange={(e) => {
                                             const newPolygons = [...polygons]
                                             newPolygons[index].vertices[vertexIndex].x = parseInt(e.target.value)
-                                            setShapes(newPolygons)
+                                            setPolygons(newPolygons)
                                         }} />
                                 </div>
                                 <div className="flex items-center gap-2.5">
@@ -154,7 +163,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         onChange={(e) => {
                                             const newPolygons = [...polygons]
                                             newPolygons[index].vertices[vertexIndex].y = parseInt(e.target.value)
-                                            setShapes(newPolygons)
+                                            setPolygons(newPolygons)
                                         }} />
                                 </div>
                                 <button
@@ -169,12 +178,12 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     onClick={() => {
                                         const newPolygons = [...polygons]
                                         newPolygons[index].vertices.splice(vertexIndex, 1)
-                                        setShapes(newPolygons)
+                                        setPolygons(newPolygons)
 
                                         // If it is the last vertex, remove the polygon
                                         if (newPolygons[index].vertices.length === 0) {
                                             newPolygons.splice(index, 1)
-                                            setShapes(newPolygons)
+                                            setPolygons(newPolygons)
                                         }
                                     }}
                                 >
@@ -188,7 +197,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                             onClick={() => {
                                 const newPolygons = [...polygons]
                                 newPolygons[index].vertices.push({ x: 0, y: 0 } as Point)
-                                setShapes(newPolygons)
+                                setPolygons(newPolygons)
                             }}
                         >Add Vertex</Button>
 
@@ -211,7 +220,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                                 onValueChange={(value) => {
                                                     const newPolygons = [...polygons]
                                                     newPolygons[index].edges[edgeIndex].start = newPolygons[index].vertices[parseInt(value)]
-                                                    setShapes(newPolygons)
+                                                    setPolygons(newPolygons)
                                                 }}
                                             >
                                                 {polygon.vertices.map((vertex, vertexIndex) => (
@@ -245,7 +254,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                                 onValueChange={(value) => {
                                                     const newPolygons = [...polygons]
                                                     newPolygons[index].edges[edgeIndex].end = newPolygons[index].vertices[parseInt(value)]
-                                                    setShapes(newPolygons)
+                                                    setPolygons(newPolygons)
                                                 }}
                                             >
                                                 {polygon.vertices.map((vertex, vertexIndex) => (
@@ -267,7 +276,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     onClick={() => {
                                         const newPolygons = [...polygons]
                                         newPolygons[index].edges.splice(edgeIndex, 1)
-                                        setShapes(newPolygons)
+                                        setPolygons(newPolygons)
                                     }}
                                 >
                                     <VscClose />
@@ -292,7 +301,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     end: newPolygons[index].vertices[1],
                                     color: { r: 255, g: 255, b: 255, a: 1 }
                                 } as Line)
-                                setShapes(newPolygons)
+                                setPolygons(newPolygons)
                             }}
                         >Add Edges</Button>
                         
@@ -308,12 +317,16 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
-                        setShapes([...shapes, {
-                            type: 'polygon',
-                            edges: [] as Line[],
-                            vertices: [{ x: 0, y: 0 }],
-                            color: {r: 255, g: 255, b: 255, a: 1}
-                        } as Polygon])
+                        setPolygons([
+                            ...polygons,
+                            {
+                                id: `polygon-${Math.random().toString(36).substr(2, 9)}`,
+                                type: 'polygon',
+                                vertices: [{ x: 0, y: 0 } as Point],
+                                edges: [],
+                                color: { r: 255, g: 255, b: 255, a: 1 }
+                            } as Polygon
+                        ])
                     }}
                 >
                     Add Polygon

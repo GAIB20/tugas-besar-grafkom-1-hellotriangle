@@ -131,7 +131,7 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
       if (shape.type === 'line') {
           gl.drawArrays(gl.LINES, 0, 2);
       } else if (shape.type === 'square' || shape.type === 'rectangle') {
-        gl.drawArrays(gl.TRIANGLES, 0, 6); // Draw 6 vertices = 2 triangles
+        gl.drawArrays(gl.TRIANGLES, 0, 6);
       }
 
       // Detach and delete shaders
