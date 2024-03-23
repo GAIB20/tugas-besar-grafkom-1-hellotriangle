@@ -2,15 +2,16 @@ import { Shape, Line } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscWand, VscClose } from "react-icons/vsc"
-import colorToRGBA from "@/lib/func"
+import colorToRGBA, { colorToHex } from "@/lib/colors"
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
   } from "@/components/ui/tooltip"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
+import Chrome from '@uiw/react-color-chrome';
 
 interface LineConfigProps {
     shapes: Shape[]
@@ -20,6 +21,9 @@ interface LineConfigProps {
 export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.Element {
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
     const [showModal, setShowModal] = useState<number>(-1)
+    const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
+    const colorPickerRef = useRef(null);
+
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'line') as Shape[]
@@ -28,6 +32,21 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
 
         setShapes(newShapes)
     }, [lines])
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+                setShowColorPicker(false);
+            }
+        };
+    
+        document.addEventListener('mousedown', handleClickOutside);
+    
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
+    
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -41,6 +60,18 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
+                        {(showColorPicker) && 
+                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                                <Chrome
+                                    color={colorToHex(line.color)}
+                                    onChange={(color) => {
+                                        const newLines = [...lines]
+                                        newLines[index].color = color.rgba
+                                        setLines(newLines)
+                                    }}
+                                />
+                            </div>
+                        }
                         <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
                             {/* Transform Modal */}
                             <div className="mb-1 flex w-full justify-between">
@@ -81,7 +112,8 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                             <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
                                 
                                 <div className="flex items-center gap-2.5">    
-                                    <div
+                                    <button
+                                        onClick={() => setShowColorPicker(!showColorPicker)}
                                         style={{ backgroundColor: colorToRGBA(line.color) }}
                                         className="mb-0.5 aspect-square size-3 rounded-full"
                                     />

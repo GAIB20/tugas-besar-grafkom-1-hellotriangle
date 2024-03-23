@@ -3,15 +3,16 @@ import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscClose, VscWand } from "react-icons/vsc"
 import { Slider } from "../ui/slider"
-import colorToRGBA from "@/lib/func"
+import colorToRGBA, { colorToHex } from "@/lib/colors"
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
   } from "@/components/ui/tooltip"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
+import Chrome from '@uiw/react-color-chrome';
 
 interface RectangleConfigProps {
     shapes: Shape[]
@@ -21,6 +22,8 @@ interface RectangleConfigProps {
 export default function RectangleConfig({ shapes, setShapes }: RectangleConfigProps): JSX.Element {
     const [rectangles, setRectangles] = useState<Rectangle[]>(shapes.filter(shape => shape.type === 'rectangle') as Rectangle[])
     const [showModal, setShowModal] = useState<number>(-1)
+    const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
+    const colorPickerRef = useRef(null);
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'rectangle') as Shape[]
@@ -29,6 +32,20 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 
         setShapes(newShapes)
     }, [rectangles])
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
+                setShowColorPicker(false);
+            }
+        };
+    
+        document.addEventListener('mousedown', handleClickOutside);
+    
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, []);
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -42,6 +59,18 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
+                        {(showColorPicker) && 
+                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                                <Chrome
+                                    color={colorToHex(rectangle.color)}
+                                    onChange={(color) => {
+                                        const newRectangles = [...rectangles]
+                                        newRectangles[index].color = color.rgba
+                                        setRectangles(newRectangles)
+                                    }}
+                                />
+                            </div>
+                        }
                         <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
                             <div className="mb-1 flex w-full justify-between">
                             <div className="flex items-center justify-center gap-2">
@@ -80,7 +109,8 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                             <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
                                 
                                 <div className="flex items-center gap-2.5">    
-                                    <div
+                                    <button
+                                        onClick={() => setShowColorPicker(!showColorPicker)}
                                         style={{ backgroundColor: colorToRGBA(rectangle.color) }}
                                         className="mb-0.5 aspect-square size-3 rounded-full"
                                     />
