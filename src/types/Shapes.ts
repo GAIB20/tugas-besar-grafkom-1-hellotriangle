@@ -13,24 +13,24 @@ type Point = {
 }
 
 type Line = {
-    type: 'line';
     id: string;
+    type: 'line';
     start: Point
     end: Point;
     color: Color;
 }
 
 type Square = {
-    type: 'square';
     id: string;
+    type: 'square';
     start: Point;
     sideLength: number;
     color: Color;
 }
 
 type Rectangle = {
-    type: 'rectangle';
     id: string;
+    type: 'rectangle';
     start: Point;
     width: number;
     height: number;
@@ -38,8 +38,8 @@ type Rectangle = {
 }
 
 type Polygon = {
-    type: 'polygon';
     id: string;
+    type: 'polygon';
     vertices: Point[];
     edges: Line[];
     color: Color;

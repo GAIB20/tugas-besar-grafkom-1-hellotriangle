@@ -19,15 +19,11 @@ interface LineConfigProps {
 export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.Element {
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
 
-    // Detect if lines changes, then update the shapes
     useEffect(() => {
-        // Delete all lines from shapes
         const newShapes = shapes.filter(shape => shape.type !== 'line') as Shape[]
 
-        // Add new lines to shapes
         newShapes.push(...lines)
 
-        // Update shapes
         setShapes(newShapes)
     })
 
@@ -199,7 +195,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 ...lines,
                                 {
                                     type: 'line',
-                                    id: `line-${lines.length + 1}`,
+                                    id: `line-${Math.random().toString(36).substr(2, 9)}`,
                                     start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                     end: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                     color: { r: 255, g: 255, b: 255, a: 1 }

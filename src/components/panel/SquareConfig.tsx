@@ -20,15 +20,11 @@ interface SquareConfigProps {
 export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): JSX.Element {
     const [squares, setSquares] = useState<Square[]>(shapes.filter(shape => shape.type === 'square') as Square[])
 
-    // Detect if lines changes, then update the shapes
     useEffect(() => {
-        // Delete all lines from shapes
         const newShapes = shapes.filter(shape => shape.type !== 'square') as Shape[]
 
-        // Add new lines to shapes
         newShapes.push(...squares)
 
-        // Update shapes
         setShapes(newShapes)
     })
 
@@ -189,8 +185,8 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                         setSquares([
                             ...squares,
                             {
+                                id: `square-${Math.random().toString(36).substr(2, 9)}`,
                                 type: 'square',
-                                id: Math.random().toString(36).substring(7),
                                 start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 sideLength: 10,
                                 color: { r: 255, g: 255, b: 255, a: 1 }

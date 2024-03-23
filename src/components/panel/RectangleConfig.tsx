@@ -10,6 +10,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
   } from "@/components/ui/tooltip"
+import { useEffect, useState } from "react"
 
 interface RectangleConfigProps {
     shapes: Shape[]
@@ -17,7 +18,15 @@ interface RectangleConfigProps {
 }
 
 export default function RectangleConfig({ shapes, setShapes }: RectangleConfigProps): JSX.Element {
-    const rectangles = shapes.filter(shape => shape.type === 'rectangle') as Rectangle[]
+    const [rectangles, setRectangles] = useState<Rectangle[]>(shapes.filter(shape => shape.type === 'rectangle') as Rectangle[])
+
+    useEffect(() => {
+        const newShapes = shapes.filter(shape => shape.type !== 'rectangle') as Shape[]
+
+        newShapes.push(...rectangles)
+
+        setShapes(newShapes)
+    })
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -48,7 +57,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     () => {
                                         const newRectangles = [...rectangles]
                                         newRectangles.splice(index, 1)
-                                        setShapes(newRectangles)
+                                        setRectangles(newRectangles)
                                     }
                                 }
                             >
@@ -76,7 +85,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onChange={(e) => {
                                         const newrectangles = [...rectangles]
                                         newrectangles[index].color.r = parseInt(e.target.value)
-                                        setShapes(newrectangles)
+                                        setRectangles(newrectangles)
                                     }}
                                 />
                                 <Input
@@ -88,7 +97,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onChange={(e) => {
                                         const newrectangles = [...rectangles]
                                         newrectangles[index].color.g = parseInt(e.target.value)
-                                        setShapes(newrectangles)
+                                        setRectangles(newrectangles)
                                     }}
                                 />
                                 <Input
@@ -100,7 +109,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onChange={(e) => {
                                         const newrectangles = [...rectangles]
                                         newrectangles[index].color.b = parseInt(e.target.value)
-                                        setShapes(newrectangles)
+                                        setRectangles(newrectangles)
                                     }}
                                 />
                                 <Input
@@ -113,7 +122,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onChange={(e) => {
                                         const newrectangles = [...rectangles]
                                         newrectangles[index].color.a = parseFloat(e.target.value)
-                                        setShapes(newrectangles)
+                                        setRectangles(newrectangles)
                                     }}
                                 />
                             </div>
@@ -130,7 +139,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onChange={(e) => {
                                         const newRectangles = [...rectangles]
                                         newRectangles[index].start.x = parseFloat(e.target.value)
-                                        setShapes(newRectangles)
+                                        setRectangles(newRectangles)
                                     }} />
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -142,7 +151,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onChange={(e) => {
                                         const newRectangles = [...rectangles]
                                         newRectangles[index].start.y = parseFloat(e.target.value)
-                                        setShapes(newRectangles)
+                                        setRectangles(newRectangles)
                                     }} />
                             </div>
                         </div>
@@ -157,7 +166,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onValueChange={(value) => {
                                         const newRectangles = [...rectangles]
                                         newRectangles[index].width = value[0]
-                                        setShapes(newRectangles)
+                                        setRectangles(newRectangles)
                                     }} 
                                     step={1} />
                             </div>
@@ -171,7 +180,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                     onValueChange={(value) => {
                                         const newRectangles = [...rectangles]
                                         newRectangles[index].height = value[0]
-                                        setShapes(newRectangles)
+                                        setRectangles(newRectangles)
                                     }} 
                                     step={1} />
                             </div>
@@ -189,13 +198,18 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
-                        setShapes([...shapes, {
-                            type: 'rectangle',
-                            start: { x: 0, y: 0 },
-                            width: 10,
-                            height: 10,
-                            color: {r: 255, g: 255, b: 255, a: 1}
-                        } as Rectangle])
+                        setRectangles([
+                            ...rectangles,
+                            {
+                                id: `rectangle-${Math.random().toString(36).substr(2, 9)}`,
+                                type: 'rectangle',
+                                start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                width: 10,
+                                height: 10,
+                                color: { r: 255, g: 255, b: 255, a: 1 }
+                            }
+                        
+                        ])
                     }}
                 >
                     Add Rectangle
