@@ -1,6 +1,6 @@
 import { useEffect, useRef } from "react";
 import { Shape } from "@/types/Shapes";
-import { renderLine, renderRectangle, renderSquare } from "@/lib/renderShape";
+import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/renderShape";
 
 interface CanvasProps {
   shapes: Shape[];
@@ -84,13 +84,7 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
       } else if (shape.type === "rectangle") {
         renderRectangle(gl, shape, uColor!)
       } else {
-                // // Draws convex hull polygons
-                // const vert: number[] = [];
-                // shape.vertices.forEach(vertex => {
-                //   vert.push(vertex.x, vertex.y);
-                // });
-        
-                // const vertices = new Float32Array(vert);
+        renderPolygon(gl, shape, uColor!)
       }
     });
   };

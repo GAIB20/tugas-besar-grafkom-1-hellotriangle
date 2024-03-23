@@ -75,4 +75,17 @@ export function renderPolygon(
     gl: WebGLRenderingContext,
     polygon: Polygon,
     uColor: WebGLUniformLocation
-) {}
+) {
+    const vert: number[] = [];
+    polygon.vertices.forEach(vertex => {
+        vert.push(vertex.x, vertex.y);
+    });
+
+    const vertices = new Float32Array(vert);
+    const buffer = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+
+    gl.uniform4f(uColor, polygon.color.r / 255, polygon.color.g / 255, polygon.color.b / 255, polygon.color.a);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, polygon.vertices.length);
+}
