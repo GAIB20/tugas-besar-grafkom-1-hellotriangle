@@ -20,6 +20,7 @@ import {
   } from "@/components/ui/dropdown-menu"
 import { ChevronsUpDown } from "lucide-react"
 import { useEffect, useState } from "react"
+import TransformModal from "../modal/TransformModal"
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -28,6 +29,7 @@ interface PolygonConfigProps {
 
 export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps): JSX.Element {
     const [polygons, setPolygons] = useState<Polygon[]>(shapes.filter(shape => shape.type === 'polygon') as Polygon[])
+    const [showModal, setShowModal] = useState<number>(-1)
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'polygon') as Shape[]
@@ -42,221 +44,197 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
             {/* Polygons Config */}
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-4 text-gray-100">
                 {polygons.map((polygon, index) => (
-                    <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
-                        <div className="mb-1 flex w-full justify-between">
-                        <div className="flex items-center justify-center gap-2">
-                                <h1 className="font-medium">Polygon {index+1}</h1>
+                    <>
+                        {(showModal === index) && 
+                            <TransformModal
+                                shape={polygon}
+                                shapeIndex={index}
+                                onClose={() => setShowModal(-1)}
+                        />}
+                        <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
+                            <div className="mb-1 flex w-full justify-between">
+                            <div className="flex items-center justify-center gap-2">
+                                    <h1 className="font-medium">Polygon {index+1}</h1>
 
-                                <TooltipProvider>
-                                    <Tooltip delayDuration={20}>
-                                        <TooltipTrigger>
-                                            <button className="flex h-full flex-col items-center">
-                                                <VscWand className="mb-0.5 animate-pulse text-gray-300" size={16} />
-                                            </button>
-                                        </TooltipTrigger>
+                                    <TooltipProvider>
+                                        <Tooltip delayDuration={20}>
+                                            <TooltipTrigger>
+                                                <button className="flex h-full flex-col items-center" onClick={() => setShowModal(index)} >
+                                                    <VscWand className="mb-0.5 animate-pulse text-gray-300" size={16} />
+                                                </button>
+                                            </TooltipTrigger>
 
-                                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
-                                            <p>Transform Shape</p>
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            </div>
-                            <button className="transition-all duration-200 ease-in-out hover:text-red-500"
-                                onClick={
-                                    () => {
-                                        const newPolygons = [...polygons]
-                                        newPolygons.splice(index, 1)
-                                        setPolygons(newPolygons)
-                                    }
-                                }
-                            >
-                                <VscClose />
-                            </button>
-                        </div>
-
-                        <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
-                            
-                            <div className="flex items-center gap-2.5">    
-                                <div
-                                    style={{ backgroundColor: colorToRGBA(polygon.color) }}
-                                    className="mb-0.5 aspect-square size-3 rounded-full"
-                                />
-                                <p className="mb-1 font-mono">rgba</p>
-                            </div>
-
-                            <div className="flex w-full items-center gap-0.5">
-                                <Input
-                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                    type="number"
-                                    min={0}
-                                    max={255}
-                                    value={polygon.color.r}
-                                    onChange={(e) => {
-                                        const newpolygons = [...polygons]
-                                        newpolygons[index].color.r = parseInt(e.target.value)
-                                        setPolygons(newpolygons)
-                                    }}
-                                />
-                                <Input
-                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                    type="number"
-                                    min={0}
-                                    max={255}
-                                    value={polygon.color.g}
-                                    onChange={(e) => {
-                                        const newpolygons = [...polygons]
-                                        newpolygons[index].color.g = parseInt(e.target.value)
-                                        setPolygons(newpolygons)
-                                    }}
-                                />
-                                <Input
-                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                    type="number"
-                                    min={0}
-                                    max={255}
-                                    value={polygon.color.b}
-                                    onChange={(e) => {
-                                        const newpolygons = [...polygons]
-                                        newpolygons[index].color.b = parseInt(e.target.value)
-                                        setPolygons(newpolygons)
-                                    }}
-                                />
-                                <Input
-                                    className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                    type="number"
-                                    min={0}
-                                    max={1}
-                                    step={0.01}
-                                    value={polygon.color.a}
-                                    onChange={(e) => {
-                                        const newpolygons = [...polygons]
-                                        newpolygons[index].color.a = parseFloat(e.target.value)
-                                        setPolygons(newpolygons)
-                                    }}
-                                />
-                            </div>
-
-                        </div> 
-
-                        {polygon.vertices.map((vertex, vertexIndex) => (
-                            <div key={vertexIndex} className="flex w-full gap-2">
-                                <div className="flex items-center gap-2.5">
-                                    <p className="text-sm">X{vertexIndex+1}</p>
-                                    <Input
-                                        className="w-full border-gray-700 text-gray-200"
-                                        type="number"
-                                        value={vertex.x}
-                                        onChange={(e) => {
-                                            const newPolygons = [...polygons]
-                                            newPolygons[index].vertices[vertexIndex].x = parseInt(e.target.value)
-                                            setPolygons(newPolygons)
-                                        }} />
+                                            <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                                                <p>Transform Shape</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                 </div>
-                                <div className="flex items-center gap-2.5">
-                                    <p className="text-sm">Y{vertexIndex+1}</p>
-                                    <Input
-                                        className="w-full border-gray-700 text-gray-200"
-                                        type="number"
-                                        value={vertex.y}
-                                        onChange={(e) => {
+                                <button className="transition-all duration-200 ease-in-out hover:text-red-500"
+                                    onClick={
+                                        () => {
+                                            if (showModal === index) {
+                                                setShowModal(-1)
+                                            }
                                             const newPolygons = [...polygons]
-                                            newPolygons[index].vertices[vertexIndex].y = parseInt(e.target.value)
-                                            setPolygons(newPolygons)
-                                        }} />
-                                </div>
-                                <button
-                                    title={polygon.edges.some(edge => edge.start === vertex || edge.end === vertex) ? 'Cannot delete vertex because it is part of an edge' : ''}
-                                    className={`text-gray-600 transition-all duration-200 ease-in-out ${
-                                        polygon.edges.some(edge => edge.start === vertex) || polygon.edges.some(edge => edge.end === vertex) ? 'cursor-not-allowed' : 'hover:text-red-500'}
-                                    `}
-                                    disabled={
-                                        // Cannot delete if there is an edge attached to the vertex
-                                        polygon.edges.some(edge => edge.start === vertex) || polygon.edges.some(edge => edge.end === vertex)
-                                    }
-                                    onClick={() => {
-                                        const newPolygons = [...polygons]
-                                        newPolygons[index].vertices.splice(vertexIndex, 1)
-                                        setPolygons(newPolygons)
-
-                                        // If it is the last vertex, remove the polygon
-                                        if (newPolygons[index].vertices.length === 0) {
                                             newPolygons.splice(index, 1)
                                             setPolygons(newPolygons)
                                         }
-                                    }}
+                                    }
                                 >
                                     <VscClose />
                                 </button>
                             </div>
-                        ))}
 
-                        {/* Add Vertex */}
-                        <Button className="mb-1 w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700"
-                            onClick={() => {
-                                const newPolygons = [...polygons]
-                                newPolygons[index].vertices.push({ x: 0, y: 0 } as Point)
-                                setPolygons(newPolygons)
-                            }}
-                        >Add Vertex</Button>
-
-                        {polygon.edges.map((edge, edgeIndex) => (
-                            <div key={edgeIndex} className="flex w-full gap-2">
-                                <div className="flex w-full flex-col gap-2.5">
-                                    <p className="text-sm">Start</p>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button className="flex w-full items-center justify-between bg-zinc-800 py-1 hover:bg-gray-700">
-                                                <p className="mt-0.5">Vertex {polygon.vertices.findIndex(vertex => vertex === edge.start) + 1}</p>
-                                                <ChevronsUpDown className="text-gray-300" size={12} />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent side="bottom" className="border-gray-700 bg-zinc-800 text-white">
-                                            <DropdownMenuLabel className="font-medium">Vertices</DropdownMenuLabel>
-                                            <DropdownMenuSeparator className="bg-gray-700"/>
-                                            <DropdownMenuRadioGroup
-                                                value={polygon.vertices.findIndex(vertex => vertex === edge.start).toString()}
-                                                onValueChange={(value) => {
-                                                    const newPolygons = [...polygons]
-                                                    newPolygons[index].edges[edgeIndex].start = newPolygons[index].vertices[parseInt(value)]
-                                                    setPolygons(newPolygons)
-                                                }}
-                                            >
-                                                {polygon.vertices.map((vertex, vertexIndex) => (
-                                                    vertex !== edge.end && (
-                                                        <DropdownMenuRadioItem
-                                                            key={vertexIndex}
-                                                            value= {vertexIndex.toString()}
-                                                        >
-                                                            Vertex {vertexIndex + 1}
-                                                        </DropdownMenuRadioItem>
-                                                    )
-                                                ))}
-                                            </DropdownMenuRadioGroup>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                            <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                                
+                                <div className="flex items-center gap-2.5">    
+                                    <div
+                                        style={{ backgroundColor: colorToRGBA(polygon.color) }}
+                                        className="mb-0.5 aspect-square size-3 rounded-full"
+                                    />
+                                    <p className="mb-1 font-mono">rgba</p>
                                 </div>
-                                <div className="flex w-full flex-col gap-2.5">
-                                    <p className="text-sm">End</p>
-                                    <DropdownMenu>
-                                        <DropdownMenuTrigger asChild>
-                                            <Button className="flex w-full items-center justify-between bg-zinc-800 py-1 hover:bg-gray-700">
-                                                <p className="mt-0.5">Vertex {polygon.vertices.findIndex(vertex => vertex === edge.end) + 1}</p>
-                                                <ChevronsUpDown className="text-gray-300" size={12} />
-                                            </Button>
-                                        </DropdownMenuTrigger>
-                                        <DropdownMenuContent side="bottom" className="border-gray-700 bg-zinc-800 text-white">
-                                            <DropdownMenuLabel className="font-medium">Vertices</DropdownMenuLabel>
-                                            <DropdownMenuSeparator className="bg-gray-700"/>
-                                            <DropdownMenuRadioGroup
-                                                value={polygon.vertices.findIndex(vertex => vertex === edge.end).toString()}
-                                                onValueChange={(value) => {
-                                                    const newPolygons = [...polygons]
-                                                    newPolygons[index].edges[edgeIndex].end = newPolygons[index].vertices[parseInt(value)]
-                                                    setPolygons(newPolygons)
-                                                }}
-                                            >
-                                                {polygon.vertices.map((vertex, vertexIndex) => (
-                                                        vertex !== edge.start && (
+
+                                <div className="flex w-full items-center gap-0.5">
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        min={0}
+                                        max={255}
+                                        value={polygon.color.r}
+                                        onChange={(e) => {
+                                            const newpolygons = [...polygons]
+                                            newpolygons[index].color.r = parseInt(e.target.value)
+                                            setPolygons(newpolygons)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        min={0}
+                                        max={255}
+                                        value={polygon.color.g}
+                                        onChange={(e) => {
+                                            const newpolygons = [...polygons]
+                                            newpolygons[index].color.g = parseInt(e.target.value)
+                                            setPolygons(newpolygons)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        min={0}
+                                        max={255}
+                                        value={polygon.color.b}
+                                        onChange={(e) => {
+                                            const newpolygons = [...polygons]
+                                            newpolygons[index].color.b = parseInt(e.target.value)
+                                            setPolygons(newpolygons)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        min={0}
+                                        max={1}
+                                        step={0.01}
+                                        value={polygon.color.a}
+                                        onChange={(e) => {
+                                            const newpolygons = [...polygons]
+                                            newpolygons[index].color.a = parseFloat(e.target.value)
+                                            setPolygons(newpolygons)
+                                        }}
+                                    />
+                                </div>
+
+                            </div> 
+
+                            {polygon.vertices.map((vertex, vertexIndex) => (
+                                <div key={vertexIndex} className="flex w-full gap-2">
+                                    <div className="flex items-center gap-2.5">
+                                        <p className="text-sm">X{vertexIndex+1}</p>
+                                        <Input
+                                            className="w-full border-gray-700 text-gray-200"
+                                            type="number"
+                                            value={vertex.x}
+                                            onChange={(e) => {
+                                                const newPolygons = [...polygons]
+                                                newPolygons[index].vertices[vertexIndex].x = parseInt(e.target.value)
+                                                setPolygons(newPolygons)
+                                            }} />
+                                    </div>
+                                    <div className="flex items-center gap-2.5">
+                                        <p className="text-sm">Y{vertexIndex+1}</p>
+                                        <Input
+                                            className="w-full border-gray-700 text-gray-200"
+                                            type="number"
+                                            value={vertex.y}
+                                            onChange={(e) => {
+                                                const newPolygons = [...polygons]
+                                                newPolygons[index].vertices[vertexIndex].y = parseInt(e.target.value)
+                                                setPolygons(newPolygons)
+                                            }} />
+                                    </div>
+                                    <button
+                                        title={polygon.edges.some(edge => edge.start === vertex || edge.end === vertex) ? 'Cannot delete vertex because it is part of an edge' : ''}
+                                        className={`text-gray-600 transition-all duration-200 ease-in-out ${
+                                            polygon.edges.some(edge => edge.start === vertex) || polygon.edges.some(edge => edge.end === vertex) ? 'cursor-not-allowed' : 'hover:text-red-500'}
+                                        `}
+                                        disabled={
+                                            // Cannot delete if there is an edge attached to the vertex
+                                            polygon.edges.some(edge => edge.start === vertex) || polygon.edges.some(edge => edge.end === vertex)
+                                        }
+                                        onClick={() => {
+                                            const newPolygons = [...polygons]
+                                            newPolygons[index].vertices.splice(vertexIndex, 1)
+                                            setPolygons(newPolygons)
+
+                                            // If it is the last vertex, remove the polygon
+                                            if (newPolygons[index].vertices.length === 0) {
+                                                newPolygons.splice(index, 1)
+                                                setPolygons(newPolygons)
+                                            }
+                                        }}
+                                    >
+                                        <VscClose />
+                                    </button>
+                                </div>
+                            ))}
+
+                            {/* Add Vertex */}
+                            <Button className="mb-1 w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700"
+                                onClick={() => {
+                                    const newPolygons = [...polygons]
+                                    newPolygons[index].vertices.push({ x: 0, y: 0 } as Point)
+                                    setPolygons(newPolygons)
+                                }}
+                            >Add Vertex</Button>
+
+                            {polygon.edges.map((edge, edgeIndex) => (
+                                <div key={edgeIndex} className="flex w-full gap-2">
+                                    <div className="flex w-full flex-col gap-2.5">
+                                        <p className="text-sm">Start</p>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button className="flex w-full items-center justify-between bg-zinc-800 py-1 hover:bg-gray-700">
+                                                    <p className="mt-0.5">Vertex {polygon.vertices.findIndex(vertex => vertex === edge.start) + 1}</p>
+                                                    <ChevronsUpDown className="text-gray-300" size={12} />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent side="bottom" className="border-gray-700 bg-zinc-800 text-white">
+                                                <DropdownMenuLabel className="font-medium">Vertices</DropdownMenuLabel>
+                                                <DropdownMenuSeparator className="bg-gray-700"/>
+                                                <DropdownMenuRadioGroup
+                                                    value={polygon.vertices.findIndex(vertex => vertex === edge.start).toString()}
+                                                    onValueChange={(value) => {
+                                                        const newPolygons = [...polygons]
+                                                        newPolygons[index].edges[edgeIndex].start = newPolygons[index].vertices[parseInt(value)]
+                                                        setPolygons(newPolygons)
+                                                    }}
+                                                >
+                                                    {polygon.vertices.map((vertex, vertexIndex) => (
+                                                        vertex !== edge.end && (
                                                             <DropdownMenuRadioItem
                                                                 key={vertexIndex}
                                                                 value= {vertexIndex.toString()}
@@ -264,50 +242,85 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                                                 Vertex {vertexIndex + 1}
                                                             </DropdownMenuRadioItem>
                                                         )
-                                                ))}
-                                            </DropdownMenuRadioGroup>
-                                        </DropdownMenuContent>
-                                    </DropdownMenu>
+                                                    ))}
+                                                </DropdownMenuRadioGroup>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                    <div className="flex w-full flex-col gap-2.5">
+                                        <p className="text-sm">End</p>
+                                        <DropdownMenu>
+                                            <DropdownMenuTrigger asChild>
+                                                <Button className="flex w-full items-center justify-between bg-zinc-800 py-1 hover:bg-gray-700">
+                                                    <p className="mt-0.5">Vertex {polygon.vertices.findIndex(vertex => vertex === edge.end) + 1}</p>
+                                                    <ChevronsUpDown className="text-gray-300" size={12} />
+                                                </Button>
+                                            </DropdownMenuTrigger>
+                                            <DropdownMenuContent side="bottom" className="border-gray-700 bg-zinc-800 text-white">
+                                                <DropdownMenuLabel className="font-medium">Vertices</DropdownMenuLabel>
+                                                <DropdownMenuSeparator className="bg-gray-700"/>
+                                                <DropdownMenuRadioGroup
+                                                    value={polygon.vertices.findIndex(vertex => vertex === edge.end).toString()}
+                                                    onValueChange={(value) => {
+                                                        const newPolygons = [...polygons]
+                                                        newPolygons[index].edges[edgeIndex].end = newPolygons[index].vertices[parseInt(value)]
+                                                        setPolygons(newPolygons)
+                                                    }}
+                                                >
+                                                    {polygon.vertices.map((vertex, vertexIndex) => (
+                                                            vertex !== edge.start && (
+                                                                <DropdownMenuRadioItem
+                                                                    key={vertexIndex}
+                                                                    value= {vertexIndex.toString()}
+                                                                >
+                                                                    Vertex {vertexIndex + 1}
+                                                                </DropdownMenuRadioItem>
+                                                            )
+                                                    ))}
+                                                </DropdownMenuRadioGroup>
+                                            </DropdownMenuContent>
+                                        </DropdownMenu>
+                                    </div>
+                                    <button
+                                        className="mt-7 text-gray-600 transition-all duration-200 ease-in-out hover:text-red-500"
+                                        onClick={() => {
+                                            const newPolygons = [...polygons]
+                                            newPolygons[index].edges.splice(edgeIndex, 1)
+                                            setPolygons(newPolygons)
+                                        }}
+                                    >
+                                        <VscClose />
+                                    </button>
                                 </div>
-                                <button
-                                    className="mt-7 text-gray-600 transition-all duration-200 ease-in-out hover:text-red-500"
-                                    onClick={() => {
-                                        const newPolygons = [...polygons]
-                                        newPolygons[index].edges.splice(edgeIndex, 1)
-                                        setPolygons(newPolygons)
-                                    }}
-                                >
-                                    <VscClose />
-                                </button>
-                            </div>
-                        ))}
+                            ))}
 
-                        {/* Add Edges */}
-                        <Button className={`w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700 ${polygon.vertices.length < 2 ? 'hidden' : ''} ${ 
-                        // TODO: Think about this later
-                        polygon.vertices.every((vertex, vertexIndex) => {
-                            const nextIndex = vertexIndex === polygon.vertices.length - 1 ? 0 : vertexIndex + 1
-                            return polygon.edges.some(edge => edge.id === `${vertexIndex}-${nextIndex}`) && polygon.edges.some(edge => edge.id === `${nextIndex}-${vertexIndex}`)
-                        })} hidden`}
-                            onClick={() => {
-                                const newPolygons = [...polygons]
-                                // Create a placeholder edge from the first available vertex to the second
-                                newPolygons[index].edges.push({
-                                    type: 'line',
-                                    id: `${0}-${1}`,
-                                    start: newPolygons[index].vertices[0],
-                                    end: newPolygons[index].vertices[1],
-                                    color: { r: 255, g: 255, b: 255, a: 1 }
-                                } as Line)
-                                setPolygons(newPolygons)
-                            }}
-                        >Add Edges</Button>
-                        
-                        {/* Polygon Separator */}
-                        {index < polygons.length - 1 && (
-                            <div className="mt-4 w-full rounded border-t border-stone-800"/>
-                        )}
-                    </div>
+                            {/* Add Edges */}
+                            <Button className={`w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700 ${polygon.vertices.length < 2 ? 'hidden' : ''} ${ 
+                            // TODO: Think about this later
+                            polygon.vertices.every((vertex, vertexIndex) => {
+                                const nextIndex = vertexIndex === polygon.vertices.length - 1 ? 0 : vertexIndex + 1
+                                return polygon.edges.some(edge => edge.id === `${vertexIndex}-${nextIndex}`) && polygon.edges.some(edge => edge.id === `${nextIndex}-${vertexIndex}`)
+                            })} hidden`}
+                                onClick={() => {
+                                    const newPolygons = [...polygons]
+                                    // Create a placeholder edge from the first available vertex to the second
+                                    newPolygons[index].edges.push({
+                                        type: 'line',
+                                        id: `${0}-${1}`,
+                                        start: newPolygons[index].vertices[0],
+                                        end: newPolygons[index].vertices[1],
+                                        color: { r: 255, g: 255, b: 255, a: 1 }
+                                    } as Line)
+                                    setPolygons(newPolygons)
+                                }}
+                            >Add Edges</Button>
+                            
+                            {/* Polygon Separator */}
+                            {index < polygons.length - 1 && (
+                                <div className="mt-4 w-full rounded border-t border-stone-800"/>
+                            )}
+                        </div>
+                    </>
                 ))}
             </div>
 

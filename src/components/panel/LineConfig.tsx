@@ -50,10 +50,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     <TooltipProvider>
                                         <Tooltip delayDuration={20}>
                                             <TooltipTrigger>
-                                                <button 
-                                                    className="flex h-full flex-col items-center"
-                                                    onClick={() => setShowModal(index)}
-                                                    >
+                                                <button className="flex h-full flex-col items-center" onClick={() => setShowModal(index)} >
                                                     <VscWand className="mb-0.5 animate-pulse text-gray-300" size={16} />
                                                 </button>
                                             </TooltipTrigger>
