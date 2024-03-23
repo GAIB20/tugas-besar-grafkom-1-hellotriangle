@@ -1,0 +1,109 @@
+// PROGRAM TRANSFORMASI TITIK
+
+// Mendefinisikan tipe data Point
+type Point = [number, number, number];
+
+// Fungsi membuat matriks kolom 2D (3x3, affine space)
+function createMatrix(): number[][] {
+    return [[0, 0, 0], [0, 0, 0], [0, 0, 0]];
+}
+
+// Fungsi mengalikan dua buah matriks 3x3
+function multiplyMatrix(matrix1: number[][], matrix2: number[][]): number[][] {
+    const result: number[][] = createMatrix();
+
+    for (let i = 0; i < 3; i++) {
+        for (let j = 0; j < 3; j++) {
+            for (let k = 0; k < 3; k++) {
+                result[i][j] += matrix1[i][k] * matrix2[k][j];
+            }
+        }
+    }
+    return result;
+}
+
+
+// Fungsi TRANSLASI terhadap sebuah titik
+function translatePoint(point: Point, dx: number, dy: number): Point {
+    const translationMatrix: number[][] = createMatrix();
+    translationMatrix[0][0] = 1;
+    translationMatrix[1][1] = 1;
+    translationMatrix[2][2] = 1;
+    translationMatrix[0][2] = dx;
+    translationMatrix[1][2] = dy;
+
+    const result: number[] = multiplyMatrix(translationMatrix, [[point[0]], [point[1]], [point[2]]])
+        .map(arr => arr[0]);
+    return result as Point;
+}
+
+
+// Fungsi ROTASI terhadap sebuah titik
+function rotatePoint(point: Point, axis: "x" | "y", angle: number): Point {
+    const rotationMatrix: number[][] = createMatrix();
+    const cosAngle = Math.cos(angle);
+    const sinAngle = Math.sin(angle);
+
+    if (axis === "x") {
+        rotationMatrix[0][0] = 1;
+        rotationMatrix[1][1] = cosAngle;
+        rotationMatrix[1][2] = -sinAngle;
+        rotationMatrix[2][1] = sinAngle;
+        rotationMatrix[2][2] = cosAngle;
+    } else if (axis === "y") {
+        rotationMatrix[0][0] = cosAngle;
+        rotationMatrix[0][2] = sinAngle;
+        rotationMatrix[1][1] = 1;
+        rotationMatrix[2][0] = -sinAngle;
+        rotationMatrix[2][2] = cosAngle;
+    }
+
+    const result: number[] = multiplyMatrix(rotationMatrix, [[point[0]], [point[1]], [point[2]]])
+        .map(arr => arr[0]);
+    return result as Point;
+}
+
+// Fungsi SCALING terhadap sebuah titik
+function scalePoint(point: Point, sx: number, sy: number): Point {
+    const scalingMatrix: number[][] = createMatrix();
+    scalingMatrix[0][0] = sx;
+    scalingMatrix[1][1] = sy;
+    scalingMatrix[2][2] = 1;
+
+    const result: number[] = multiplyMatrix(scalingMatrix, [[point[0]], [point[1]], [point[2]]])
+        .map(arr => arr[0]);
+    return result as Point;
+}
+
+// Fungsi SHEAR terhadap sebuah titik
+function shearPoint(point: Point, shx: number, shy: number): Point {
+    const shearMatrix: number[][] = createMatrix();
+    shearMatrix[0][0] = 1;
+    shearMatrix[0][1] = shx;
+    shearMatrix[1][1] = 1;
+    shearMatrix[1][0] = shy;
+    shearMatrix[2][2] = 1;
+
+    const result: number[] = multiplyMatrix(shearMatrix, [[point[0]], [point[1]], [point[2]]])
+        .map(arr => arr[0]);
+    return result as Point;
+}
+
+
+
+// Contoh Penggunaan
+const point: Point = [1, 1, 1];
+
+console.log("Titik awal: ", point);
+
+const translatedPoint = translatePoint(point, 2, 3);
+console.log("Titik setelah translasi: ", translatedPoint);
+
+const rotatedPoint = rotatePoint(point, "x", Math.PI / 4);
+console.log("Titik setelah rotasi: ", rotatedPoint);
+
+const scaledPoint = scalePoint(point, 2, 2);
+console.log("Titik setelah scaling: ", scaledPoint);
+
+const shearedPoint = shearPoint(point, 0.5, 0.5);
+console.log("Titik setelah shear: ", shearedPoint);
