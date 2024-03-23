@@ -33,33 +33,25 @@ function translatePoint(point: Point, dx: number, dy: number): Point {
     translationMatrix[1][2] = dy;
 
     const result: number[] = multiplyMatrix(translationMatrix, [[point[0]], [point[1]], [point[2]]])
-        .map(arr => arr[0]);
+        .map(arr => parseFloat(arr[0].toFixed(5)));
     return result as Point;
 }
 
 
 // Fungsi ROTASI terhadap sebuah titik
-function rotatePoint(point: Point, axis: "x" | "y", angle: number): Point {
+function rotatePoint(point: Point, angle: number): Point {
     const rotationMatrix: number[][] = createMatrix();
     const cosAngle = Math.cos(angle);
     const sinAngle = Math.sin(angle);
 
-    if (axis === "x") {
-        rotationMatrix[0][0] = 1;
-        rotationMatrix[1][1] = cosAngle;
-        rotationMatrix[1][2] = -sinAngle;
-        rotationMatrix[2][1] = sinAngle;
-        rotationMatrix[2][2] = cosAngle;
-    } else if (axis === "y") {
-        rotationMatrix[0][0] = cosAngle;
-        rotationMatrix[0][2] = sinAngle;
-        rotationMatrix[1][1] = 1;
-        rotationMatrix[2][0] = -sinAngle;
-        rotationMatrix[2][2] = cosAngle;
-    }
+    rotationMatrix[0][0] = cosAngle;
+    rotationMatrix[0][1] = -sinAngle;
+    rotationMatrix[1][0] = sinAngle;
+    rotationMatrix[1][1] = cosAngle;
+    rotationMatrix[2][2] = 1;
 
     const result: number[] = multiplyMatrix(rotationMatrix, [[point[0]], [point[1]], [point[2]]])
-        .map(arr => arr[0]);
+        .map(arr => parseFloat(arr[0].toFixed(5)));
     return result as Point;
 }
 
@@ -71,7 +63,7 @@ function scalePoint(point: Point, sx: number, sy: number): Point {
     scalingMatrix[2][2] = 1;
 
     const result: number[] = multiplyMatrix(scalingMatrix, [[point[0]], [point[1]], [point[2]]])
-        .map(arr => arr[0]);
+        .map(arr => parseFloat(arr[0].toFixed(5)));
     return result as Point;
 }
 
@@ -85,7 +77,7 @@ function shearPoint(point: Point, shx: number, shy: number): Point {
     shearMatrix[2][2] = 1;
 
     const result: number[] = multiplyMatrix(shearMatrix, [[point[0]], [point[1]], [point[2]]])
-        .map(arr => arr[0]);
+        .map(arr => parseFloat(arr[0].toFixed(5)));
     return result as Point;
 }
 
@@ -99,7 +91,7 @@ console.log("Titik awal: ", point);
 const translatedPoint = translatePoint(point, 2, 3);
 console.log("Titik setelah translasi: ", translatedPoint);
 
-const rotatedPoint = rotatePoint(point, "x", Math.PI / 4);
+const rotatedPoint = rotatePoint(point, Math.PI / 4);
 console.log("Titik setelah rotasi: ", rotatedPoint);
 
 const scaledPoint = scalePoint(point, 2, 2);
