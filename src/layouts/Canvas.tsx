@@ -83,8 +83,15 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
         renderSquare(gl, shape, uColor!)
       } else if (shape.type === "rectangle") {
         renderRectangle(gl, shape, uColor!)
+      } else {
+                // // Draws convex hull polygons
+                // const vert: number[] = [];
+                // shape.vertices.forEach(vertex => {
+                //   vert.push(vertex.x, vertex.y);
+                // });
+        
+                // const vertices = new Float32Array(vert);
       }
-      // TODO: Render polygon
     });
   };
 
