@@ -284,11 +284,11 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
 
                         {/* Add Edges */}
                         <Button className={`w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700 ${polygon.vertices.length < 2 ? 'hidden' : ''} ${ 
-                        // Check if all vertices are connected to two edges
+                        // TODO: Think about this later
                         polygon.vertices.every((vertex, vertexIndex) => {
                             const nextIndex = vertexIndex === polygon.vertices.length - 1 ? 0 : vertexIndex + 1
                             return polygon.edges.some(edge => edge.id === `${vertexIndex}-${nextIndex}`) && polygon.edges.some(edge => edge.id === `${nextIndex}-${vertexIndex}`)
-                        })}`}
+                        })} hidden`}
                             onClick={() => {
                                 const newPolygons = [...polygons]
                                 // Create a placeholder edge from the first available vertex to the second

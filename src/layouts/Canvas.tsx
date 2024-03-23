@@ -105,9 +105,16 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
             x1, y1, x2, y2, x3, y3,
             x3, y3, x2, y2, x4, y4
         ]);
+      } else {
+        // Draws convex hull polygons
+        const vert: number[] = [];
+        shape.vertices.forEach(vertex => {
+          vert.push(vertex.x, vertex.y);
+        });
+
+        vertices = new Float32Array(vert);
       }
 
-      // TODO: Render polygon
 
       const buffer = gl.createBuffer();
       gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -132,6 +139,8 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
           gl.drawArrays(gl.LINES, 0, 2);
       } else if (shape.type === 'square' || shape.type === 'rectangle') {
         gl.drawArrays(gl.TRIANGLES, 0, 6);
+      } else {
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, shape.vertices.length);
       }
 
       // Detach and delete shaders
