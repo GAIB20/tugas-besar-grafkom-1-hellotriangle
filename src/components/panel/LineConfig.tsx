@@ -70,7 +70,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                     type="number"
-                                    min={0}
                                     max={255}
                                     value={line.color.r}
                                     onChange={(e) => {
@@ -82,7 +81,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                     type="number"
-                                    min={0}
                                     max={255}
                                     value={line.color.g}
                                     onChange={(e) => {
@@ -94,7 +92,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                     type="number"
-                                    min={0}
                                     max={255}
                                     value={line.color.b}
                                     onChange={(e) => {
@@ -106,7 +103,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                     type="number"
-                                    min={0}
                                     max={1}
                                     step={0.01}
                                     value={line.color.a}
@@ -126,11 +122,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
                                     value={line.start.x}
                                     onChange={(e) => {
                                         const newLines = [...lines]
-                                        newLines[index].start.x = parseInt(e.target.value)
+                                        newLines[index].start.x = parseFloat(e.target.value)
                                         setShapes(newLines)
                                     }} />
                             </div>
@@ -139,11 +134,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
                                     value={line.start.y}
                                     onChange={(e) => {
                                         const newLines = [...lines]
-                                        newLines[index].start.y = parseInt(e.target.value)
+                                        newLines[index].start.y = parseFloat(e.target.value)
                                         setShapes(newLines)
                                     }} />
                             </div>
@@ -154,11 +148,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
-                                    value={line.start.x}
+                                    value={line.end.x}
                                     onChange={(e) => {
                                         const newLines = [...lines]
-                                        newLines[index].start.x = parseInt(e.target.value)
+                                        newLines[index].end.x = parseFloat(e.target.value)
                                         setShapes(newLines)
                                     }} />
                             </div>
@@ -167,11 +160,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <Input
                                     className="w-full border-gray-700 text-gray-200"
                                     type="number"
-                                    min={0}
-                                    value={line.start.y}
+                                    value={line.end.y}
                                     onChange={(e) => {
                                         const newLines = [...lines]
-                                        newLines[index].start.y = parseInt(e.target.value)
+                                        newLines[index].end.y = parseFloat(e.target.value)
                                         setShapes(newLines)
                                     }} />
                             </div>
