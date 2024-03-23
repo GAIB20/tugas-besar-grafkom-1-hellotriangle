@@ -66,14 +66,33 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
           if (shape.type === "line") {
-            const x1 = shape.start.x
-            const y1 = shape.start.y
-            const x2 = shape.end.x
-            const y2 = shape.end.y
-            const dx = x2 - x1;
-            const dy = y2 - y1;
-            const dist = Math.abs(dy * mousePos.x - dx * mousePos.y + x2 * y1 - y2 * x1) / Math.sqrt(dy * dy + dx * dx);
-            return dist < 5;
+            const hitTolerance = 2;
+            const x0 = mousePos.x;
+            const y0 = mousePos.y;
+
+            const x1 = shape.start.x;
+            const y1 = shape.start.y;
+            const x2 = shape.end.x;
+            const y2 = shape.end.y;
+
+            // Calculate the line segment's length squared
+            const lineLenSq = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+
+            // Calculate the projection of the point onto the line segment
+            const t = ((x0 - x1) * (x2 - x1) + (y0 - y1) * (y2 - y1)) / lineLenSq;
+
+            // Check if the projection falls within the line segment
+            if (t < 0 || t > 1) {
+                const distToStartSq = (x0 - x1) * (x0 - x1) + (y0 - y1) * (y0 - y1);
+                const distToEndSq = (x0 - x2) * (x0 - x2) + (y0 - y2) * (y0 - y2);
+                return Math.sqrt(Math.min(distToStartSq, distToEndSq)) < hitTolerance;
+            } else {
+                const A = y2 - y1;
+                const B = x1 - x2;
+                const C = x2 * y1 - x1 * y2;
+                const distance = Math.abs(A * x0 + B * y0 + C) / Math.sqrt(A * A + B * B);
+                return distance < hitTolerance;
+            }
           } else if (shape.type === "square") {
             const x = shape.start.x;
             const y = shape.start.y;
