@@ -9,6 +9,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
   } from "@/components/ui/tooltip"
+import { useEffect, useState } from "react"
 
 interface LineConfigProps {
     shapes: Shape[]
@@ -16,7 +17,19 @@ interface LineConfigProps {
 }
 
 export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.Element {
-    const lines = shapes.filter(shape => shape.type === 'line') as Line[]
+    const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
+
+    // Detect if lines changes, then update the shapes
+    useEffect(() => {
+        // Delete all lines from shapes
+        const newShapes = shapes.filter(shape => shape.type !== 'line') as Shape[]
+
+        // Add new lines to shapes
+        newShapes.push(...lines)
+
+        // Update shapes
+        setShapes(newShapes)
+    })
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -47,7 +60,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     () => {
                                         const newLines = [...lines]
                                         newLines.splice(index, 1)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }
                                 }
                             >
@@ -75,7 +88,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].color.r = parseInt(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }}
                                 />
                                 <Input
@@ -86,7 +99,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].color.g = parseInt(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }}
                                 />
                                 <Input
@@ -97,7 +110,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].color.b = parseInt(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }}
                                 />
                                 <Input
@@ -109,7 +122,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].color.a = parseFloat(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }}
                                 />
                             </div>
@@ -126,7 +139,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].start.x = parseFloat(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }} />
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -138,7 +151,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].start.y = parseFloat(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }} />
                             </div>
                         </div>
@@ -152,7 +165,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].end.x = parseFloat(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }} />
                             </div>
                             <div className="flex items-center gap-2.5">
@@ -164,7 +177,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     onChange={(e) => {
                                         const newLines = [...lines]
                                         newLines[index].end.y = parseFloat(e.target.value)
-                                        setShapes(newLines)
+                                        setLines(newLines)
                                     }} />
                             </div>
                         </div>
@@ -181,12 +194,18 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
-                        setShapes([...shapes, {
-                            type: 'line',
-                            start: { x: 0, y: 0 },
-                            end: { x: 0, y: 0 },
-                            color: { r: 255, g: 255, b: 255, a: 1},
-                        } as Line])
+                        setLines(
+                            [
+                                ...lines,
+                                {
+                                    type: 'line',
+                                    id: `line-${lines.length + 1}`,
+                                    start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    end: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    color: { r: 255, g: 255, b: 255, a: 1 }
+                                }
+                            ]
+                        )
                     }}
                 >
                     Add Line
