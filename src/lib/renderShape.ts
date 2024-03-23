@@ -11,6 +11,7 @@ export function renderLine(
         line.start.x, line.start.y,
         line.end.x, line.end.y,
     ]);
+    adjustHorizontalStretch(gl, vertices)
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -31,18 +32,19 @@ export function renderSquare(
     uColor: WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation
 ) {
-    const x1 = square.start.x;
+    const x1 = square.start.x
     const y1 = square.start.y;
-    const x2 = x1 + square.sideLength;
+    const x2 = x1 + square.sideLength
     const y2 = y1;
-    const x3 = x1;
+    const x3 = x1
     const y3 = y1 + square.sideLength;
-    const x4 = x2;
+    const x4 = x2
     const y4 = y3;
     const vertices = new Float32Array([
         x1, y1, x2, y2, x3, y3,
         x3, y3, x2, y2, x4, y4
     ]);
+    adjustHorizontalStretch(gl, vertices)
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -74,6 +76,7 @@ export function renderRectangle(
         x1, y1, x2, y2, x3, y3,
         x3, y3, x2, y2, x4, y4
     ]);
+    adjustHorizontalStretch(gl, vertices)
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -99,6 +102,7 @@ export function renderPolygon(
         });
 
     const vertices = new Float32Array(vert);
+    adjustHorizontalStretch(gl, vertices);
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -109,4 +113,19 @@ export function renderPolygon(
     gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, polygon.vertices.length);
     gl.deleteBuffer(buffer);
+}
+
+/**
+ * Since our canvas is rectangular but the coordinate system in OpenGL starts from -1 to 1, 
+ * which is square shaped, the x coordinate was stretched by OpenGL to make sure the width is
+ * equal to the height in our coordinate system. This makes the shapes look a bit distorted.
+ * A quick fix is to unstretch it so they will look like the intended shapes
+ */
+function adjustHorizontalStretch(gl: WebGLRenderingContext, vertices: Float32Array) {
+    const horizontalStretch = gl.canvas.width / gl.canvas.height
+    vertices.forEach((_, index) => {
+        if (index % 2 === 0) {
+            vertices[index] /= horizontalStretch
+        }
+    })
 }
