@@ -112,9 +112,19 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
 
   useEffect(() => {
     if (canvasRef.current) {
+      const canvas = canvasRef.current;
       const gl = canvasRef.current.getContext("webgl");
 
       if (gl) {
+        // Consider the device pixel ratio for high-DPI displays
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+
+        canvas.width = rect.width * dpr;
+        canvas.height = rect.height * dpr;
+        
+        gl.viewport(0, 0, canvas.width, canvas.height);
+
         drawShapes(gl, shapes);
       }
     }
