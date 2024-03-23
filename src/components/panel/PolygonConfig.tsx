@@ -145,7 +145,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     <Input
                                         className="w-full border-gray-700 text-gray-200"
                                         type="number"
-                                        min={0}
                                         value={vertex.x}
                                         onChange={(e) => {
                                             const newPolygons = [...polygons]
@@ -158,7 +157,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     <Input
                                         className="w-full border-gray-700 text-gray-200"
                                         type="number"
-                                        min={0}
                                         value={vertex.y}
                                         onChange={(e) => {
                                             const newPolygons = [...polygons]
