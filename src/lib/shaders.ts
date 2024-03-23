@@ -34,7 +34,7 @@ function compileShader(
     return shader;
 }
 
-function initShaders(gl: WebGLRenderingContext) {
+export function initShaders(gl: WebGLRenderingContext) {
     const vertexShader = compileShader(
         gl,
         vertexShaderSource,
@@ -67,6 +67,5 @@ function initShaders(gl: WebGLRenderingContext) {
     gl.attachShader(shaderProgram, vertexShader);
     gl.attachShader(shaderProgram, fragmentShader);
     gl.linkProgram(shaderProgram);
-
     gl.useProgram(shaderProgram);
 }
