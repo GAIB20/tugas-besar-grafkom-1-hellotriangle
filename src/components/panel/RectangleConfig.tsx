@@ -28,7 +28,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
         newShapes.push(...rectangles)
 
         setShapes(newShapes)
-    })
+    }, [rectangles])
 
     return (
         <div className="flex size-full flex-col items-center justify-between">

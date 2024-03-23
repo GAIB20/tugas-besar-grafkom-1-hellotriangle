@@ -27,7 +27,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
         newShapes.push(...lines)
 
         setShapes(newShapes)
-    })
+    }, [lines])
 
     return (
         <div className="flex size-full flex-col items-center justify-between">

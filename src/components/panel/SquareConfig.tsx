@@ -28,7 +28,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
         newShapes.push(...squares)
 
         setShapes(newShapes)
-    })
+    }, [squares])
 
     return (
         <div className="flex size-full flex-col items-center justify-between">

@@ -37,7 +37,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
         newShapes.push(...polygons)
 
         setShapes(newShapes)
-    })
+    }, [polygons])
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
