@@ -41,6 +41,7 @@ type Polygon = {
     type: 'polygon';
     id: string;
     vertices: Point[];
+    edges: Line[];
     color: Color;
 }
 

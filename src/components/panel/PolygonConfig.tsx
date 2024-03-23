@@ -1,4 +1,4 @@
-import { Shape, Polygon, Point } from "@/types/Shapes"
+import { Shape, Polygon, Point, Line } from "@/types/Shapes"
 import { Button } from "../ui/button"
 import { Input } from "../ui/input"
 import { VscClose, VscWand } from "react-icons/vsc"
@@ -9,6 +9,16 @@ import {
     TooltipProvider,
     TooltipTrigger,
   } from "@/components/ui/tooltip"
+  import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+  } from "@/components/ui/dropdown-menu"
+import { ChevronsUpDown } from "lucide-react"
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -148,7 +158,14 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         }} />
                                 </div>
                                 <button
-                                    className="text-gray-600 transition-all duration-200 ease-in-out hover:text-red-500"
+                                    title={polygon.edges.some(edge => edge.start === vertex || edge.end === vertex) ? 'Cannot delete vertex because it is part of an edge' : ''}
+                                    className={`text-gray-600 transition-all duration-200 ease-in-out ${
+                                        polygon.edges.some(edge => edge.start === vertex) || polygon.edges.some(edge => edge.end === vertex) ? 'cursor-not-allowed' : 'hover:text-red-500'}
+                                    `}
+                                    disabled={
+                                        // Cannot delete if there is an edge attached to the vertex
+                                        polygon.edges.some(edge => edge.start === vertex) || polygon.edges.some(edge => edge.end === vertex)
+                                    }
                                     onClick={() => {
                                         const newPolygons = [...polygons]
                                         newPolygons[index].vertices.splice(vertexIndex, 1)
@@ -167,13 +184,117 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                         ))}
 
                         {/* Add Vertex */}
-                        <Button className="w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700"
+                        <Button className="mb-1 w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700"
                             onClick={() => {
                                 const newPolygons = [...polygons]
                                 newPolygons[index].vertices.push({ x: 0, y: 0 } as Point)
                                 setShapes(newPolygons)
                             }}
                         >Add Vertex</Button>
+
+                        {polygon.edges.map((edge, edgeIndex) => (
+                            <div key={edgeIndex} className="flex w-full gap-2">
+                                <div className="flex w-full flex-col gap-2.5">
+                                    <p className="text-sm">Start</p>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button className="flex w-full items-center justify-between bg-zinc-800 py-1 hover:bg-gray-700">
+                                                <p className="mt-0.5">Vertex {polygon.vertices.findIndex(vertex => vertex === edge.start) + 1}</p>
+                                                <ChevronsUpDown className="text-gray-300" size={12} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent side="bottom" className="border-gray-700 bg-zinc-800 text-white">
+                                            <DropdownMenuLabel className="font-medium">Vertices</DropdownMenuLabel>
+                                            <DropdownMenuSeparator className="bg-gray-700"/>
+                                            <DropdownMenuRadioGroup
+                                                value={polygon.vertices.findIndex(vertex => vertex === edge.start).toString()}
+                                                onValueChange={(value) => {
+                                                    const newPolygons = [...polygons]
+                                                    newPolygons[index].edges[edgeIndex].start = newPolygons[index].vertices[parseInt(value)]
+                                                    setShapes(newPolygons)
+                                                }}
+                                            >
+                                                {polygon.vertices.map((vertex, vertexIndex) => (
+                                                    vertex !== edge.end && (
+                                                        <DropdownMenuRadioItem
+                                                            key={vertexIndex}
+                                                            value= {vertexIndex.toString()}
+                                                        >
+                                                            Vertex {vertexIndex + 1}
+                                                        </DropdownMenuRadioItem>
+                                                    )
+                                                ))}
+                                            </DropdownMenuRadioGroup>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                                <div className="flex w-full flex-col gap-2.5">
+                                    <p className="text-sm">End</p>
+                                    <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                            <Button className="flex w-full items-center justify-between bg-zinc-800 py-1 hover:bg-gray-700">
+                                                <p className="mt-0.5">Vertex {polygon.vertices.findIndex(vertex => vertex === edge.end) + 1}</p>
+                                                <ChevronsUpDown className="text-gray-300" size={12} />
+                                            </Button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent side="bottom" className="border-gray-700 bg-zinc-800 text-white">
+                                            <DropdownMenuLabel className="font-medium">Vertices</DropdownMenuLabel>
+                                            <DropdownMenuSeparator className="bg-gray-700"/>
+                                            <DropdownMenuRadioGroup
+                                                value={polygon.vertices.findIndex(vertex => vertex === edge.end).toString()}
+                                                onValueChange={(value) => {
+                                                    const newPolygons = [...polygons]
+                                                    newPolygons[index].edges[edgeIndex].end = newPolygons[index].vertices[parseInt(value)]
+                                                    setShapes(newPolygons)
+                                                }}
+                                            >
+                                                {polygon.vertices.map((vertex, vertexIndex) => (
+                                                        vertex !== edge.start && (
+                                                            <DropdownMenuRadioItem
+                                                                key={vertexIndex}
+                                                                value= {vertexIndex.toString()}
+                                                            >
+                                                                Vertex {vertexIndex + 1}
+                                                            </DropdownMenuRadioItem>
+                                                        )
+                                                ))}
+                                            </DropdownMenuRadioGroup>
+                                        </DropdownMenuContent>
+                                    </DropdownMenu>
+                                </div>
+                                <button
+                                    className="mt-7 text-gray-600 transition-all duration-200 ease-in-out hover:text-red-500"
+                                    onClick={() => {
+                                        const newPolygons = [...polygons]
+                                        newPolygons[index].edges.splice(edgeIndex, 1)
+                                        setShapes(newPolygons)
+                                    }}
+                                >
+                                    <VscClose />
+                                </button>
+                            </div>
+                        ))}
+
+                        {/* Add Edges */}
+                        <Button className={`w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700 ${polygon.vertices.length < 2 ? 'hidden' : ''} ${ 
+                        // Check if all vertices are connected to two edges
+                        polygon.vertices.every((vertex, vertexIndex) => {
+                            const nextIndex = vertexIndex === polygon.vertices.length - 1 ? 0 : vertexIndex + 1
+                            return polygon.edges.some(edge => edge.id === `${vertexIndex}-${nextIndex}`) && polygon.edges.some(edge => edge.id === `${nextIndex}-${vertexIndex}`)
+                        })}`}
+                            onClick={() => {
+                                const newPolygons = [...polygons]
+                                // Create a placeholder edge from the first available vertex to the second
+                                newPolygons[index].edges.push({
+                                    type: 'line',
+                                    id: `${0}-${1}`,
+                                    start: newPolygons[index].vertices[0],
+                                    end: newPolygons[index].vertices[1],
+                                    color: { r: 255, g: 255, b: 255, a: 1 }
+                                } as Line)
+                                setShapes(newPolygons)
+                            }}
+                        >Add Edges</Button>
                         
                         {/* Polygon Separator */}
                         {index < polygons.length - 1 && (
@@ -189,6 +310,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                     onClick={() => {
                         setShapes([...shapes, {
                             type: 'polygon',
+                            edges: [] as Line[],
                             vertices: [{ x: 0, y: 0 }],
                             color: {r: 255, g: 255, b: 255, a: 1}
                         } as Polygon])
