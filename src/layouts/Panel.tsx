@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import { BiMinus, BiPolygon, BiRectangle, BiSquare } from "react-icons/bi";
+import { BiMinus, BiPolygon } from "react-icons/bi";
 import LineConfig from "@/components/panel/LineConfig";
 import SquareConfig from "@/components/panel/SquareConfig";
 import RectangleConfig from "@/components/panel/RectangleConfig";
@@ -11,6 +11,10 @@ import {
     TooltipTrigger,
   } from "@/components/ui/tooltip"  
 import { Shape } from "@/types/Shapes";
+import { CloudDownload, CloudUpload } from "lucide-react";
+import { toast } from 'react-toastify';
+import { AiOutlineClear } from "react-icons/ai";
+import { RectangleHorizontal, Square } from "lucide-react";
 
 interface PanelProps {
     shapePanel: 'line' | 'square' | 'rectangle' | 'polygon',
@@ -21,65 +25,161 @@ interface PanelProps {
 
 export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: PanelProps): JSX.Element {
 
+  const handleUploadShapes = () => {
+    const input = document.createElement('input');
+    input.type = 'file';
+    input.accept = '.json';
+    input.onchange = async (e) => {
+        const file = (e.target as HTMLInputElement).files?.[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = async (e) => {
+                try {
+                    const content = e.target?.result;
+                    if (typeof content === 'string') {
+                        const data = JSON.parse(content);
+                        setShapes(data);
+                        toast.success('Shapes imported successfully!');
+                    }
+                } catch (error) {
+                    toast.error('Error reading file!');
+                }
+            };
+            reader.onerror = () => {
+                toast.error('Not a valid shapes file!');
+            };
+            reader.readAsText(file);
+        }
+    };
+    input.click();
+	};
+
+
+	const handleDownloadShapes = () => {
+    try {
+        const data = JSON.stringify(shapes, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'shapes.json';
+        a.click();
+        URL.revokeObjectURL(url);
+        toast.success('Shapes exported successfully!');
+    } catch (error) {
+        toast.error('Error exporting shapes!');
+    }
+	};
+
+	const handleClearCanvas = () => {
+		setShapes([]);
+	}
+
   return (
     <div className="flex h-full w-[480px] overflow-hidden shadow">
-        <div className="flex w-fit flex-col gap-3 bg-zinc-950 px-2 py-4">
-            <TooltipProvider>
-                <Tooltip delayDuration={20}>
-                    <TooltipTrigger>
-                        <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "line" ? "bg-gray-700" : ""}`}
-                            onClick={() => setShapePanel('line')}
+        <div className="flex w-fit flex-col justify-between bg-zinc-950 px-2 py-4">
+            <div className="flex flex-col gap-3">
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "line" ? "bg-gray-700" : ""}`}
+                                onClick={() => setShapePanel('line')}
+                                >
+                                <BiMinus size={16} className="rotate-45 text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Line</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "square" ? "bg-gray-700" : ""}`}
+                                onClick={() => setShapePanel('square')}
                             >
-                            <BiMinus size={16} className="text-gray-300" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
-                        <p>Line</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-                <Tooltip delayDuration={20}>
-                    <TooltipTrigger>
-                        <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "square" ? "bg-gray-700" : ""}`}
-                            onClick={() => setShapePanel('square')}
-                        >
-                            <BiSquare size={16} className="text-gray-300" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
-                        <p>Square</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-                <Tooltip delayDuration={20}>
-                    <TooltipTrigger>
-                        <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "rectangle" ? "bg-gray-700" : ""}`}
-                            onClick={() => setShapePanel('rectangle')}
-                        >
-                            <BiRectangle size={16} className="text-gray-300" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
-                        <p>Rectangle</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
-            <TooltipProvider>
-                <Tooltip delayDuration={20}>
-                    <TooltipTrigger>
-                        <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "polygon" ? "bg-gray-700" : ""}`}
-                            onClick={() => setShapePanel('polygon')}
-                        >
-                            <BiPolygon size={16} className="text-gray-300" />
-                        </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
-                        <p>Polygon</p>
-                    </TooltipContent>
-                </Tooltip>
-            </TooltipProvider>
+                                <Square size={16} className="text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Square</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "rectangle" ? "bg-gray-700" : ""}`}
+                                onClick={() => setShapePanel('rectangle')}
+                            >
+                                <RectangleHorizontal size={16} className="text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Rectangle</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-gray-700 ${shapePanel === "polygon" ? "bg-gray-700" : ""}`}
+                                onClick={() => setShapePanel('polygon')}
+                            >
+                                <BiPolygon size={16} className="text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Polygon</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+								<TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-red-700`}
+                                onClick={handleClearCanvas}
+                            >
+                                <AiOutlineClear size={16} className="text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Clear canvas</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
+            <div className="mb-1 flex flex-col gap-3">
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-gray-700`}
+                                onClick={handleUploadShapes}
+                            >
+                                <CloudUpload size={16} className="text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Upload JSON</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                            <Button className={`aspect-square w-fit p-1 hover:bg-gray-700`}
+                                onClick={handleDownloadShapes}
+                            >
+                                <CloudDownload size={16} className="text-gray-300" />
+                            </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Download JSON</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+            </div>
         </div>
 
         <div className="flex size-full flex-col justify-center bg-zinc-900 py-5 pl-4 pr-1">
