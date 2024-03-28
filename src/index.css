@@ -33,6 +33,9 @@
     --ring: 222.2 84% 4.9%;
  
     --radius: 0.5rem;
+
+    --toastify-font-family: 'Maison Neue', sans-serif !important;
+    --toastify-color-dark: #272727 !important;
   }
  
   .dark {

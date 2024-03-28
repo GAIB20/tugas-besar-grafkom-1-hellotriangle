@@ -77,7 +77,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
 
   return (
     <div className="flex h-full w-[480px] overflow-hidden shadow">
-        <div className="flex w-fit flex-col justify-between bg-zinc-950 px-2 py-4">
+        <div className="flex w-fit flex-col justify-between bg-[#111111] px-2 py-4">
             <div className="flex flex-col gap-3">
                 <TooltipProvider>
                     <Tooltip delayDuration={20}>
@@ -138,7 +138,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
 								<TooltipProvider>
                     <Tooltip delayDuration={20}>
                         <TooltipTrigger>
-                            <Button className={`aspect-square w-fit p-1 hover:bg-red-700`}
+                            <Button className={`aspect-square w-fit p-1 hover:bg-red-700 active:bg-red-900`}
                                 onClick={handleClearCanvas}
                             >
                                 <AiOutlineClear size={16} className="text-gray-300" />
