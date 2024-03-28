@@ -22,7 +22,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
     const [showModal, setShowModal] = useState<number>(-1)
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const colorPickerRef = useRef(null);
+    const colorPickerRef = useRef<HTMLDivElement>(null);
 
 
     useEffect(() => {

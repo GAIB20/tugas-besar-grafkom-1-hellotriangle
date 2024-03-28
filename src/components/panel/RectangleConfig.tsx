@@ -23,7 +23,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
     const [rectangles, setRectangles] = useState<Rectangle[]>(shapes.filter(shape => shape.type === 'rectangle') as Rectangle[])
     const [showModal, setShowModal] = useState<number>(-1)
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const colorPickerRef = useRef(null);
+    const colorPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'rectangle') as Shape[]

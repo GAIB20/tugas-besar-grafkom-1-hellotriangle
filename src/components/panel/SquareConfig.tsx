@@ -23,7 +23,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
     const [squares, setSquares] = useState<Square[]>(shapes.filter(shape => shape.type === 'square') as Square[])
     const [showModal, setShowModal] = useState<number>(-1)
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const colorPickerRef = useRef(null);
+    const colorPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'square') as Shape[]

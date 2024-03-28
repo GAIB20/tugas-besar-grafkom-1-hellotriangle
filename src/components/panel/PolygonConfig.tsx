@@ -32,7 +32,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
     const [polygons, setPolygons] = useState<Polygon[]>(shapes.filter(shape => shape.type === 'polygon') as Polygon[])
     const [showModal, setShowModal] = useState<number>(-1)
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const colorPickerRef = useRef(null);
+    const colorPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'polygon') as Shape[]
