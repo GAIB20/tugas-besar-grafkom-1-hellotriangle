@@ -150,6 +150,11 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
             isDragging = true;
             dragShapeId = hitShape.id;
             lastMousePos = mousePos;
+            
+            if (canvas.classList.contains("grabbable") || isDragging) {
+              canvas.classList.remove("grabbable");
+              canvas.classList.add("grabbing");
+            }
           }
         };
 
@@ -185,6 +190,11 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
         const mouseUpHandler = () => {
           isDragging = false;
           dragShapeId = null;
+
+          if (canvas.classList.contains("grabbing")) {
+            canvas.classList.remove("grabbing");
+            canvas.classList.add("grabbable");
+          }
         };
 
         canvas.addEventListener('mousedown', mouseDownHandler);
@@ -194,7 +204,13 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
         canvas.addEventListener('mousemove', (event) => {
           const mousePos = getCanvasMousePosition(event) as Point;
           const hitShape = shapes.find(shape => hitTest(mousePos, shape));
-          canvas.style.cursor = hitShape ? "pointer" : "default";
+          if (hitShape) {
+            canvas.classList.remove("pointer");
+            canvas.classList.add("grabbable");
+          } else {
+            canvas.classList.remove("grabbable");
+            canvas.classList.add("pointer");
+          }
         });
 
         return () => {

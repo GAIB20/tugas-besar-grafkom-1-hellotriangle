@@ -183,3 +183,12 @@ input::-webkit-inner-spin-button {
   --alpha-pointer-background-color: #6a6a6a !important;
   --alpha-pointer-box-shadow: rgb(0 0 0 / 37%) 0px 1px 4px 0px !important;
 }
+
+/* Custom grab and grabbing cursor */
+.grabbable {
+  cursor: url("/cursor-grab.svg"), grab;
+}
+
+.grabbing {
+  cursor: url('/cursor-grabbed.svg'), grabbing;
+}
