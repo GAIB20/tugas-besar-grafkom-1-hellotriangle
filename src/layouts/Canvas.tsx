@@ -145,7 +145,7 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
       
         const mouseDownHandler = (event: MouseEvent) => {
           const mousePos = getCanvasMousePosition(event) as Point;
-          const hitShape = shapes.find(shape => hitTest(mousePos, shape));
+          const hitShape = shapes.slice().reverse().find(shape => hitTest(mousePos, shape));
           if (hitShape) {
             isDragging = true;
             dragShapeId = hitShape.id;
