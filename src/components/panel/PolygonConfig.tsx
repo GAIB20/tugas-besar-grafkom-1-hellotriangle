@@ -67,6 +67,29 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
         };
     }, []);
 
+    // Helper function to calculate the centroid of the polygon
+    function calculateCentroid(vertices: Point[]) {
+        const centroid = { x: 0, y: 0 };
+        vertices.forEach(vertex => {
+            centroid.x += vertex.x;
+            centroid.y += vertex.y;
+        });
+        centroid.x /= vertices.length;
+        centroid.y /= vertices.length;
+        return centroid;
+    }
+
+    // Helper function to sort vertices in counterclockwise order
+    function sortVertices(vertices: Point[]) {
+        const centroid = calculateCentroid(vertices);
+        vertices.sort((a, b) => {
+            const angleA = Math.atan2(a.y - centroid.y, a.x - centroid.x);
+            const angleB = Math.atan2(b.y - centroid.y, b.x - centroid.x);
+            return angleA - angleB;
+        });
+        return vertices;
+    }
+
     return (
         <div className="flex size-full flex-col items-center justify-between">
             {/* Polygons Config */}
@@ -203,6 +226,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                             onChange={(e) => {
                                                 const newPolygons = [...polygons]
                                                 newPolygons[index].vertices[vertexIndex].x = parseInt(e.target.value)
+                                                newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
                                                 setPolygons(newPolygons)
                                             }} />
                                     </div>
@@ -215,6 +239,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                             onChange={(e) => {
                                                 const newPolygons = [...polygons]
                                                 newPolygons[index].vertices[vertexIndex].y = parseInt(e.target.value)
+                                                newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
                                                 setPolygons(newPolygons)
                                             }} />
                                     </div>
@@ -230,13 +255,13 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         onClick={() => {
                                             const newPolygons = [...polygons]
                                             newPolygons[index].vertices.splice(vertexIndex, 1)
-                                            setPolygons(newPolygons)
+                                            newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
 
                                             // If it is the third last vertex, remove the polygon
                                             if (newPolygons[index].vertices.length === 2) {
                                                 newPolygons.splice(index, 1)
-                                                setPolygons(newPolygons)
                                             }
+                                            setPolygons(newPolygons)
                                         }}
                                     >
                                         <VscClose />
@@ -249,6 +274,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                 onClick={() => {
                                     const newPolygons = [...polygons]
                                     newPolygons[index].vertices.push({ x: 0, y: 0 } as Point)
+                                    newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
                                     setPolygons(newPolygons)
                                 }}
                             >Add Vertex</Button>

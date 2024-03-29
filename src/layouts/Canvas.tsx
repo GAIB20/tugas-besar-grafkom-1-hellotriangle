@@ -248,7 +248,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             debouncedSetShapes([...shapes, newRectangle]);
           } else {
             const polygonRadius = 5;
-            const polygonVertices = 5;
+            const polygonVertices = 8;
             const newPolygon: Shape = {
               id: `polygon-${uuidv4()}`,
               type: "polygon",
