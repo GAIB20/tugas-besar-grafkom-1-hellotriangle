@@ -23,6 +23,7 @@ import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
+import { debounce } from "lodash"
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -83,11 +84,11 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                             <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
                                 <Chrome
                                     color={colorToHex(polygon.color)}
-                                    onChange={(color) => {
+                                    onChange={(color) => debounce(() => {
                                         const newPolygons = [...polygons]
                                         newPolygons[index].color = color.rgba
                                         setPolygons(newPolygons)
-                                    }}
+                                    }, 100)()}
                                 />
                             </div>
                         }

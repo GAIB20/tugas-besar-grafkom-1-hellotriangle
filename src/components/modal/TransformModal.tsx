@@ -121,7 +121,6 @@ export default function TransformModal({ shapes, setShapes, shapeIndex, onClose 
                         <Input 
                             className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
                             type="number"
-                            defaultValue={0}
                             value={shape.effect?.rotate || 0}
                             min={-360}
                             max={360}
