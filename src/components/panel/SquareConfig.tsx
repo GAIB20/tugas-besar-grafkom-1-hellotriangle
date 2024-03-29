@@ -13,6 +13,7 @@ import {
 import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
+import { v4 as uuidv4 } from 'uuid';
 
 interface SquareConfigProps {
     shapes: Shape[]
@@ -232,7 +233,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                         setSquares([
                             ...squares,
                             {
-                                id: `square-${Math.random().toString(36).substr(2, 9)}`,
+                                id: `square-${uuidv4()}`,
                                 type: 'square',
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 sideLength: 10,

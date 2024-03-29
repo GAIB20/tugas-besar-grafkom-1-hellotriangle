@@ -12,6 +12,7 @@ import {
 import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
+import { v4 as uuidv4 } from 'uuid';
 
 interface LineConfigProps {
     shapes: Shape[]
@@ -241,7 +242,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 ...lines,
                                 {
                                     type: 'line',
-                                    id: `line-${Math.random().toString(36).substr(2, 9)}`,
+                                    id: `line-${uuidv4()}`,
                                     start: { type: 'point', x: 5, y: 5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                     end: { type: 'point', x: -5, y: -5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                     color: { r: 255, g: 255, b: 255, a: 1 },

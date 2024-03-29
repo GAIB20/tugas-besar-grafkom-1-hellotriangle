@@ -22,6 +22,7 @@ import { ChevronsUpDown } from "lucide-react"
 import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
+import { v4 as uuidv4 } from 'uuid';
 
 interface PolygonConfigProps {
     shapes: Shape[]
@@ -362,7 +363,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                         setPolygons([
                             ...polygons,
                             {
-                                id: `polygon-${Math.random().toString(36).substr(2, 9)}`,
+                                id: `polygon-${uuidv4()}`,
                                 type: 'polygon',
                                 vertices: [
                                     { x: -5, y: 0, z:0 } as Point,
