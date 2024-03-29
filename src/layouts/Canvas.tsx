@@ -189,7 +189,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             } else {
               draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy } as Point));
             }
-            setShapes(shapes);
+            debouncedSetShapes([...shapes]);
             drawShapes(gl, shapes);
           }
 
