@@ -5,9 +5,10 @@ import { initShaders } from "@/lib/shaders";
 
 interface CanvasProps {
   shapes: Shape[];
+  setShapes: (shapes: Shape[]) => void;
 }
 
-export default function Canvas({ shapes }: CanvasProps): JSX.Element {
+export default function Canvas({ shapes, setShapes }: CanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const drawShapes = (gl: WebGLRenderingContext, shapes: Shape[]) => {
@@ -181,6 +182,7 @@ export default function Canvas({ shapes }: CanvasProps): JSX.Element {
             } else {
               draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy } as Point));
             }
+            setShapes(shapes);
             drawShapes(gl, shapes);
           }
 
