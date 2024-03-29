@@ -3,6 +3,7 @@ import { Point, Shape } from "@/types/Shapes";
 import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/renderShape";
 import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
+import debounce from 'lodash/debounce';
 
 interface CanvasProps {
   shapePanel: 'line' | 'square' | 'rectangle' | 'polygon';
@@ -12,6 +13,8 @@ interface CanvasProps {
 
 export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const debouncedSetShapes = debounce(setShapes, 100);
 
   const drawShapes = (gl: WebGLRenderingContext, shapes: Shape[]) => {
     // Clear the canvas
@@ -147,6 +150,8 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
       
         const mouseDownHandler = (event: MouseEvent) => {
+          event.preventDefault();
+
           const mousePos = getCanvasMousePosition(event) as Point;
           const hitShape = shapes.slice().reverse().find(shape => hitTest(mousePos, shape));
           if (hitShape) {
@@ -202,6 +207,8 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const doubleClickHandler = (event: MouseEvent) => {
+          event.preventDefault();
+
           // Instantiate a shape based on the current tool
           const mousePos = getCanvasMousePosition(event) as Point;
 
@@ -217,7 +224,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y + lineLength, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               color: { r: 255, g: 255, b: 255, a: 1 },
             };
-            setShapes([...shapes, newLine]);
+            debouncedSetShapes([...shapes, newLine]);
           } else if (shapePanel === "square") {
             const squareSize = 6;
             const newSquare: Shape = {
@@ -227,7 +234,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               sideLength: squareSize,
               color: { r: 255, g: 255, b: 255, a: 1 },
             };
-            setShapes([...shapes, newSquare]);
+            debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
             const rectangleSize = { width: 10, height: 5 };
             const newRectangle: Shape = {
@@ -238,7 +245,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               height: rectangleSize.height,
               color: { r: 255, g: 255, b: 255, a: 1 },
             };
-            setShapes([...shapes, newRectangle]);
+            debouncedSetShapes([...shapes, newRectangle]);
           } else {
             const polygonRadius = 5;
             const polygonVertices = 5;
@@ -258,7 +265,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               edges: [],
               color: { r: 255, g: 255, b: 255, a: 1 },
             };
-            setShapes([...shapes, newPolygon]);
+            debouncedSetShapes([...shapes, newPolygon]);
           }
         }
 
@@ -283,10 +290,11 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           canvas.removeEventListener('mousedown', mouseDownHandler);
           canvas.removeEventListener('mousemove', mouseMoveHandler);
           window.removeEventListener('mouseup', mouseUpHandler);
+          canvas.removeEventListener('dblclick', doubleClickHandler);
         };
       }
     }
-  }, [shapes]);
+  }, [shapes, shapePanel]);
 
   return (
     <div className="flex size-full overflow-hidden">
