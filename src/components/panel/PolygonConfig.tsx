@@ -67,7 +67,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
         };
     }, []);
 
-    // Helper function to calculate the centroid of the polygon
     function calculateCentroid(vertices: Point[]) {
         const centroid = { x: 0, y: 0 };
         vertices.forEach(vertex => {
@@ -79,7 +78,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
         return centroid;
     }
 
-    // Helper function to sort vertices in counterclockwise order
+    // Sort vertices in counterclockwise order
     function sortVertices(vertices: Point[]) {
         const centroid = calculateCentroid(vertices);
         vertices.sort((a, b) => {
@@ -89,6 +88,54 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
         });
         return vertices;
     }
+
+    function findClosestEdge(vertices: Point[]) {
+        const centroid = calculateCentroid(vertices);
+        let closestEdge = { index: 0, distance: Infinity };
+    
+        vertices.forEach((vertex, index) => {
+            const nextVertex = vertices[(index + 1) % vertices.length];
+            const midPoint = {
+                x: (vertex.x + nextVertex.x) / 2,
+                y: (vertex.y + nextVertex.y) / 2
+            };
+            const distance = Math.hypot(midPoint.x - centroid.x, midPoint.y - centroid.y);
+            if (distance < closestEdge.distance) {
+                closestEdge = { index, distance };
+            }
+        });
+    
+        return closestEdge.index;
+    }
+    
+    function insertVertexOutside(vertices: Point[], edgeIndex: number) {
+        const centroid = calculateCentroid(vertices);
+        const vertex = vertices[edgeIndex];
+        const nextVertex = vertices[(edgeIndex + 1) % vertices.length];
+        const midPoint = {
+            x: (vertex.x + nextVertex.x) / 2,
+            y: (vertex.y + nextVertex.y) / 2
+        };
+    
+        // Calculate vector from centroid to midpoint
+        let direction = { x: midPoint.x - centroid.x, y: midPoint.y - centroid.y };
+        const magnitude = Math.hypot(direction.x, direction.y);
+    
+        // Normalize the direction vector
+        direction = { x: direction.x / magnitude, y: direction.y / magnitude };
+    
+        // Extend the midpoint slightly outside the polygon
+        const extensionDistance = 4;
+        const newVertex = {
+            x: midPoint.x + direction.x * extensionDistance,
+            y: midPoint.y + direction.y * extensionDistance,
+            z: 0,
+        };
+    
+        vertices.splice(edgeIndex + 1, 0, newVertex as Point);
+    
+        return vertices;
+    }    
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -272,10 +319,11 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                             {/* Add Vertex */}
                             <Button className="mb-1 w-full rounded-lg bg-zinc-800 py-1 hover:bg-gray-700"
                                 onClick={() => {
-                                    const newPolygons = [...polygons]
-                                    newPolygons[index].vertices.push({ x: 0, y: 0 } as Point)
+                                    const newPolygons = [...polygons];
+                                    const edgeIndex = findClosestEdge(newPolygons[index].vertices);
+                                    newPolygons[index].vertices = insertVertexOutside(newPolygons[index].vertices, edgeIndex);
                                     newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
-                                    setPolygons(newPolygons)
+                                    setPolygons(newPolygons);
                                 }}
                             >Add Vertex</Button>
 
