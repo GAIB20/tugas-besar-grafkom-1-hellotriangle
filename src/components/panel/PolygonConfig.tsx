@@ -221,8 +221,8 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                             newPolygons[index].vertices.splice(vertexIndex, 1)
                                             setPolygons(newPolygons)
 
-                                            // If it is the last vertex, remove the polygon
-                                            if (newPolygons[index].vertices.length === 0) {
+                                            // If it is the third last vertex, remove the polygon
+                                            if (newPolygons[index].vertices.length === 2) {
                                                 newPolygons.splice(index, 1)
                                                 setPolygons(newPolygons)
                                             }
@@ -364,7 +364,11 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                             {
                                 id: `polygon-${Math.random().toString(36).substr(2, 9)}`,
                                 type: 'polygon',
-                                vertices: [{ x: 0, y: 0, z:0 } as Point],
+                                vertices: [
+                                    { x: -5, y: 0, z:0 } as Point,
+                                    { x: 0, y: 5, z:0 } as Point,
+                                    { x: 5, y: 0, z:0 } as Point
+                                ],
                                 edges: [],
                                 color: { r: 255, g: 255, b: 255, a: 1 },
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
