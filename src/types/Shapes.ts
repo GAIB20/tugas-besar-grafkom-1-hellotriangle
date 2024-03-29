@@ -5,10 +5,18 @@ type Color = {
     a: number;
 }
 
+type Transformation = {
+    dx: number;
+    dy: number;
+    rotate: number;
+    scale: number;
+}
+
 type Point = {
     type: 'point'
     x: number;
     y: number;
+    z: 0;
     color: Color;
 }
 
@@ -18,6 +26,7 @@ type Line = {
     start: Point
     end: Point;
     color: Color;
+    effect?: Transformation;
 }
 
 type Square = {
@@ -26,6 +35,7 @@ type Square = {
     start: Point;
     sideLength: number;
     color: Color;
+    effect?: Transformation;
 }
 
 type Rectangle = {
@@ -35,6 +45,7 @@ type Rectangle = {
     width: number;
     height: number;
     color: Color;
+    effect?: Transformation;
 }
 
 type Polygon = {
@@ -43,8 +54,9 @@ type Polygon = {
     vertices: Point[];
     edges: Line[];
     color: Color;
+    effect?: Transformation;
 }
 
 type Shape = Line | Square | Rectangle | Polygon;
 
-export type { Color, Point, Shape, Line, Square, Rectangle, Polygon }
+export type { Color, Point, Shape, Line, Square, Rectangle, Polygon, Transformation }

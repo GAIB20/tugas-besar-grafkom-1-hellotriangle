@@ -5,14 +5,16 @@ import { Maximize2, Minimize2 } from "lucide-react";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "../ui/tooltip";
 
 interface TransformModalProps {
-    shape: Shape;
+    shapes: Shape[];
+    setShapes: (shapes: Shape[]) => void;
     shapeIndex: number;
     onClose: () => void;
 }
 
-export default function TransformModal({ shape, shapeIndex, onClose }: TransformModalProps): JSX.Element {
+export default function TransformModal({ shapes, setShapes, shapeIndex, onClose }: TransformModalProps): JSX.Element {
+    const shape = shapes[shapeIndex];
+
     return (
-        
             <div
                 onClick={(e) => e.stopPropagation()}
                 className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-4"
@@ -38,7 +40,15 @@ export default function TransformModal({ shape, shapeIndex, onClose }: Transform
                         <Input 
                             className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
                             type="number"
-                            defaultValue={0}
+                            value={shape.effect?.dx || 0}
+                            onChange={(e) => {
+                                const newShapes = shapes.filter((_, i) => i !== shapeIndex);
+
+                                const newShape = { ...shape, effect: { ...shape.effect, dx: Number(e.target.value) } };
+                                newShapes.splice(shapeIndex, 0, newShape as Shape);
+
+                                setShapes(newShapes);
+                            }}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -55,7 +65,15 @@ export default function TransformModal({ shape, shapeIndex, onClose }: Transform
                         <Input 
                             className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
                             type="number"
-                            defaultValue={0}
+                            value={shape.effect?.dy || 0}
+                            onChange={(e) => {
+                                const newShapes = shapes.filter((_, i) => i !== shapeIndex);
+
+                                const newShape = { ...shape, effect: { ...shape.effect, dy: Number(e.target.value) } };
+                                newShapes.splice(shapeIndex, 0, newShape as Shape);
+
+                                setShapes(newShapes);
+                            }}
                         />
                     </div>
                 </div>
@@ -75,7 +93,18 @@ export default function TransformModal({ shape, shapeIndex, onClose }: Transform
                         <Input 
                             className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
                             type="number"
-                            defaultValue={0}
+                            value={shape.effect?.scale || 1}
+                            min={0}
+                            max={10}
+                            step={0.1}
+                            onChange={(e) => {
+                                const newShapes = shapes.filter((_, i) => i !== shapeIndex);
+
+                                const newShape = { ...shape, effect: { ...shape.effect, scale: Number(e.target.value) } };
+                                newShapes.splice(shapeIndex, 0, newShape as Shape);
+
+                                setShapes(newShapes);
+                            }}
                         />
                     </div>
                     <div className="flex items-center gap-2">
@@ -93,8 +122,17 @@ export default function TransformModal({ shape, shapeIndex, onClose }: Transform
                             className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
                             type="number"
                             defaultValue={0}
+                            value={shape.effect?.rotate || 0}
                             min={-360}
                             max={360}
+                            onChange={(e) => {
+                                const newShapes = shapes.filter((_, i) => i !== shapeIndex);
+
+                                const newShape = { ...shape, effect: { ...shape.effect, rotate: Number(e.target.value) } };
+                                newShapes.splice(shapeIndex, 0, newShape as Shape);
+
+                                setShapes(newShapes);
+                            }}
                         />
                     </div>
                 </div>

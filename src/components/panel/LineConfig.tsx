@@ -22,8 +22,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
     const [showModal, setShowModal] = useState<number>(-1)
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const colorPickerRef = useRef<HTMLDivElement>(null);
-
+    const colorPickerRef = useRef<HTMLDivElement>(null);   
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'line') as Shape[]
@@ -56,7 +55,8 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                     <>
                         {(showModal === index) && 
                             <TransformModal
-                                shape={line}
+                                shapes={lines}
+                                setShapes={(newShapes: Shape[]) => setLines(newShapes as Line[])}
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
@@ -242,9 +242,10 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 {
                                     type: 'line',
                                     id: `line-${Math.random().toString(36).substr(2, 9)}`,
-                                    start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
-                                    end: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
-                                    color: { r: 255, g: 255, b: 255, a: 1 }
+                                    start: { type: 'point', x: 5, y: 5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    end: { type: 'point', x: -5, y: -5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    color: { r: 255, g: 255, b: 255, a: 1 },
+                                    effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                                 }
                             ]
                         )

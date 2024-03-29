@@ -55,7 +55,8 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                     <>
                         {(showModal === index) && 
                             <TransformModal
-                                shape={rectangle}
+                                shapes={rectangles}
+                                setShapes={(newShapes: Shape[]) => setRectangles(newShapes as Rectangle[])}
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
@@ -246,10 +247,11 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                             {
                                 id: `rectangle-${Math.random().toString(36).substr(2, 9)}`,
                                 type: 'rectangle',
-                                start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 width: 10,
                                 height: 10,
-                                color: { r: 255, g: 255, b: 255, a: 1 }
+                                color: { r: 255, g: 255, b: 255, a: 1 },
+                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
                         
                         ])

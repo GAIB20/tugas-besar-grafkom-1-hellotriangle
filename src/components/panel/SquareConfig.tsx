@@ -55,7 +55,8 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                     <>
                         {(showModal === index) && 
                             <TransformModal
-                                shape={square}
+                                shapes={squares}
+                                setShapes={(newShapes: Shape[]) => setSquares(newShapes as Square[])}
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
@@ -230,9 +231,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                             {
                                 id: `square-${Math.random().toString(36).substr(2, 9)}`,
                                 type: 'square',
-                                start: { type: 'point', x: 0, y: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 sideLength: 10,
-                                color: { r: 255, g: 255, b: 255, a: 1 }
+                                color: { r: 255, g: 255, b: 255, a: 1 },
+                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
                         ])
                     }}

@@ -64,7 +64,8 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                     <>
                         {(showModal === index) && 
                             <TransformModal
-                                shape={polygon}
+                                shapes={polygons}
+                                setShapes={(newShapes: Shape[]) => setPolygons(newShapes as Polygon[])}
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
@@ -363,9 +364,10 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                             {
                                 id: `polygon-${Math.random().toString(36).substr(2, 9)}`,
                                 type: 'polygon',
-                                vertices: [{ x: 0, y: 0 } as Point],
+                                vertices: [{ x: 0, y: 0, z:0 } as Point],
                                 edges: [],
-                                color: { r: 255, g: 255, b: 255, a: 1 }
+                                color: { r: 255, g: 255, b: 255, a: 1 },
+                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             } as Polygon
                         ])
                     }}

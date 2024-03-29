@@ -1,4 +1,5 @@
 import { Line, Square, Rectangle, Polygon } from "@/types/Shapes";
+import { transformLine, transformRectangle, transformSquare } from "./transform";
 
 export function renderLine(
     gl: WebGLRenderingContext,
@@ -7,9 +8,10 @@ export function renderLine(
     uColor:  WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation
 ) {
+    const transformedLine = transformLine(line);
     const vertices = new Float32Array([
-        line.start.x, line.start.y,
-        line.end.x, line.end.y,
+        transformedLine.start.x, transformedLine.start.y,
+        transformedLine.end.x, transformedLine.end.y,
     ]);
     adjustHorizontalStretch(gl, vertices)
 
@@ -18,7 +20,7 @@ export function renderLine(
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.uniform4f(uColor, line.color.r / 255, line.color.g / 255, line.color.b / 255, line.color.a);
+    gl.uniform4f(uColor, transformedLine.color.r / 255, transformedLine.color.g / 255, transformedLine.color.b / 255, transformedLine.color.a);
     gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.LINES, 0, 2);
     gl.deleteBuffer(buffer);
@@ -32,12 +34,13 @@ export function renderSquare(
     uColor: WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation
 ) {
-    const x1 = square.start.x
-    const y1 = square.start.y;
-    const x2 = x1 + square.sideLength
+    const transformedSquare = transformSquare(square);
+    const x1 = transformedSquare.start.x
+    const y1 = transformedSquare.start.y;
+    const x2 = x1 + transformedSquare.sideLength
     const y2 = y1;
     const x3 = x1
-    const y3 = y1 + square.sideLength;
+    const y3 = y1 + transformedSquare.sideLength;
     const x4 = x2
     const y4 = y3;
     const vertices = new Float32Array([
@@ -51,7 +54,7 @@ export function renderSquare(
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.uniform4f(uColor, square.color.r / 255, square.color.g / 255, square.color.b / 255, square.color.a);
+    gl.uniform4f(uColor, transformedSquare.color.r / 255, transformedSquare.color.g / 255, transformedSquare.color.b / 255, transformedSquare.color.a);
     gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     gl.deleteBuffer(buffer);
@@ -64,12 +67,13 @@ export function renderRectangle(
     uColor: WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation
 ) {
-    const x1 = rectangle.start.x;
-    const y1 = rectangle.start.y;
-    const x2 = x1 + rectangle.width;
+    const transformedRectangle = transformRectangle(rectangle);
+    const x1 = transformedRectangle.start.x;
+    const y1 = transformedRectangle.start.y;
+    const x2 = x1 + transformedRectangle.width;
     const y2 = y1;
     const x3 = x1;
-    const y3 = y1 + rectangle.height;
+    const y3 = y1 + transformedRectangle.height;
     const x4 = x2;
     const y4 = y3;
     const vertices = new Float32Array([
@@ -83,7 +87,7 @@ export function renderRectangle(
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.uniform4f(uColor, rectangle.color.r / 255, rectangle.color.g / 255, rectangle.color.b / 255, rectangle.color.a);
+    gl.uniform4f(uColor, transformedRectangle.color.r / 255, transformedRectangle.color.g / 255, transformedRectangle.color.b / 255, transformedRectangle.color.a);
     gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLES, 0, 6);
     gl.deleteBuffer(buffer);
