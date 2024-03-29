@@ -27,6 +27,15 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
     const colorPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        console.log("Rectangles Updated")
+        const newShapes = shapes.filter(shape => shape.type === 'rectangle') as Rectangle[]
+
+        if (newShapes.length !== rectangles.length) {
+            setRectangles(newShapes)
+        }
+    }, [shapes])
+
+    useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'rectangle') as Shape[]
 
         newShapes.push(...rectangles)

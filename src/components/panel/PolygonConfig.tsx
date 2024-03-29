@@ -36,6 +36,15 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
     const colorPickerRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
+        console.log("Polygons updated");
+        const newShapes = shapes.filter(shape => shape.type === 'polygon') as Polygon[]
+
+        if (newShapes.length !== polygons.length) {
+            setPolygons(newShapes)
+        }
+    }, [shapes])
+
+    useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'polygon') as Shape[]
 
         newShapes.push(...polygons)

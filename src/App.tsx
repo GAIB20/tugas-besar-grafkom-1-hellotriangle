@@ -10,8 +10,7 @@ function App(): JSX.Element {
 
   useEffect(() => {
     console.log("Fungsi update");
-    
-}, [shapes]);
+  }, [shapes]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-950">
