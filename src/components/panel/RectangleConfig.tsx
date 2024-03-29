@@ -79,7 +79,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                         const newRectangles = [...rectangles]
                                         newRectangles[index].color = color.rgba
                                         setRectangles(newRectangles)
-                                    }, 100)()}
+                                    }, 10)()}
                                 />
                             </div>
                         }

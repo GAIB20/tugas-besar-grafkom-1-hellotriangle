@@ -79,7 +79,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                         const newSquares = [...squares]
                                         newSquares[index].color = color.rgba
                                         setSquares(newSquares)
-                                    }, 100)()}
+                                    }, 10)()}
                                 />
                             </div>
                         }

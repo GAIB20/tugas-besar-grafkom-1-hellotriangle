@@ -79,7 +79,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         const newLines = [...lines]
                                         newLines[index].color = color.rgba
                                         setLines(newLines)
-                                    }, 100)()}
+                                    }, 10)()}
                                 />
                             </div>
                         }

@@ -88,7 +88,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         const newPolygons = [...polygons]
                                         newPolygons[index].color = color.rgba
                                         setPolygons(newPolygons)
-                                    }, 100)()}
+                                    }, 10)()}
                                 />
                             </div>
                         }
