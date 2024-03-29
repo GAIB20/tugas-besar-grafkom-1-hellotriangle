@@ -25,6 +25,9 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
     const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
     const colorPickerRef = useRef<HTMLDivElement>(null);
 
+    // On shapes change from the parent, refresh the shapes menu
+    
+
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'square') as Shape[]
 

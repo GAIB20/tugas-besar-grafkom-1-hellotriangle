@@ -2,13 +2,15 @@ import { useEffect, useRef } from "react";
 import { Point, Shape } from "@/types/Shapes";
 import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/renderShape";
 import { initShaders } from "@/lib/shaders";
+import { v4 as uuidv4 } from 'uuid';
 
 interface CanvasProps {
+  shapePanel: 'line' | 'square' | 'rectangle' | 'polygon';
   shapes: Shape[];
   setShapes: (shapes: Shape[]) => void;
 }
 
-export default function Canvas({ shapes, setShapes }: CanvasProps): JSX.Element {
+export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const drawShapes = (gl: WebGLRenderingContext, shapes: Shape[]) => {
@@ -199,9 +201,71 @@ export default function Canvas({ shapes, setShapes }: CanvasProps): JSX.Element 
           }
         };
 
+        const doubleClickHandler = (event: MouseEvent) => {
+          // Instantiate a shape based on the current tool
+          const mousePos = getCanvasMousePosition(event) as Point;
+
+          // If mouse position is on top of an existing shape, do nothing
+          if (shapes.some(shape => hitTest(mousePos, shape))) return;
+
+          if (shapePanel === "line") {
+            const lineLength = 6
+            const newLine: Shape = {
+              id: `line-${uuidv4()}`,
+              type: "line",
+              start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y - lineLength / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+              end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y + lineLength, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+              color: { r: 255, g: 255, b: 255, a: 1 },
+            };
+            setShapes([...shapes, newLine]);
+          } else if (shapePanel === "square") {
+            const squareSize = 6;
+            const newSquare: Shape = {
+              id: `square-${uuidv4()}`,
+              type: "square",
+              start: { type: 'point', x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+              sideLength: squareSize,
+              color: { r: 255, g: 255, b: 255, a: 1 },
+            };
+            setShapes([...shapes, newSquare]);
+          } else if (shapePanel === "rectangle") {
+            const rectangleSize = { width: 10, height: 5 };
+            const newRectangle: Shape = {
+              id: `rectangle-${uuidv4()}`,
+              type: "rectangle",
+              start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+              width: rectangleSize.width,
+              height: rectangleSize.height,
+              color: { r: 255, g: 255, b: 255, a: 1 },
+            };
+            setShapes([...shapes, newRectangle]);
+          } else {
+            const polygonRadius = 5;
+            const polygonVertices = 5;
+            const newPolygon: Shape = {
+              id: `polygon-${uuidv4()}`,
+              type: "polygon",
+              vertices: Array.from({ length: polygonVertices }, (_, i) => {
+                const angle = (Math.PI * 2 * i) / polygonVertices;
+                return {
+                  type: 'point',
+                  x: mousePos.x + polygonRadius * Math.cos(angle),
+                  y: mousePos.y + polygonRadius * Math.sin(angle),
+                  z: 0,
+                  color: { r: 255, g: 255, b: 255, a: 1 },
+                };
+              }),
+              edges: [],
+              color: { r: 255, g: 255, b: 255, a: 1 },
+            };
+            setShapes([...shapes, newPolygon]);
+          }
+        }
+
         canvas.addEventListener('mousedown', mouseDownHandler);
         canvas.addEventListener('mousemove', mouseMoveHandler);
         window.addEventListener('mouseup', mouseUpHandler);
+        canvas.addEventListener('dblclick', doubleClickHandler);
 
         canvas.addEventListener('mousemove', (event) => {
           const mousePos = getCanvasMousePosition(event) as Point;

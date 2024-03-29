@@ -16,7 +16,7 @@ function App(): JSX.Element {
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-950">
       <Panel shapePanel={shapePanel} setShapePanel={setShapePanel} shapes={shapes} setShapes={setShapes} />
-      <Canvas shapes={shapes} setShapes={setShapes} />
+      <Canvas shapePanel={shapePanel} shapes={shapes} setShapes={setShapes} />
     </div>
   )
 }
