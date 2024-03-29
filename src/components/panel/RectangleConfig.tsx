@@ -53,7 +53,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
             {/* Rectangle Config */}
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-8 text-gray-100">
                 {rectangles.map((rectangle, index) => (
-                    <>
+                    <div key={index}>
                         {(showModal === index) && 
                             <TransformModal
                                 shapes={rectangles}
@@ -73,7 +73,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 />
                             </div>
                         }
-                        <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
+                        <div className="flex w-full snap-start flex-col gap-3 pr-2">
                             <div className="mb-1 flex w-full justify-between">
                             <div className="flex items-center justify-center gap-2">
                                     <h1 className="font-medium">Rectangle {index+1}</h1>
@@ -235,7 +235,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 <div className="mt-4 w-full rounded border-t border-stone-800"/>
                             )}
                         </div>
-                    </>
+                    </div>
                 ))}
             </div>
 
@@ -251,7 +251,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 width: 12,
                                 height: 8,
-                                color: { r: 255, g: 255, b: 255, a: 1 },
+                                color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
                         ])

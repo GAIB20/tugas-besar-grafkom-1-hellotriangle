@@ -220,9 +220,9 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             const newLine: Shape = {
               id: `line-${uuidv4()}`,
               type: "line",
-              start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y - lineLength / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
-              end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y + lineLength, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
-              color: { r: 255, g: 255, b: 255, a: 1 },
+              start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y + lineLength / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+              end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y - lineLength, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
             };
             debouncedSetShapes([...shapes, newLine]);
           } else if (shapePanel === "square") {
@@ -232,7 +232,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               type: "square",
               start: { type: 'point', x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               sideLength: squareSize,
-              color: { r: 255, g: 255, b: 255, a: 1 },
+              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
             };
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
@@ -243,7 +243,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               width: rectangleSize.width,
               height: rectangleSize.height,
-              color: { r: 255, g: 255, b: 255, a: 1 },
+              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
             };
             debouncedSetShapes([...shapes, newRectangle]);
           } else {
@@ -259,11 +259,11 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                   x: mousePos.x + polygonRadius * Math.cos(angle),
                   y: mousePos.y + polygonRadius * Math.sin(angle),
                   z: 0,
-                  color: { r: 255, g: 255, b: 255, a: 1 },
+                  color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
                 };
               }),
               edges: [],
-              color: { r: 255, g: 255, b: 255, a: 1 },
+              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
             };
             debouncedSetShapes([...shapes, newPolygon]);
           }

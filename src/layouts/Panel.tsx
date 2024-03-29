@@ -73,6 +73,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
 
 	const handleClearCanvas = () => {
 		setShapes([]);
+    toast.success('Canvas cleared!');
 	}
 
   return (

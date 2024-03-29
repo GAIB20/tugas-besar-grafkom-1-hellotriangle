@@ -62,7 +62,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
             {/* Polygons Config */}
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-4 text-gray-100">
                 {polygons.map((polygon, index) => (
-                    <>
+                    <div key={index} >
                         {(showModal === index) && 
                             <TransformModal
                                 shapes={polygons}
@@ -82,7 +82,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                 />
                             </div>
                         }
-                        <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
+                        <div className="flex w-full snap-start flex-col gap-3 pr-2">
                             <div className="mb-1 flex w-full justify-between">
                             <div className="flex items-center justify-center gap-2">
                                     <h1 className="font-medium">Polygon {index+1}</h1>
@@ -352,7 +352,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                 <div className="mt-4 w-full rounded border-t border-stone-800"/>
                             )}
                         </div>
-                    </>
+                    </div>
                 ))}
             </div>
 
@@ -371,7 +371,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     { x: 5, y: 0, z:0 } as Point
                                 ],
                                 edges: [],
-                                color: { r: 255, g: 255, b: 255, a: 1 },
+                                color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             } as Polygon
                         ])

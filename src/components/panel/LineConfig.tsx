@@ -53,7 +53,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
             {/* Lines Config */}
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-4 text-gray-100">
                 {lines.map((line, index) => (
-                    <>
+                    <div key={index}>
                         {(showModal === index) && 
                             <TransformModal
                                 shapes={lines}
@@ -73,7 +73,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 />
                             </div>
                         }
-                        <div key={index} className="flex w-full snap-start flex-col gap-3 pr-2">
+                        <div className="flex w-full snap-start flex-col gap-3 pr-2">
                             {/* Transform Modal */}
                             <div className="mb-1 flex w-full justify-between">
                                 <div className="flex items-center justify-center gap-2">
@@ -229,7 +229,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 <div className="mt-4 w-full rounded border-t border-stone-800"/>
                             )}
                         </div>
-                    </>
+                    </div>
                 ))}
             </div>
 
@@ -243,9 +243,9 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 {
                                     type: 'line',
                                     id: `line-${uuidv4()}`,
-                                    start: { type: 'point', x: 5, y: 5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
-                                    end: { type: 'point', x: -5, y: -5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
-                                    color: { r: 255, g: 255, b: 255, a: 1 },
+                                    start: { type: 'point', x: -5, y: 5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    end: { type: 'point', x: 5, y: -5, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
                                     effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                                 }
                             ]
