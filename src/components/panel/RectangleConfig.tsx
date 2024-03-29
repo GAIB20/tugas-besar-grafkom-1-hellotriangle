@@ -248,12 +248,11 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 id: `rectangle-${Math.random().toString(36).substr(2, 9)}`,
                                 type: 'rectangle',
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
-                                width: 10,
-                                height: 10,
+                                width: 12,
+                                height: 8,
                                 color: { r: 255, g: 255, b: 255, a: 1 },
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
-                        
                         ])
                     }}
                 >
