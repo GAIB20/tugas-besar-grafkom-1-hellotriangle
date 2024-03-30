@@ -113,13 +113,17 @@ export function transformRectangle(rectangle: Rectangle): Rectangle {
 }
 
 export function transformPolygon(polygon: Polygon): Polygon {
-    const vertices = polygon.vertices.map((vertex) => applyEffect(vertex, polygon.effect));
+    const centerX = polygon.vertices.reduce((acc, vertex) => acc + vertex.x, 0) / polygon.vertices.length;
+    const centerY = polygon.vertices.reduce((acc, vertex) => acc + vertex.y, 0) / polygon.vertices.length;
+    const center = { x: centerX, y: centerY, z: 0 };
+    const vertices = polygon.vertices.map((vertex) => applyEffect(vertex, polygon.effect, center as Point));
     const edges = polygon.edges.map((edge) => transformLine(edge));
     return { ...polygon, vertices, edges };
 }
 
 export function transformLine(line: Line): Line {
-    const start = applyEffect(line.start, line.effect);
-    const end = applyEffect(line.end, line.effect);
+    const center = { x: (line.start.x + line.end.x) / 2, y: (line.start.y + line.end.y) / 2, z: 0 };
+    const start = applyEffect(line.start, line.effect, center as Point);
+    const end = applyEffect(line.end, line.effect, center as Point);
     return { ...line, start, end };
 }
