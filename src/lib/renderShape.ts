@@ -1,5 +1,5 @@
 import { Line, Square, Rectangle, Polygon } from "@/types/Shapes";
-import { transformLine, transformRectangle, transformSquare } from "./transform";
+import { transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
 
 export function renderLine(
     gl: WebGLRenderingContext,
@@ -100,8 +100,10 @@ export function renderPolygon(
     uColor: WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation
 ) {
+    const transformedPolygon = transformPolygon(polygon);
+
     const vert: number[] = [];
-        polygon.vertices.forEach(vertex => {
+        transformedPolygon.vertices.forEach(vertex => {
           vert.push(vertex.x, vertex.y);
         });
 
@@ -113,9 +115,9 @@ export function renderPolygon(
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
     gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
     gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.uniform4f(uColor, polygon.color.r / 255, polygon.color.g / 255, polygon.color.b / 255, polygon.color.a);
+    gl.uniform4f(uColor, transformedPolygon.color.r / 255, transformedPolygon.color.g / 255, transformedPolygon.color.b / 255, transformedPolygon.color.a);
     gl.uniform1f(scaleUniform, 0.05);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, polygon.vertices.length);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, transformedPolygon.vertices.length);
     gl.deleteBuffer(buffer);
 }
 
