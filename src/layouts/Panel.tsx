@@ -25,55 +25,56 @@ interface PanelProps {
 
 export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: PanelProps): JSX.Element {
 
-  const handleUploadShapes = () => {
-    const input = document.createElement('input');
-    input.type = 'file';
-    input.accept = '.json';
-    input.onchange = async (e) => {
-        const file = (e.target as HTMLInputElement).files?.[0];
-        if (file) {
-            const reader = new FileReader();
-            reader.onload = async (e) => {
-                try {
-                    const content = e.target?.result;
-                    if (typeof content === 'string') {
-                        const data = JSON.parse(content);
-                        setShapes(data);
-                        toast.success('Shapes imported successfully!');
-                    }
-                } catch (error) {
-                    toast.error('Error reading file!');
-                }
-            };
-            reader.onerror = () => {
-                toast.error('Not a valid shapes file!');
-            };
-            reader.readAsText(file);
-        }
-    };
-    input.click();
+    const handleUploadShapes = () => {
+			const input = document.createElement('input');
+			input.type = 'file';
+			input.accept = '.json';
+			input.onchange = async (e) => {
+				const file = (e.target as HTMLInputElement).files?.[0];
+				if (file) {
+					const reader = new FileReader();
+					reader.onload = async (e) => {
+						try {
+								const content = e.target?.result;
+								if (typeof content === 'string') {
+										const data = JSON.parse(content);
+										setShapes(data);
+										setShapePanel('line'); // Refresh panel state
+										toast.success('Shapes imported successfully!');
+								}
+						} catch (error) {
+								toast.error('Error reading file!');
+						}
+					};
+					reader.onerror = () => {
+						toast.error('Not a valid shapes file!');
+					};
+					reader.readAsText(file);
+				}
+			};
+			input.click();
 	};
 
 
 	const handleDownloadShapes = () => {
-    try {
-        const data = JSON.stringify(shapes, null, 2);
-        const blob = new Blob([data], { type: 'application/json' });
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'shapes.json';
-        a.click();
-        URL.revokeObjectURL(url);
-        toast.success('Shapes exported successfully!');
-    } catch (error) {
-        toast.error('Error exporting shapes!');
-    }
-	};
+			try {
+					const data = JSON.stringify(shapes, null, 2);
+					const blob = new Blob([data], { type: 'application/json' });
+					const url = URL.createObjectURL(blob);
+					const a = document.createElement('a');
+					a.href = url;
+					a.download = 'shapes.json';
+					a.click();
+					URL.revokeObjectURL(url);
+					toast.success('Shapes exported successfully!');
+			} catch (error) {
+					toast.error('Error exporting shapes!');
+			}
+		};
 
-	const handleClearCanvas = () => {
-		setShapes([]);
-    toast.success('Canvas cleared!');
+		const handleClearCanvas = () => {
+				setShapes([]);
+		toast.success('Canvas cleared!');
 	}
 
   return (
