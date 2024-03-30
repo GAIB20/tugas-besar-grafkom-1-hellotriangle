@@ -4,6 +4,7 @@ import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/
 import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
+import { transformLine, transformPolygon, transformRectangle, transformSquare } from "@/lib/transform";
 
 interface CanvasProps {
   shapePanel: 'line' | 'square' | 'rectangle' | 'polygon';
@@ -72,14 +73,16 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
           if (shape.type === "line") {
+            const line = transformLine(shape);
+
             const hitTolerance = 2;
             const x0 = mousePos.x;
             const y0 = mousePos.y;
 
-            const x1 = shape.start.x;
-            const y1 = shape.start.y;
-            const x2 = shape.end.x;
-            const y2 = shape.end.y;
+            const x1 = line.start.x;
+            const y1 = line.start.y;
+            const x2 = line.end.x;
+            const y2 = line.end.y;
 
             // Calculate the line segment's length squared
             const lineLenSq = (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
@@ -100,18 +103,21 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                 return distance < hitTolerance;
             }
           } else if (shape.type === "square") {
-            const x = shape.start.x;
-            const y = shape.start.y;
-            const size = shape.sideLength;
+            const square = transformSquare(shape);
+            const x = square.start.x;
+            const y = square.start.y;
+            const size = square.sideLength;
             return mousePos.x >= x && mousePos.x <= x + size && mousePos.y >= y && mousePos.y <= y + size;
           } else if (shape.type === "rectangle") {
-            const x = shape.start.x;
-            const y = shape.start.y;
-            const width = shape.width;
-            const height = shape.height;
+            const rectangle = transformRectangle(shape);
+            const x = rectangle.start.x;
+            const y = rectangle.start.y;
+            const width = rectangle.width;
+            const height = rectangle.height;
             return mousePos.x >= x && mousePos.x <= x + width && mousePos.y >= y && mousePos.y <= y + height;
           } else {
-            const points = shape.vertices
+            const polygon = transformPolygon(shape);
+            const points = polygon.vertices
             let inside = false;
             for (let i = 0, j = points.length - 1; i < points.length; j = i++) {
               const xi = points[i].x;
@@ -223,6 +229,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y + lineLength / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y - lineLength, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newLine]);
           } else if (shapePanel === "square") {
@@ -233,6 +240,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               start: { type: 'point', x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               sideLength: squareSize,
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
@@ -244,6 +252,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               width: rectangleSize.width,
               height: rectangleSize.height,
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newRectangle]);
           } else {
@@ -264,6 +273,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               }),
               edges: [],
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newPolygon]);
           }

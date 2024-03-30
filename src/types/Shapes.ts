@@ -45,7 +45,7 @@ type Rectangle = {
     width: number;
     height: number;
     color: Color;
-    effect?: Transformation;
+    effect: Transformation;
 }
 
 type Polygon = {
