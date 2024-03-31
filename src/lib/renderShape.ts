@@ -27,16 +27,20 @@ export function renderLine(
     ]
 
     const vertices = new Float32Array([
-        verticesUncolored[0], verticesUncolored[1], colors[0], colors[1], colors[2],
-        verticesUncolored[2], verticesUncolored[2], colors[3], colors[4], colors[5]
-    ])
-
+        verticesUncolored[0], verticesUncolored[1],  // Vertex 1 position
+        verticesUncolored[2], verticesUncolored[3],  // Vertex 2 position
+        colors[0], colors[1], colors[2],             // Vertex 1 color
+        colors[3], colors[4], colors[5]              // Vertex 2 color
+    ]);
+    
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
     gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-
-    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
-    gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+    
+    // Set up attribute pointers for position and color
+    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 0, 4 * Float32Array.BYTES_PER_ELEMENT); // Offset for color data
+    
 
     gl.enableVertexAttribArray(coordinatesAttributePointer);
     gl.enableVertexAttribArray(vertexColorLocation);
