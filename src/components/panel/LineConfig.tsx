@@ -37,7 +37,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
 
     useEffect(() => {
         const newShapes = shapes.filter(shape => shape.type !== 'line') as Shape[]
-
         newShapes.push(...lines)
 
         setShapes(newShapes)
@@ -71,18 +70,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
-                        {(showColorPicker) && 
-                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
-                                <Chrome
-                                    color={colorToHex(line.color)}
-                                    onChange={(color) => debounce(() => {
-                                        const newLines = [...lines]
-                                        newLines[index].color = color.rgba
-                                        setLines(newLines)
-                                    }, 10)()}
-                                />
-                            </div>
-                        }
                         <div className="flex w-full snap-start flex-col gap-3 pr-2">
                             {/* Transform Modal */}
                             <div className="mb-1 flex w-full justify-between">
@@ -119,68 +106,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 </button>
                             </div>
 
-                            {/* RGBA Color */}
-                            <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
-                                
-                                <div className="flex items-center gap-2.5">    
-                                    <button
-                                        onClick={() => setShowColorPicker(!showColorPicker)}
-                                        style={{ backgroundColor: colorToRGBA(line.color) }}
-                                        className="mb-0.5 aspect-square size-3 rounded-full"
-                                    />
-                                    <p className="mb-1 font-mono">rgba</p>
-                                </div>
-
-                                <div className="flex w-full items-center gap-0.5">
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        max={255}
-                                        value={line.color.r}
-                                        onChange={(e) => {
-                                            const newLines = [...lines]
-                                            newLines[index].color.r = parseInt(e.target.value)
-                                            setLines(newLines)
-                                        }}
-                                    />
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        max={255}
-                                        value={line.color.g}
-                                        onChange={(e) => {
-                                            const newLines = [...lines]
-                                            newLines[index].color.g = parseInt(e.target.value)
-                                            setLines(newLines)
-                                        }}
-                                    />
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        max={255}
-                                        value={line.color.b}
-                                        onChange={(e) => {
-                                            const newLines = [...lines]
-                                            newLines[index].color.b = parseInt(e.target.value)
-                                            setLines(newLines)
-                                        }}
-                                    />
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        max={1}
-                                        step={0.01}
-                                        value={line.color.a}
-                                        onChange={(e) => {
-                                            const newLines = [...lines]
-                                            newLines[index].color.a = parseFloat(e.target.value)
-                                            setLines(newLines)
-                                        }}
-                                    />
-                                </div>
-
-                            </div> 
-
                             <div className="flex w-full gap-4">
                                 <div className="flex items-center gap-2.5">
                                     <p className="text-sm">X1</p>
@@ -207,6 +132,77 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         }} />
                                 </div>
                             </div>
+                            {/* RGBA Color */}
+                            <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                                
+                                <div className="flex items-center gap-2.5">    
+                                    <button
+                                        onClick={() => setShowColorPicker(!showColorPicker)}
+                                        style={{ backgroundColor: colorToRGBA(line.start.color) }}
+                                        className="mb-0.5 aspect-square size-3 rounded-full"
+                                    />
+                                    <p className="mb-1 font-mono">rgba</p>
+                                </div>
+
+                                <div className="flex w-full items-center gap-0.5">
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={255}
+                                        value={line.start.color.r}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].start.color.r = parseInt(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={255}
+                                        value={line.start.color.g}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].start.color.g = parseInt(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={255}
+                                        value={line.start.color.b}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].start.color.b = parseInt(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={1}
+                                        step={0.01}
+                                        value={line.start.color.a}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].color.a = parseFloat(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                </div>
+                            </div> 
+                            {(showColorPicker) && 
+                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                                <Chrome
+                                    color={colorToHex(line.start.color)}
+                                    onChange={(color) => debounce(() => {
+                                        const newLines = [...lines]
+                                        newLines[index].start.color = color.rgba
+                                        setLines(newLines)
+                                    }, 10)()}
+                                />
+                            </div>}
                             <div className="flex w-full gap-4">
                                 <div className="flex items-center gap-2.5">
                                     <p className="text-sm">X2</p>
@@ -233,6 +229,77 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         }} />
                                 </div>
                             </div>
+                            {/* RGBA Color */}
+                            <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
+                                
+                                <div className="flex items-center gap-2.5">    
+                                    <button
+                                        onClick={() => setShowColorPicker(!showColorPicker)}
+                                        style={{ backgroundColor: colorToRGBA(line.start.color) }}
+                                        className="mb-0.5 aspect-square size-3 rounded-full"
+                                    />
+                                    <p className="mb-1 font-mono">rgba</p>
+                                </div>
+
+                                <div className="flex w-full items-center gap-0.5">
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={255}
+                                        value={line.end.color.r}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].end.color.r = parseInt(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={255}
+                                        value={line.end.color.g}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].end.color.g = parseInt(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={255}
+                                        value={line.end.color.b}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].end.color.b = parseInt(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                    <Input
+                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
+                                        type="number"
+                                        max={1}
+                                        step={0.01}
+                                        value={line.end.color.a}
+                                        onChange={(e) => {
+                                            const newLines = [...lines]
+                                            newLines[index].color.a = parseFloat(e.target.value)
+                                            setLines(newLines)
+                                        }}
+                                    />
+                                </div>
+                            </div> 
+                            {(showColorPicker) && 
+                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                                <Chrome
+                                    color={colorToHex(line.end.color)}
+                                    onChange={(color) => debounce(() => {
+                                        const newLines = [...lines]
+                                        newLines[index].end.color = color.rgba
+                                        setLines(newLines)
+                                    }, 10)()}
+                                />
+                            </div>}
 
                             {/* Line Separator */}
                             {index < lines.length - 1 && (

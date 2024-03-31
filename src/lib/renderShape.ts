@@ -21,9 +21,14 @@ export function renderLine(
     console.log(`After adjustments: ${verticesUncolored}`)
 
     const colors = [
-        1.0, 0.0, 0.0, // 1
-        0.0, 1.0, 0.0, // 2 
+        line.start.color.r, line.start.color.g, line.start.color.b,
+        line.end.color.r, line.end.color.g, line.end.color.b
     ]
+
+    // const colors = [
+    //     1.0, 0.0, 0.0, // 1
+    //     0.0, 1.0, 0.0, // 2 
+    // ]
 
     const vertices = new Float32Array([
         verticesUncolored[0], verticesUncolored[1],  // Vertex 1 position
