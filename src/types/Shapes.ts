@@ -26,7 +26,7 @@ type Line = {
     start: Point
     end: Point;
     color: Color;
-    effect?: Transformation;
+    effect: Transformation;
 }
 
 type Square = {
@@ -35,7 +35,7 @@ type Square = {
     start: Point;
     sideLength: number;
     color: Color;
-    effect?: Transformation;
+    effect: Transformation;
 }
 
 type Rectangle = {
@@ -54,7 +54,7 @@ type Polygon = {
     vertices: Point[];
     edges: Line[];
     color: Color;
-    effect?: Transformation;
+    effect: Transformation;
 }
 
 type Shape = Line | Square | Rectangle | Polygon;
