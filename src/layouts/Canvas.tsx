@@ -34,15 +34,16 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
     const coordinates = gl.getAttribLocation(shaderProgram, 'coordinates');
     const uColor = gl.getUniformLocation(shaderProgram, 'uColor');
     const scaleUniform = gl.getUniformLocation(shaderProgram, "scale");
+    const vertexColorLocation = gl.getAttribLocation(shaderProgram, 'vertexColor')
 
     // Render the shapes
     shapes.forEach((shape) => {
       if (shape.type === "line") {
-        renderLine(gl, shape, coordinates, uColor!, scaleUniform!)
+        renderLine(gl, shape, coordinates, uColor!, scaleUniform!, vertexColorLocation)
       } else if (shape.type === "square") {
-        renderSquare(gl, shape, coordinates, uColor!, scaleUniform!)
+        renderSquare(gl, shape, coordinates, uColor!, scaleUniform!, vertexColorLocation)
       } else if (shape.type === "rectangle") {
-        renderRectangle(gl, shape, coordinates, uColor!, scaleUniform!)
+        renderRectangle(gl, shape, coordinates, uColor!, scaleUniform!, vertexColorLocation)
       } else {
         renderPolygon(gl, shape, coordinates, uColor!, scaleUniform!)
       }

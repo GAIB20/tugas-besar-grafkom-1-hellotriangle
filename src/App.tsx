@@ -8,9 +8,9 @@ function App(): JSX.Element {
   const [shapePanel, setShapePanel] = useState<'line' | 'square' | 'rectangle' | 'polygon'>('line')
   const [shapes, setShapes] = useState<Shape[]>([])
 
-  useEffect(() => {
-    console.log("Fungsi update");
-  }, [shapes]);
+  // useEffect(() => {
+  //   console.log("Fungsi update");
+  // }, [shapes]);
 
   return (
     <div className="flex h-screen w-screen overflow-hidden bg-zinc-950">

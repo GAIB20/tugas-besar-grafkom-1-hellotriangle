@@ -1,16 +1,21 @@
 const vertexShaderSource = `
     attribute vec2 coordinates;
     uniform float scale; // Uniform variable for scaling
-        void main(void) {
-    gl_Position = vec4(coordinates * scale, 0.0, 1.0);
+    attribute vec3 vertexColor;
+    varying vec3 fragColor;
+    void main(void) {
+        gl_Position = vec4(coordinates * scale, 0.0, 1.0);
+        fragColor = vertexColor;
     }
 `;
 
 const fragmentShaderSource = `
     precision mediump float;
     uniform vec4 uColor;
+    varying vec3 fragColor;
     void main(void) {
-        gl_FragColor = uColor;
+        // gl_FragColor = uColor;
+        gl_FragColor = vec4(fragColor, 1.0);
     }
 `;
 
