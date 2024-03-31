@@ -5,7 +5,6 @@ export function renderLine(
     gl: WebGLRenderingContext,
     line: Line,
     coordinatesAttributePointer: number,
-    uColor:  WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation,
     vertexColorLocation: number
 ) {
@@ -55,7 +54,6 @@ export function renderSquare(
     gl: WebGLRenderingContext,
     square: Square,
     coordinatesAttributePointer: number,
-    uColor: WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation,
     vertexColorLocation: number
 ) {
@@ -111,7 +109,6 @@ export function renderRectangle(
     gl: WebGLRenderingContext,
     rectangle: Rectangle,
     coordinatesAttributePointer: number,
-    uColor: WebGLUniformLocation,
     scaleUniform: WebGLUniformLocation,
     vertexColorLocation: number
 ) {
@@ -167,25 +164,45 @@ export function renderPolygon(
     gl: WebGLRenderingContext,
     polygon: Polygon,
     coordinatesAttributePointer: number,
-    uColor: WebGLUniformLocation,
-    scaleUniform: WebGLUniformLocation
+    scaleUniform: WebGLUniformLocation,
+    vertexColorLocation: number
 ) {
     const transformedPolygon = transformPolygon(polygon);
+    const vertices: number[] = []
 
-    const vert: number[] = [];
-        transformedPolygon.vertices.forEach(vertex => {
-          vert.push(vertex.x, vertex.y);
-        });
+    const colors = [
+        1.0, 0.0, 0.0, // 1
+        0.0, 1.0, 0.0, // 2 
+        0.0, 0.0, 1.0, // 3
+        // 0.0, 1.0, 0.0, // 4
+        // 0.4, 0.7, 0.8, // 5
+    ];
 
-    const vertices = new Float32Array(vert);
-    adjustHorizontalStretch(gl, vertices);
+    console.log("Colors")
+    console.log(colors)
+
+    transformedPolygon.vertices.forEach((vertex, i) => {
+        const currentVertex = [vertex.x, vertex.y]
+        adjustHorizontalStretch(gl, currentVertex)
+        vertices.push(...currentVertex);
+        for (let j = 0; j < 3; j++) {
+            vertices.push(colors[i * 3 + j]);
+        }
+    });
+
+    console.log("Vertices")
+    console.log(vertices)
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
-    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+    gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+
     gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.uniform4f(uColor, transformedPolygon.color.r / 255, transformedPolygon.color.g / 255, transformedPolygon.color.b / 255, transformedPolygon.color.a);
+    gl.enableVertexAttribArray(vertexColorLocation);
+
     gl.uniform1f(scaleUniform, 0.05);
     gl.drawArrays(gl.TRIANGLE_FAN, 0, transformedPolygon.vertices.length);
     gl.deleteBuffer(buffer);
