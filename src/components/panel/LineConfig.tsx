@@ -20,15 +20,27 @@ interface LineConfigProps {
     setShapes: (shapes: Shape[]) => void
 }
 
+interface ColorPickerVisibility {
+    [lineId: string]: {
+      line: boolean;
+      start: boolean;
+      end: boolean;
+    };
+}
+
+interface ColorPickerRefs {
+    [lineId: string]: {
+      line: HTMLElement | null;
+      start: HTMLElement | null;
+      end: HTMLElement | null;
+    };
+  }
+
 export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.Element {
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
     const [showModal, setShowModal] = useState<number>(-1)
-    const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const [showColorPickerStart, setShowColorPickerStart] = useState<boolean>(false)
-    const [showColorPickerEnd, setShowColorPickerEnd] = useState<boolean>(false)
-    const colorPickerRef = useRef<HTMLDivElement>(null);
-    const colorPickerStartRef = useRef<HTMLDivElement>(null);
-    const colorPickerEndRef = useRef<HTMLDivElement>(null);
+    const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
+    const colorPickerRefs = useRef<ColorPickerRefs>({});
     
     useEffect(() => {
         console.log("Lines Updated");
@@ -48,24 +60,21 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
-            if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
-                setShowColorPicker(false);
-            }
-            if (colorPickerStartRef.current && !colorPickerStartRef.current.contains(event.target as Node)) {
-                setShowColorPickerStart(false);
-            }
-            if (colorPickerEndRef.current && !colorPickerEndRef.current.contains(event.target as Node)) {
-                setShowColorPickerEnd(false);
-            }
+          const newVisibility: ColorPickerVisibility = { ...colorPickerVisibility };
+          Object.keys(colorPickerRefs.current).forEach((lineId) => {
+            Object.keys(colorPickerRefs.current[lineId]).forEach((pickerType) => {
+              if (colorPickerRefs.current[lineId][pickerType as keyof ColorPickerRefs[string]] && !colorPickerRefs.current[lineId][pickerType as keyof ColorPickerRefs[string]]?.contains(event.target as Node)) {
+                newVisibility[lineId] = { ...(newVisibility[lineId] || { line: false, start: false, end: false }), [pickerType]: false };
+              }
+            });
+          });
+          setColorPickerVisibility(newVisibility);
         };
-    
+      
         document.addEventListener('mousedown', handleClickOutside);
-    
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
-    
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+      }, [colorPickerVisibility]);
+      
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -117,19 +126,28 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                             </div>
 
                             {/* Color Pickers */}
-                            {(showColorPicker) && 
-                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                            <div
+                                ref={(el) => colorPickerRefs.current[line.id] = { ...colorPickerRefs.current[line.id], line: el }}
+                                style={{ display: colorPickerVisibility[line.id]?.line ? 'block' : 'none' }}
+                                className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+                            >
                                 <Chrome
                                     color={colorToHex(line.color)}
                                     onChange={(color) => debounce(() => {
                                         const newLines = [...lines]
                                         newLines[index].color = color.rgba
+                                        newLines[index].start.color = color.rgba
+                                        newLines[index].end.color = color.rgba
                                         setLines(newLines)
                                     }, 10)()}
                                 />
-                            </div>}
-                            {(showColorPickerStart) && 
-                            <div ref={colorPickerStartRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                            </div>
+
+                            <div
+                                ref={(el) => colorPickerRefs.current[line.id] = { ...colorPickerRefs.current[line.id], start: el }}
+                                style={{ display: colorPickerVisibility[line.id]?.start ? 'block' : 'none' }}
+                                className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+                            >
                                 <Chrome
                                     color={colorToHex(line.start.color)}
                                     onChange={(color) => debounce(() => {
@@ -138,9 +156,13 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         setLines(newLines)
                                     }, 10)()}
                                 />
-                            </div>}
-                            {(showColorPickerEnd) && 
-                            <div ref={colorPickerEndRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
+                            </div>
+
+                            <div
+                                ref={(el) => colorPickerRefs.current[line.id] = { ...colorPickerRefs.current[line.id], end: el }}
+                                style={{ display: colorPickerVisibility[line.id]?.end ? 'block' : 'none' }}
+                                className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+                            >
                                 <Chrome
                                     color={colorToHex(line.end.color)}
                                     onChange={(color) => debounce(() => {
@@ -149,14 +171,18 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         setLines(newLines)
                                     }, 10)()}
                                 />
-                            </div>}
+                            </div>
 
                             {/* RGBA Color */}
                             <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
                                 
                                 <div className="flex items-center gap-2.5">    
                                     <button
-                                        onClick={() => setShowColorPicker(!showColorPicker)}
+                                        onClick={() => {
+                                            const newVisibility = { ...colorPickerVisibility };
+                                            newVisibility[line.id] = { ...(newVisibility[line.id] || { line: false, start: false, end: false }), line: !newVisibility[line.id]?.line };
+                                            setColorPickerVisibility(newVisibility);
+                                        }}
                                         style={{ backgroundColor: colorToRGBA(line.color) }}
                                         className="mb-0.5 aspect-square size-3 rounded-full"
                                     />
@@ -214,7 +240,11 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
 
                             <div className="flex w-full items-center gap-2.5">
                                 <button
-                                    onClick={() => setShowColorPickerStart(!showColorPickerStart)}
+                                    onClick={() => {
+                                        const newVisibility = { ...colorPickerVisibility };
+                                        newVisibility[line.id] = { ...(newVisibility[line.id] || { line: false, start: false, end: false }), start: !newVisibility[line.id]?.start };
+                                        setColorPickerVisibility(newVisibility);
+                                    }}
                                     style={{ backgroundColor: colorToRGBA(line.start.color) }}
                                     className="mb-0.5 ml-2 aspect-square size-3 rounded-full"
                                 />
@@ -246,7 +276,11 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                             
                             <div className="flex w-full items-center gap-2.5">
                                 <button
-                                    onClick={() => setShowColorPickerEnd(!showColorPickerEnd)}
+                                    onClick={() => {
+                                        const newVisibility = { ...colorPickerVisibility };
+                                        newVisibility[line.id] = { ...(newVisibility[line.id] || { line: false, start: false, end: false }), end: !newVisibility[line.id]?.end };
+                                        setColorPickerVisibility(newVisibility);
+                                    }}
                                     style={{ backgroundColor: colorToRGBA(line.end.color) }}
                                     className="mb-0.5 ml-2 aspect-square size-3 rounded-full"
                                 />
@@ -290,12 +324,15 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
                         const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
+                        const id = `line-${uuidv4()}`;
+                        colorPickerRefs.current[id] = { line: null, start: null, end: null };
+                        
                         setLines(
                             [
                                 ...lines,
                                 {
                                     type: 'line',
-                                    id: `line-${uuidv4()}`,
+                                    id: id,
                                     start: { type: 'point', x: -5, y: 5, z:0, color: color },
                                     end: { type: 'point', x: 5, y: -5, z:0, color: color },
                                     color: color,
