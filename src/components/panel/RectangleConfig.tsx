@@ -15,7 +15,7 @@ import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import { CornerBottomLeftIcon, CornerBottomRightIcon, CornerTopLeftIcon, CornerTopRightIcon } from "@radix-ui/react-icons"
-import { Square as SquareIcon } from "lucide-react"
+import { RectangleHorizontal } from "lucide-react"
 
 interface RectangleConfigProps {
     shapes: Shape[]
@@ -239,7 +239,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p>
-																	<SquareIcon size={12} />
+																	<RectangleHorizontal size={12} />
 																</p>
 
 															</div>
