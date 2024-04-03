@@ -103,7 +103,8 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                 return distance < hitTolerance;
             }
           } else if (shape.type === "square") {
-            const square = transformSquare(shape);
+            // const square = transformSquare(shape);
+            const square = shape;
             const x = square.start.x;
             const y = square.start.y;
             const size = square.sideLength;
@@ -230,7 +231,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y + lineLength / 2, z: 0, color: color },
               end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y - lineLength, z: 0, color: color },
               color: color,
-              effect: { dx: 0, dy: 0, rotate: 0, scale: 1, center_x: 0, center_y: 0 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newLine]);
           } else if (shapePanel === "square") {
@@ -241,7 +242,13 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               start: { type: 'point', x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               sideLength: squareSize,
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
-              effect: { dx: 0, dy: 0, rotate: 0, scale: 1, center_x: 0, center_y: 0 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
+              final: [
+                { type: 'point', x: 0, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                { type: 'point', x: squareSize, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                { type: 'point', x: 0, y: squareSize, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                { type: 'point', x: squareSize, y: squareSize, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } }
+            ]
             };
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
@@ -253,7 +260,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               width: rectangleSize.width,
               height: rectangleSize.height,
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
-              effect: { dx: 0, dy: 0, rotate: 0, scale: 1, center_x: 0, center_y: 0 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newRectangle]);
           } else {
@@ -274,7 +281,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               }),
               edges: [],
               color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
-              effect: { dx: 0, dy: 0, rotate: 0, scale: 1, center_x: 0, center_y: 0 },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newPolygon]);
           }

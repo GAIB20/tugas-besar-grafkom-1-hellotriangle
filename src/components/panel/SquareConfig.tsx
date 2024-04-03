@@ -245,7 +245,13 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 sideLength: 10,
                                 color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
-                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
+                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
+                                final: [
+                                    { type: 'point', x: 0, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    { type: 'point', x: 10, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    { type: 'point', x: 0, y: 10, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    { type: 'point', x: 10, y: 10, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } }
+                                ]
                             }
                         ])
                     }}

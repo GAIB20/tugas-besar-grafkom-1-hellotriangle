@@ -78,10 +78,10 @@ export function applyEffect(point: Point, effect?: Transformation, center?: Poin
     const translationBackFromCenter = center ? createTranslationMatrix(center.x, center.y, 0) : mat4.create();
 
     const transformationMatrix = mat4.create();
-    mat4.multiply(transformationMatrix, translationMatrix, translationToCenter);
-    mat4.multiply(transformationMatrix, transformationMatrix, rotationMatrix);
-    mat4.multiply(transformationMatrix, transformationMatrix, translationBackFromCenter);
-    mat4.multiply(transformationMatrix, transformationMatrix, scaleMatrix);
+    mat4.multiply(transformationMatrix, rotationMatrix, translationToCenter);
+    mat4.multiply(transformationMatrix, translationMatrix, transformationMatrix);
+    mat4.multiply(transformationMatrix, translationBackFromCenter, transformationMatrix);
+    mat4.multiply(transformationMatrix, scaleMatrix, transformationMatrix);
 
     const vec = vec3.fromValues(point.x, point.y, 0);
     vec3.transformMat4(vec, vec, transformationMatrix);
@@ -90,14 +90,36 @@ export function applyEffect(point: Point, effect?: Transformation, center?: Poin
 
 
 export function transformSquare(square: Square): Square {
-    const centerX = square.start.x + square.sideLength / 2;
-    const centerY = square.start.y + square.sideLength / 2;
-    const center = { x: centerX, y: centerY, z: 0 };
+    const color = square.start.color;
+    const centerX = square.final[0].x + square.sideLength / 2;
+    const centerY = square.final[0].y + square.sideLength / 2;
+    const center = { type: 'point', x: centerX, y: centerY, z: 0, color: color };
 
-    const start = applyEffect(square.start, square.effect, center as Point);
+    // Transform vertices
+    const x1 = square.final[0].x;
+    const y1 = square.final[0].y;
+    const x2 = square.final[1].x;
+    const y2 = square.final[1].y;  
+    const x3 = square.final[2].x;
+    const y3 = square.final[2].y;
+    const x4 = square.final[3].x;
+    const y4 = square.final[3].y;
+
+    const vertex1: Point = {type: 'point', x: x1, y: y1, z: 0, color: color};
+    const vertex2: Point = {type: 'point', x: x2, y: y2, z: 0, color: color};
+    const vertex3: Point = {type: 'point', x: x3, y: y3, z: 0, color: color};
+    const vertex4: Point = {type: 'point', x: x4, y: y4, z: 0, color: color};
+
+    const final1 = applyEffect(vertex1, square.effect, center as Point);
+    const final2 = applyEffect(vertex2, square.effect, center as Point);
+    const final3 = applyEffect(vertex3, square.effect, center as Point);
+    const final4 = applyEffect(vertex4, square.effect, center as Point);
+
+    const final = [final1, final2, final3, final4]
+
     const sideLength = square.sideLength * (square.effect?.scale || 1);
 
-    return { ...square, start, sideLength };
+    return { ...square, start: final1, final, sideLength };
 }
 
 export function transformRectangle(rectangle: Rectangle): Rectangle {

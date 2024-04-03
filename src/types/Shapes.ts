@@ -36,6 +36,7 @@ type Square = {
     sideLength: number;
     color: Color;
     effect: Transformation;
+    final: Point[]
 }
 
 type Rectangle = {

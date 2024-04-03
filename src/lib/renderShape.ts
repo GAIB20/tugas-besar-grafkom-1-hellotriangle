@@ -1,5 +1,5 @@
-import { Line, Square, Rectangle, Polygon } from "@/types/Shapes";
-import { transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
+import { Line, Square, Rectangle, Polygon, Point } from "@/types/Shapes";
+import { applyEffect, transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
 
 export function renderLine(
     gl: WebGLRenderingContext,
@@ -62,17 +62,45 @@ export function renderSquare(
     scaleUniform: WebGLUniformLocation,
     vertexColorLocation: number
 ) {
-    const transformedSquare = transformSquare(square);
-    const x1 = transformedSquare.start.x
-    const y1 = transformedSquare.start.y;
-    const x2 = x1 + transformedSquare.sideLength
-    const y2 = y1;
-    const x3 = x1
-    const y3 = y1 + transformedSquare.sideLength;
-    const x4 = x2
-    const y4 = y3;
+    square = transformSquare(square)
+    // Calculate center
+    // const color = square.start.color;
+    // const centerX = square.start.x + square.sideLength / 2;
+    // const centerY = square.start.y + square.sideLength / 2;
+    // const center = { type: 'point', x: centerX, y: centerY, z: 0, color: color };
+
+    // // Transform vertices
+    // const x1 = square.start.x
+    // const y1 = square.start.y;
+    // const x2 = x1 + square.sideLength
+    // const y2 = y1;  
+    // const x3 = x1
+    // const y3 = y1 + square.sideLength;
+    // const x4 = x2
+    // const y4 = y3;
+
+    // const vertex1: Point = {type: 'point', x: x1, y: y1, z: 0, color: color};
+    // const vertex2: Point = {type: 'point', x: x2, y: y2, z: 0, color: color};
+    // const vertex3: Point = {type: 'point', x: x3, y: y3, z: 0, color: color};
+    // const vertex4: Point = {type: 'point', x: x4, y: y4, z: 0, color: color};
+
+    // const final1 = applyEffect(vertex1, square.effect, center as Point);
+    // const final2 = applyEffect(vertex2, square.effect, center as Point);
+    // const final3 = applyEffect(vertex3, square.effect, center as Point);
+    // const final4 = applyEffect(vertex4, square.effect, center as Point);
+
+    // const finalX1 = final1.x;
+    // const finalY1 = final1.y;
+    // const finalX2 = final2.x;
+    // const finalY2 = final2.y;
+    // const finalX3 = final3.x;
+    // const finalY3 = final3.y;
+    // const finalX4 = final4.x;
+    // const finalY4 = final4.y;
+
     
-    const verticesUncolored = [x1, y1, x2, y2, x3, y3, x4, y4]
+    // const verticesUncolored = [finalX1, finalY1, finalX2, finalY2, finalX3, finalY3, finalX4, finalY4]
+    const verticesUncolored = [square.final[0].x, square.final[0].y, square.final[1].x, square.final[1].y, square.final[2].x, square.final[2].y, square.final[3].x, square.final[3].y]
     adjustHorizontalStretch(gl, verticesUncolored)
 
     // Colors for each vertex
