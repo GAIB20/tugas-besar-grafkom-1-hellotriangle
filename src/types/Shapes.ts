@@ -10,8 +10,6 @@ type Transformation = {
     dy: number;
     rotate: number;
     scale: number;
-    center_x: number;
-    center_y: number;
 }
 
 type Point = {

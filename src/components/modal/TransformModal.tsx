@@ -133,55 +133,6 @@ export default function TransformModal({ shapes, setShapes, shapeIndex, onClose 
                                 setShapes(newShapes);
                             }}
                         />
-                        <div className="flex items-center gap-2">
-                            <TooltipProvider>
-                                <Tooltip delayDuration={10} >
-                                    <TooltipTrigger>
-                                        <p className="font-['jsMath-cmmi10'] tracking-widest">cx</p>
-                                    </TooltipTrigger>
-                                    <TooltipContent className="bg-gray-800/95 text-sm">
-                                        <p>Center of rotation - x</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                            <Input 
-                                className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
-                                type="number"
-                                value={shape.effect?.center_x || 0}
-                                onChange={(e) => {
-                                    const newShapes = shapes.filter((_, i) => i !== shapeIndex);
-
-                                    const newShape = { ...shape, effect: { ...shape.effect, center_x: Number(e.target.value) } };
-                                    newShapes.splice(shapeIndex, 0, newShape as Shape);
-
-                                    setShapes(newShapes);
-                                }}
-                            />
-
-                            <TooltipProvider>
-                                <Tooltip delayDuration={10} >
-                                    <TooltipTrigger>
-                                        <p className="font-['jsMath-cmmi10'] tracking-widest">cy</p>
-                                    </TooltipTrigger>
-                                    <TooltipContent className="bg-gray-800/95 text-sm">
-                                        <p>Center of rotation - y</p>
-                                    </TooltipContent>
-                                </Tooltip>
-                            </TooltipProvider>
-                            <Input 
-                                className="w-16 border border-gray-700 px-2 py-0 text-xs focus-visible:ring-0"
-                                type="number"
-                                value={shape.effect?.center_y || 0}
-                                onChange={(e) => {
-                                    const newShapes = shapes.filter((_, i) => i !== shapeIndex);
-
-                                    const newShape = { ...shape, effect: { ...shape.effect, center_y: Number(e.target.value) } };
-                                    newShapes.splice(shapeIndex, 0, newShape as Shape);
-
-                                    setShapes(newShapes);
-                                }}
-                            />
-                        </div>
                     </div>
                 </div>
             </div>
