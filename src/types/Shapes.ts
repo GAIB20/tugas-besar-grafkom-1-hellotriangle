@@ -1,5 +1,3 @@
-import { SidebarCloseIcon } from "lucide-react";
-
 type Color = {
     r: number;
     g: number;
