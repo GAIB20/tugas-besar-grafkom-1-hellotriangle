@@ -15,6 +15,7 @@ import { CloudDownload, CloudUpload } from "lucide-react";
 import { toast } from 'react-toastify';
 import { AiOutlineClear } from "react-icons/ai";
 import { RectangleHorizontal, Square } from "lucide-react";
+import { useState } from "react";
 
 interface PanelProps {
     shapePanel: 'line' | 'square' | 'rectangle' | 'polygon',
@@ -24,6 +25,12 @@ interface PanelProps {
 }
 
 export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: PanelProps): JSX.Element {
+
+    const [selectVertexMode, setSelectVertexMode] = useState(false);
+    
+    const toggleSelectVertexMode = () => {
+      setSelectVertexMode(!selectVertexMode);
+    };
 
     const handleUploadShapes = () => {
 			const input = document.createElement('input');
@@ -72,10 +79,10 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
 			}
 		};
 
-		const handleClearCanvas = () => {
-				setShapes([]);
-		toast.success('Canvas cleared!');
-	}
+	const handleClearCanvas = () => {
+			setShapes([]);
+	    toast.success('Canvas cleared!');
+	};
 
   return (
     <div className="flex h-full w-[480px] overflow-hidden shadow">
@@ -137,7 +144,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
-								<TooltipProvider>
+				<TooltipProvider>
                     <Tooltip delayDuration={20}>
                         <TooltipTrigger>
                             <Button className={`aspect-square w-fit p-1 hover:bg-red-700 active:bg-red-900`}
@@ -151,6 +158,22 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                         </TooltipContent>
                     </Tooltip>
                 </TooltipProvider>
+
+                <TooltipProvider>
+                    <Tooltip delayDuration={20}>
+                        <TooltipTrigger>
+                        <Button
+                            className={`aspect-square w-fit p-1 hover:bg-gray-700 ${selectVertexMode ? 'bg-gray-700' : ''}`}
+                            onClick={toggleSelectVertexMode}
+                        >
+                        </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="right" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                            <p>Select vertex</p>
+                        </TooltipContent>
+                    </Tooltip>
+                </TooltipProvider>
+
             </div>
             <div className="mb-1 flex flex-col gap-3">
                 <TooltipProvider>

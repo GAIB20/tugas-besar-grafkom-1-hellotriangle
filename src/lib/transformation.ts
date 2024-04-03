@@ -39,7 +39,7 @@ export function translatePoint(point: Point, dx: number, dy: number): Point {
 
 
 // Fungsi ROTASI terhadap sebuah titik
-export function rotatePoint(point: Point, angle: number): Point {
+export function rotatePoint(point: Point, angle: number, center_x: number, center_y: number): Point {
     const rotationMatrix: number[][] = createMatrix();
     const cosAngle = Math.cos(angle);
     const sinAngle = Math.sin(angle);
@@ -50,9 +50,10 @@ export function rotatePoint(point: Point, angle: number): Point {
     rotationMatrix[1][1] = cosAngle;
     rotationMatrix[2][2] = 1;
 
-    const result: number[] = multiplyMatrix(rotationMatrix, [[point[0]], [point[1]], [point[2]]])
+    const result: number[] = multiplyMatrix(rotationMatrix, [[point[0]-center_x], [point[1]-center_y], [point[2]]])
         .map(arr => parseFloat(arr[0].toFixed(5)));
-    return result as Point;
+    const final_result: number[] = [result[0]+center_x, result[1]+center_y, result[2]];
+    return final_result as Point;
 }
 
 // Fungsi SCALING terhadap sebuah titik
@@ -91,7 +92,7 @@ console.log("Titik awal: ", point);
 const translatedPoint = translatePoint(point, 2, 3);
 console.log("Titik setelah translasi: ", translatedPoint);
 
-const rotatedPoint = rotatePoint(point, Math.PI / 4);
+const rotatedPoint = rotatePoint(point, Math.PI / 4, 0, 0);
 console.log("Titik setelah rotasi: ", rotatedPoint);
 
 const scaledPoint = scalePoint(point, 2, 2);
