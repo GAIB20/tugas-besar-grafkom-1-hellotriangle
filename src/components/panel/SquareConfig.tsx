@@ -291,7 +291,6 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 																</p>
 
 															</div>
-
 															<div className="flex items-center gap-2">
 																<button
 																		onClick={() => {

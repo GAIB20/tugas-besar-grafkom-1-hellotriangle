@@ -48,7 +48,12 @@ type Rectangle = {
     start: Point;
     width: number;
     height: number;
-    color: Color;
+    vertexColors: {
+        tl: Color;
+        tr: Color;
+        bl: Color;
+        br: Color;
+    };
     effect: Transformation;
 }
 

@@ -246,13 +246,14 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
             const rectangleSize = { width: 12, height: 8 };
+            const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newRectangle: Shape = {
               id: `rectangle-${uuidv4()}`,
               type: "rectangle",
               start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               width: rectangleSize.width,
               height: rectangleSize.height,
-              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+              vertexColors: { tl: color, tr: color, bl: color, br: color },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newRectangle]);
