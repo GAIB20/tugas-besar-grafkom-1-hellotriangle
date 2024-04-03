@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Point, Shape } from "@/types/Shapes";
+import { Point, Shape, VertexWithShape, getVertexWithShapes } from "@/types/Shapes";
 import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/renderShape";
 import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
@@ -66,9 +66,11 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
 
         drawShapes(gl, shapes);
 
-        let isDragging = false;
+        let isDraggingShape = false;
+        let isDraggingVertex = false;
         let dragShapeId: string | null = null;
         let lastMousePos = { x: 0, y: 0 };
+        let draggedVertexWithShape: VertexWithShape | null = null
 
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
@@ -132,6 +134,14 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           }
         };
 
+        const hitVertexTest = (mousePos: Point, vertex: Point) => {
+          const hitTolerance = 2
+          const dx = mousePos.x - vertex.x
+          const dy = mousePos.y - vertex.y
+          const distance = Math.sqrt(dx*dx + dy*dy)
+          return distance < hitTolerance
+        }
+
         const getCanvasMousePosition = (event: MouseEvent) => {
           const rect = canvas.getBoundingClientRect();
           const x = event.clientX - rect.left;
@@ -157,15 +167,21 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
       
         const mouseDownHandler = (event: MouseEvent) => {
           event.preventDefault();
-
+          const vertexWithShape = shapes.slice().reverse().flatMap(shape => getVertexWithShapes(shape))
           const mousePos = getCanvasMousePosition(event) as Point;
+          const hitVertexWithShape = vertexWithShape.find(vertexWithShape => hitVertexTest(mousePos, vertexWithShape.vertex))
           const hitShape = shapes.slice().reverse().find(shape => hitTest(mousePos, shape));
-          if (hitShape) {
-            isDragging = true;
+
+          if (hitVertexWithShape) {
+            isDraggingVertex = true;
+            lastMousePos = mousePos;
+
+          } else if (hitShape) {
+            isDraggingShape = true;
             dragShapeId = hitShape.id;
             lastMousePos = mousePos;
             
-            if (canvas.classList.contains("grabbable") || isDragging) {
+            if (canvas.classList.contains("grabbable") || isDraggingShape) {
               canvas.classList.remove("grabbable");
               canvas.classList.add("grabbing");
             }
@@ -173,7 +189,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const mouseMoveHandler = (event: MouseEvent) => {
-          if (!isDragging) return;
+          if (!isDraggingShape) return;
           const mousePos = getCanvasMousePosition(event);
           const dx = mousePos.x - lastMousePos.x;
           const dy = mousePos.y - lastMousePos.y;
@@ -203,7 +219,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const mouseUpHandler = () => {
-          isDragging = false;
+          isDraggingShape = false;
           dragShapeId = null;
 
           if (canvas.classList.contains("grabbing")) {

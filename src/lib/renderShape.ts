@@ -170,13 +170,15 @@ export function renderPolygon(
     const transformedPolygon = transformPolygon(polygon);
     const vertices: number[] = []
 
-    const colors = [
-        1.0, 0.0, 0.0, // 1
-        0.0, 1.0, 0.0, // 2 
-        0.0, 0.0, 1.0, // 3
-        // 0.0, 1.0, 0.0, // 4
-        // 0.4, 0.7, 0.8, // 5
-    ];
+    // const colors = [
+    //     1.0, 0.0, 0.0, // 1
+    //     0.0, 1.0, 0.0, // 2 
+    //     0.0, 0.0, 1.0, // 3
+    //     // 0.0, 1.0, 0.0, // 4
+    //     // 0.4, 0.7, 0.8, // 5
+    // ];
+
+    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r, vertex.color.g, vertex.color.b])
 
     console.log("Colors")
     console.log(colors)

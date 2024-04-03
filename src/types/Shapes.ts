@@ -69,12 +69,12 @@ type Shape = Line | Square | Rectangle | Polygon;
 export type { Color, Point, Shape, Line, Square, Rectangle, Polygon, Transformation }
 
 // To specify which shape a vertex belongs to
-export type VertexShape = {
+export type VertexWithShape = {
     vertex: Point,
     shape: Shape
 }
 
-export function getVertexShapes(shape: Shape): VertexShape[] {
+export function getVertexWithShapes(shape: Shape): VertexWithShape[] {
     if (shape.type === "line") {
         return [
             {
