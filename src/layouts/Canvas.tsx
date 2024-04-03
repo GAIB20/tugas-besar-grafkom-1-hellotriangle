@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react";
-import { Point, Shape } from "@/types/Shapes";
+import { Point, Shape, VertexWithShape, getVertexWithShapes } from "@/types/Shapes";
 import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/renderShape";
 import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
@@ -66,9 +66,11 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
 
         drawShapes(gl, shapes);
 
-        let isDragging = false;
+        let isDraggingShape = false;
+        let isDraggingVertex = false;
         let dragShapeId: string | null = null;
         let lastMousePos = { x: 0, y: 0 };
+        let draggedVertexWithShape: VertexWithShape | null = null
 
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
@@ -133,6 +135,14 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           }
         };
 
+        const hitVertexTest = (mousePos: Point, vertex: Point) => {
+          const hitTolerance = 2
+          const dx = mousePos.x - vertex.x
+          const dy = mousePos.y - vertex.y
+          const distance = Math.sqrt(dx*dx + dy*dy)
+          return distance < hitTolerance
+        }
+
         const getCanvasMousePosition = (event: MouseEvent) => {
           const rect = canvas.getBoundingClientRect();
           const x = event.clientX - rect.left;
@@ -158,15 +168,21 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
       
         const mouseDownHandler = (event: MouseEvent) => {
           event.preventDefault();
-
+          const vertexWithShape = shapes.slice().reverse().flatMap(shape => getVertexWithShapes(shape))
           const mousePos = getCanvasMousePosition(event) as Point;
+          const hitVertexWithShape = vertexWithShape.find(vertexWithShape => hitVertexTest(mousePos, vertexWithShape.vertex))
           const hitShape = shapes.slice().reverse().find(shape => hitTest(mousePos, shape));
-          if (hitShape) {
-            isDragging = true;
+
+          if (hitVertexWithShape) {
+            isDraggingVertex = true;
+            lastMousePos = mousePos;
+
+          } else if (hitShape) {
+            isDraggingShape = true;
             dragShapeId = hitShape.id;
             lastMousePos = mousePos;
             
-            if (canvas.classList.contains("grabbable") || isDragging) {
+            if (canvas.classList.contains("grabbable") || isDraggingShape) {
               canvas.classList.remove("grabbable");
               canvas.classList.add("grabbing");
             }
@@ -174,7 +190,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const mouseMoveHandler = (event: MouseEvent) => {
-          if (!isDragging) return;
+          if (!isDraggingShape) return;
           const mousePos = getCanvasMousePosition(event);
           const dx = mousePos.x - lastMousePos.x;
           const dy = mousePos.y - lastMousePos.y;
@@ -204,7 +220,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const mouseUpHandler = () => {
-          isDragging = false;
+          isDraggingShape = false;
           dragShapeId = null;
 
           if (canvas.classList.contains("grabbing")) {
@@ -223,19 +239,19 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           if (shapes.some(shape => hitTest(mousePos, shape))) return;
 
           if (shapePanel === "line") {
-            const lineLength = 6
+            const lineLength = 7;
             const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newLine: Shape = {
               id: `line-${uuidv4()}`,
               type: "line",
               start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y + lineLength / 2, z: 0, color: color },
               end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y - lineLength, z: 0, color: color },
-              color: color,
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newLine]);
           } else if (shapePanel === "square") {
-            const squareSize = 6;
+            const squareSize = 10;
+            const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newSquare: Shape = {
               id: `square-${uuidv4()}`,
               type: "square",
@@ -249,17 +265,20 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                 { type: 'point', x: 0, y: squareSize, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                 { type: 'point', x: squareSize, y: squareSize, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } }
             ]
+              vertexColors: { tl: color, tr: color, bl: color, br: color },
+              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
-            const rectangleSize = { width: 10, height: 5 };
+            const rectangleSize = { width: 12, height: 8 };
+            const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newRectangle: Shape = {
               id: `rectangle-${uuidv4()}`,
               type: "rectangle",
               start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               width: rectangleSize.width,
               height: rectangleSize.height,
-              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+              vertexColors: { tl: color, tr: color, bl: color, br: color },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newRectangle]);

@@ -34,7 +34,7 @@ interface ColorPickerRefs {
       start: HTMLElement | null;
       end: HTMLElement | null;
     };
-  }
+}
 
 export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.Element {
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
@@ -132,10 +132,14 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                 className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
                             >
                                 <Chrome
-                                    color={colorToHex(line.color)}
+                                    color={colorToHex({
+                                        r: (line.start.color.r + line.end.color.r) / 2,
+                                        g: (line.start.color.g + line.end.color.g) / 2,
+                                        b: (line.start.color.b + line.end.color.b) / 2,
+                                        a: (line.start.color.a + line.end.color.a) / 2
+                                    })}
                                     onChange={(color) => debounce(() => {
                                         const newLines = [...lines]
-                                        newLines[index].color = color.rgba
                                         newLines[index].start.color = color.rgba
                                         newLines[index].end.color = color.rgba
                                         setLines(newLines)
@@ -183,7 +187,12 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                             newVisibility[line.id] = { ...(newVisibility[line.id] || { line: false, start: false, end: false }), line: !newVisibility[line.id]?.line };
                                             setColorPickerVisibility(newVisibility);
                                         }}
-                                        style={{ backgroundColor: colorToRGBA(line.color) }}
+                                        style={{ backgroundColor: colorToRGBA({
+                                            r: (line.start.color.r + line.end.color.r) / 2,
+                                            g: (line.start.color.g + line.end.color.g) / 2,
+                                            b: (line.start.color.b + line.end.color.b) / 2,
+                                            a: (line.start.color.a + line.end.color.a) / 2
+                                        }) }}
                                         className="mb-0.5 aspect-square size-3 rounded-full"
                                     />
                                     <p className="mb-1 font-mono">rgba</p>
@@ -198,6 +207,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.r = parseInt(e.target.value)
+                                            newLines[index].end.color.r = parseInt(e.target.value)
                                             setLines(newLines)
                                         }}
                                     />
@@ -209,6 +219,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.g = parseInt(e.target.value)
+                                            newLines[index].end.color.g = parseInt(e.target.value)
                                             setLines(newLines)
                                         }}
                                     />
@@ -220,6 +231,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.b = parseInt(e.target.value)
+                                            newLines[index].end.color.b = parseInt(e.target.value)
                                             setLines(newLines)
                                         }}
                                     />
@@ -231,7 +243,8 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         value={line.start.color.a}
                                         onChange={(e) => {
                                             const newLines = [...lines]
-                                            newLines[index].color.a = parseFloat(e.target.value)
+                                            newLines[index].start.color.a = parseFloat(e.target.value)
+                                            newLines[index].end.color.a = parseFloat(e.target.value)
                                             setLines(newLines)
                                         }}
                                     />
@@ -326,7 +339,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                         const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
                         const id = `line-${uuidv4()}`;
                         colorPickerRefs.current[id] = { line: null, start: null, end: null };
-                        
+
                         setLines(
                             [
                                 ...lines,
@@ -335,7 +348,6 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     id: id,
                                     start: { type: 'point', x: -5, y: 5, z:0, color: color },
                                     end: { type: 'point', x: 5, y: -5, z:0, color: color },
-                                    color: color,
                                     effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                                 }
                             ]
