@@ -34,7 +34,7 @@ interface ColorPickerRefs {
       start: HTMLElement | null;
       end: HTMLElement | null;
     };
-  }
+}
 
 export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.Element {
     const [lines, setLines] = useState<Line[]>(shapes.filter(shape => shape.type === 'line') as Line[])
@@ -326,7 +326,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                         const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
                         const id = `line-${uuidv4()}`;
                         colorPickerRefs.current[id] = { line: null, start: null, end: null };
-                        
+
                         setLines(
                             [
                                 ...lines,

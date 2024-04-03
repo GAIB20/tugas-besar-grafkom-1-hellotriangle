@@ -36,7 +36,12 @@ type Square = {
     type: 'square';
     start: Point;
     sideLength: number;
-    color: Color;
+    vertexColors: {
+        tl: Color;
+        tr: Color;
+        bl: Color;
+        br: Color;
+    };
     effect: Transformation;
 }
 

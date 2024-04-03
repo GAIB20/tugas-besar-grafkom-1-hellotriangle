@@ -21,14 +21,9 @@ export function renderLine(
     console.log(`After adjustments: ${verticesUncolored}`)
 
     const colors = [
-        line.start.color.r, line.start.color.g, line.start.color.b,
-        line.end.color.r, line.end.color.g, line.end.color.b
+        line.start.color.r / 255.0, line.start.color.g / 255.0, line.start.color.b / 255.0,
+        line.end.color.r / 255.0, line.end.color.g / 255.0, line.end.color.b / 255.0
     ]
-
-    // const colors = [
-    //     1.0, 0.0, 0.0, // 1
-    //     0.0, 1.0, 0.0, // 2 
-    // ]
 
     const vertices = new Float32Array([
         verticesUncolored[0], verticesUncolored[1],  // Vertex 1 position
@@ -77,13 +72,13 @@ export function renderSquare(
 
     // Colors for each vertex
     const colors = [
-        1.0, 0.0, 0.0, // 1
-        0.0, 1.0, 0.0, // 2 
-        0.0, 0.0, 1.0, // 3
-        0.0, 1.0, 0.0, // 2
-        0.4, 0.7, 0.8, // 4
-        0.0, 0.0, 1.0, // 3
-    ];
+        square.vertexColors.bl.r / 255.0, square.vertexColors.bl.g / 255.0, square.vertexColors.bl.b / 255.0, // 4
+        square.vertexColors.br.r / 255.0, square.vertexColors.br.g / 255.0, square.vertexColors.br.b / 255.0, // 3
+        square.vertexColors.tl.r / 255.0, square.vertexColors.tl.g / 255.0, square.vertexColors.tl.b / 255.0, // 1
+        square.vertexColors.br.r / 255.0, square.vertexColors.br.g / 255.0, square.vertexColors.br.b / 255.0, // 3
+        square.vertexColors.tr.r / 255.0, square.vertexColors.tr.g / 255.0, square.vertexColors.tr.b / 255.0, // 2 
+        square.vertexColors.tl.r / 255.0, square.vertexColors.tl.g / 255.0, square.vertexColors.tl.b / 255.0, // 2
+    ]
 
     // Combine position and color data
     const vertices = new Float32Array([
