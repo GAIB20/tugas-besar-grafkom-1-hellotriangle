@@ -275,13 +275,13 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             debouncedSetShapes([...shapes, newRectangle]);
           } else {
             const polygonRadius = 5;
-            const polygonVertices = 8;
+            const polygonVertices = 5;
             const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newPolygon: Shape = {
               id: `polygon-${uuidv4()}`,
               type: "polygon",
               vertices: Array.from({ length: polygonVertices }, (_, i) => {
-                const angle = (Math.PI * 2 * i) / polygonVertices;
+                const angle = (Math.PI * 2 * i) / polygonVertices + Math.PI / 2;
                 return {
                   type: 'point',
                   x: mousePos.x + polygonRadius * Math.cos(angle),
