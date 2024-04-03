@@ -222,19 +222,18 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           if (shapes.some(shape => hitTest(mousePos, shape))) return;
 
           if (shapePanel === "line") {
-            const lineLength = 6
+            const lineLength = 10;
             const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newLine: Shape = {
               id: `line-${uuidv4()}`,
               type: "line",
               start: { type: 'point', x: mousePos.x - lineLength / 2, y: mousePos.y + lineLength / 2, z: 0, color: color },
               end: { type: 'point', x: mousePos.x + lineLength, y: mousePos.y - lineLength, z: 0, color: color },
-              color: color,
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newLine]);
           } else if (shapePanel === "square") {
-            const squareSize = 6;
+            const squareSize = 10;
             const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newSquare: Shape = {
               id: `square-${uuidv4()}`,
@@ -246,7 +245,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             };
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
-            const rectangleSize = { width: 10, height: 5 };
+            const rectangleSize = { width: 12, height: 8 };
             const newRectangle: Shape = {
               id: `rectangle-${uuidv4()}`,
               type: "rectangle",

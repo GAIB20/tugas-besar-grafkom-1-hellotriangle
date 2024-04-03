@@ -25,7 +25,6 @@ type Line = {
     type: 'line';
     start: Point
     end: Point;
-    color: Color;
     effect: Transformation;
 }
 
