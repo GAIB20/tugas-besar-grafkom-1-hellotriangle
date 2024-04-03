@@ -172,9 +172,16 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           const hitVertexWithShape = vertexWithShape.find(vertexWithShape => hitVertexTest(mousePos, vertexWithShape.vertex))
           const hitShape = shapes.slice().reverse().find(shape => hitTest(mousePos, shape));
 
+          console.log(`Hit vertex with shape: ${hitVertexWithShape}`)
+
           if (hitVertexWithShape) {
             isDraggingVertex = true;
             lastMousePos = mousePos;
+
+            if (canvas.classList.contains("grabbable") || isDraggingVertex) {
+              canvas.classList.remove("grabbable");
+              canvas.classList.add("crosshair");
+            }
 
           } else if (hitShape) {
             isDraggingShape = true;
@@ -189,34 +196,56 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const mouseMoveHandler = (event: MouseEvent) => {
-          if (!isDraggingShape) return;
           const mousePos = getCanvasMousePosition(event);
           const dx = mousePos.x - lastMousePos.x;
           const dy = mousePos.y - lastMousePos.y;
 
-          // Update the position of the dragged shape
-          const draggedShape = shapes.find(shape => shape.id === dragShapeId);
-          if (draggedShape) {
-            if (draggedShape.type === "line") {
-              draggedShape.start.x += dx;
-              draggedShape.start.y += dy;
-              draggedShape.end.x += dx;
-              draggedShape.end.y += dy;
-            } else if (draggedShape.type === "square") {
-              draggedShape.start.x += dx;
-              draggedShape.start.y += dy;
-            } else if (draggedShape.type === "rectangle") {
-              draggedShape.start.x += dx;
-              draggedShape.start.y += dy;
-            } else {
-              draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy } as Point));
-            }
-            debouncedSetShapes([...shapes]);
-            drawShapes(gl, shapes);
-          }
+          if (isDraggingVertex) {
+            console.log("=== Is dragging vertex")
+            if (draggedVertexWithShape?.shape.type === "line") {
+              if (draggedVertexWithShape.vertex == draggedVertexWithShape.shape.start) {
+                draggedVertexWithShape.shape.start.x += dx
+                draggedVertexWithShape.shape.start.y += dy
+              } else {
+                draggedVertexWithShape.shape.end.x += dx
+                draggedVertexWithShape.shape.end.y += dy
+              }
+            } else if (draggedVertexWithShape?.shape.type === "square") {
 
-          lastMousePos = mousePos;
-        };
+            } else if (draggedVertexWithShape?.shape.type === "rectangle") {
+
+            } else if (draggedVertexWithShape?.shape.type === "polygon") {
+              
+            }
+            return;
+          }
+          if (isDraggingShape) {
+            console.log("=== Is dragging shape")
+            // Update the position of the dragged shape
+            const draggedShape = shapes.find(shape => shape.id === dragShapeId);
+            if (draggedShape) {
+              if (draggedShape.type === "line") {
+                draggedShape.start.x += dx;
+                draggedShape.start.y += dy;
+                draggedShape.end.x += dx;
+                draggedShape.end.y += dy;
+              } else if (draggedShape.type === "square") {
+                draggedShape.start.x += dx;
+                draggedShape.start.y += dy;
+              } else if (draggedShape.type === "rectangle") {
+                draggedShape.start.x += dx;
+                draggedShape.start.y += dy;
+              } else {
+                draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy } as Point));
+              }
+              debouncedSetShapes([...shapes]);
+              drawShapes(gl, shapes);
+            }
+  
+            lastMousePos = mousePos;
+            return;
+          } 
+        }; 
 
         const mouseUpHandler = () => {
           isDraggingShape = false;
@@ -305,11 +334,17 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         canvas.addEventListener('mousemove', (event) => {
           const mousePos = getCanvasMousePosition(event) as Point;
           const hitShape = shapes.find(shape => hitTest(mousePos, shape));
-          if (hitShape) {
+          const vertexWithShape = shapes.slice().reverse().flatMap(shape => getVertexWithShapes(shape))
+          const hitVertexWithShape = vertexWithShape.find(vertexWithShape => hitVertexTest(mousePos, vertexWithShape.vertex))
+          if (hitVertexWithShape) {
+            canvas.classList.remove("pointer");
+            canvas.classList.add("crosshair")
+          } else if (hitShape) {
             canvas.classList.remove("pointer");
             canvas.classList.add("grabbable");
           } else {
             canvas.classList.remove("grabbable");
+            canvas.classList.remove("crosshair");
             canvas.classList.add("pointer");
           }
         });
