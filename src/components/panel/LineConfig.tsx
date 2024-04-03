@@ -203,7 +203,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                         type="number"
                                         max={255}
-                                        value={line.start.color.r}
+                                        value={(line.start.color.r + line.end.color.r) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.r = parseInt(e.target.value)
@@ -215,7 +215,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                         type="number"
                                         max={255}
-                                        value={line.start.color.g}
+                                        value={(line.start.color.g + line.end.color.g) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.g = parseInt(e.target.value)
@@ -227,7 +227,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                         type="number"
                                         max={255}
-                                        value={line.start.color.b}
+                                        value={(line.start.color.b + line.end.color.b) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.b = parseInt(e.target.value)
@@ -240,7 +240,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         type="number"
                                         max={1}
                                         step={0.01}
-                                        value={line.start.color.a}
+                                        value={(line.start.color.a + line.end.color.a) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.a = parseFloat(e.target.value)

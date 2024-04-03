@@ -209,7 +209,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               draggedShape.start.x += dx;
               draggedShape.start.y += dy;
             } else {
-              draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy } as Point));
+              draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy, color: point.color } as Point));
             }
             debouncedSetShapes([...shapes]);
             drawShapes(gl, shapes);
@@ -276,6 +276,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           } else {
             const polygonRadius = 5;
             const polygonVertices = 8;
+            const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newPolygon: Shape = {
               id: `polygon-${uuidv4()}`,
               type: "polygon",
@@ -286,11 +287,9 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                   x: mousePos.x + polygonRadius * Math.cos(angle),
                   y: mousePos.y + polygonRadius * Math.sin(angle),
                   z: 0,
-                  color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+                  color: color,
                 };
               }),
-              edges: [],
-              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newPolygon]);

@@ -178,7 +178,7 @@ export function renderPolygon(
     //     // 0.4, 0.7, 0.8, // 5
     // ];
 
-    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r, vertex.color.g, vertex.color.b])
+    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r / 255.0, vertex.color.g / 255.0, vertex.color.b / 255.0])
 
     console.log("Colors")
     console.log(colors)
