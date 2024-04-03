@@ -81,17 +81,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
         return centroid;
     }
 
-    // Sort vertices in counterclockwise order
-    function sortVertices(vertices: Point[]) {
-        const centroid = calculateCentroid(vertices);
-        vertices.sort((a, b) => {
-            const angleA = Math.atan2(a.y - centroid.y, a.x - centroid.x);
-            const angleB = Math.atan2(b.y - centroid.y, b.x - centroid.x);
-            return angleA - angleB;
-        });
-        return vertices;
-    }
-
     function findClosestEdge(vertices: Point[]) {
         const centroid = calculateCentroid(vertices);
         let closestEdge = { index: 0, distance: Infinity };
@@ -232,23 +221,7 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
 													})
 												))}
 
-                        {/* {polygon.vertices.map((vertex, vertexIndex) => (
-                            <div key={vertexIndex}
-                                ref={(el) => colorPickerRefs.current[polygon.id] = { ...colorPickerRefs.current[polygon.id], vertex: el }}
-                                style={{ display: colorPickerVisibility[polygon.id]?.vertexIdx === vertexIndex ? 'block' : 'none' }}
-                                className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
-                            >
-                                <Chrome
-                                    color={colorToHex(vertex.color)}
-                                    onChange={(color) => {
-                                        handleVertexColorChange(index, vertexIndex, color.rgba);
-                                    }}
-                                />
-                            </div>
-                        ))} */}
-
                         {/* Polygon Config */}
-
                         <div className="flex w-full snap-start flex-col gap-3 pr-2">
                             <div className="mb-1 flex w-full justify-between">
                             <div className="flex items-center justify-center gap-2">
@@ -385,7 +358,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                             onChange={(e) => {
                                                 const newPolygons = [...polygons]
                                                 newPolygons[index].vertices[vertexIndex].x = parseInt(e.target.value)
-                                                newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
                                                 setPolygons(newPolygons)
                                             }} />
                                     </div>
@@ -398,7 +370,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                             onChange={(e) => {
                                                 const newPolygons = [...polygons]
                                                 newPolygons[index].vertices[vertexIndex].y = parseInt(e.target.value)
-                                                newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
                                                 setPolygons(newPolygons)
                                             }} />
                                     </div>
@@ -407,7 +378,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                         onClick={() => {
                                             const newPolygons = [...polygons]
                                             newPolygons[index].vertices.splice(vertexIndex, 1)
-                                            newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
 
                                             // If it is the third last vertex, remove the polygon
                                             if (newPolygons[index].vertices.length === 2) {
@@ -427,7 +397,6 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
                                     const newPolygons = [...polygons];
                                     const edgeIndex = findClosestEdge(newPolygons[index].vertices);
                                     newPolygons[index].vertices = insertVertexOutside(newPolygons[index].vertices, edgeIndex);
-                                    newPolygons[index].vertices = sortVertices(newPolygons[index].vertices);
                                     setPolygons(newPolygons);
                                 }}
                             >Add Vertex</Button>
