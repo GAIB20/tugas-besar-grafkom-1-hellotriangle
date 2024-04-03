@@ -222,7 +222,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           if (shapes.some(shape => hitTest(mousePos, shape))) return;
 
           if (shapePanel === "line") {
-            const lineLength = 10;
+            const lineLength = 7;
             const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newLine: Shape = {
               id: `line-${uuidv4()}`,
