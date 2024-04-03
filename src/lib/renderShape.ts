@@ -127,13 +127,13 @@ export function renderRectangle(
 
     // Colors for each vertex
     const colors = [
-        1.0, 0.0, 0.0, // 1
-        0.0, 1.0, 0.0, // 2 
-        0.0, 0.0, 1.0, // 3
-        0.0, 1.0, 0.0, // 2
-        0.4, 0.7, 0.8, // 4
-        0.0, 0.0, 1.0, // 3
-    ];
+        rectangle.vertexColors.bl.r / 255.0, rectangle.vertexColors.bl.g / 255.0, rectangle.vertexColors.bl.b / 255.0, // 4
+        rectangle.vertexColors.br.r / 255.0, rectangle.vertexColors.br.g / 255.0, rectangle.vertexColors.br.b / 255.0, // 3
+        rectangle.vertexColors.tl.r / 255.0, rectangle.vertexColors.tl.g / 255.0, rectangle.vertexColors.tl.b / 255.0, // 1
+        rectangle.vertexColors.br.r / 255.0, rectangle.vertexColors.br.g / 255.0, rectangle.vertexColors.br.b / 255.0, // 3
+        rectangle.vertexColors.tr.r / 255.0, rectangle.vertexColors.tr.g / 255.0, rectangle.vertexColors.tr.b / 255.0, // 2 
+        rectangle.vertexColors.tl.r / 255.0, rectangle.vertexColors.tl.g / 255.0, rectangle.vertexColors.tl.b / 255.0, // 2
+    ]
 
     // Combine position and color data
     const vertices = new Float32Array([

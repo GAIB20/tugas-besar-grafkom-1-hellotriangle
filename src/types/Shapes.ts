@@ -1,5 +1,3 @@
-import { SidebarCloseIcon } from "lucide-react";
-
 type Color = {
     r: number;
     g: number;
@@ -27,7 +25,6 @@ type Line = {
     type: 'line';
     start: Point
     end: Point;
-    color: Color;
     effect: Transformation;
 }
 
@@ -51,7 +48,12 @@ type Rectangle = {
     start: Point;
     width: number;
     height: number;
-    color: Color;
+    vertexColors: {
+        tl: Color;
+        tr: Color;
+        bl: Color;
+        br: Color;
+    };
     effect: Transformation;
 }
 

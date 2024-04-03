@@ -14,18 +14,39 @@ import { useEffect, useRef, useState } from "react"
 import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
-import { debounce } from "lodash"
+import { CornerBottomLeftIcon, CornerBottomRightIcon, CornerTopLeftIcon, CornerTopRightIcon } from "@radix-ui/react-icons"
+import { Square as SquareIcon } from "lucide-react"
 
 interface RectangleConfigProps {
     shapes: Shape[]
     setShapes: (shapes: Shape[]) => void
 }
 
+interface ColorPickerVisibility {
+    [rectangleId: string]: {
+      rectangle: boolean;
+      tl: boolean;
+      tr: boolean;
+      bl: boolean;
+      br: boolean;
+    };
+}
+
+interface ColorPickerRefs {
+    [rectangleId: string]: {
+      rectangle: HTMLElement | null;
+      tl: HTMLElement | null;
+			tr: HTMLElement | null;
+			bl: HTMLElement | null;
+			br: HTMLElement | null;
+    };
+}
+
 export default function RectangleConfig({ shapes, setShapes }: RectangleConfigProps): JSX.Element {
     const [rectangles, setRectangles] = useState<Rectangle[]>(shapes.filter(shape => shape.type === 'rectangle') as Rectangle[])
     const [showModal, setShowModal] = useState<number>(-1)
-    const [showColorPicker, setShowColorPicker] = useState<boolean>(false)
-    const colorPickerRef = useRef<HTMLDivElement>(null);
+    const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
+    const colorPickerRefs = useRef<ColorPickerRefs>({});
 
     useEffect(() => {
         console.log("Rectangles Updated")
@@ -45,18 +66,21 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
     }, [rectangles])
 
     useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (colorPickerRef.current && !colorPickerRef.current.contains(event.target as Node)) {
-                setShowColorPicker(false);
-            }
-        };
-    
-        document.addEventListener('mousedown', handleClickOutside);
-    
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, []);
+			const handleClickOutside = (event: MouseEvent) => {
+				const newVisibility: ColorPickerVisibility = { ...colorPickerVisibility };
+				Object.keys(colorPickerRefs.current).forEach((rectangleId) => {
+					Object.keys(colorPickerRefs.current[rectangleId]).forEach((pickerType) => {
+						if (colorPickerRefs.current[rectangleId][pickerType as keyof ColorPickerRefs[string]] && !colorPickerRefs.current[rectangleId][pickerType as keyof ColorPickerRefs[string]]?.contains(event.target as Node)) {
+							newVisibility[rectangleId] = { ...(newVisibility[rectangleId] || { rectangle: false, tl: false, tr: false, bl: false, br: false }), [pickerType]: false };
+						}
+					});
+				});
+				setColorPickerVisibility(newVisibility);
+			};
+		
+			document.addEventListener('mousedown', handleClickOutside);
+			return () => document.removeEventListener('mousedown', handleClickOutside);
+		}, [colorPickerVisibility]);
 
     return (
         <div className="flex size-full flex-col items-center justify-between">
@@ -64,6 +88,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-8 text-gray-100">
                 {rectangles.map((rectangle, index) => (
                     <div key={index}>
+												{/* Transform Modal */}
                         {(showModal === index) && 
                             <TransformModal
                                 shapes={rectangles}
@@ -71,18 +96,96 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 shapeIndex={index}
                                 onClose={() => setShowModal(-1)}
                         />}
-                        {(showColorPicker) && 
-                            <div ref={colorPickerRef} className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2">
-                                <Chrome
-                                    color={colorToHex(rectangle.color)}
-                                    onChange={(color) => debounce(() => {
-                                        const newRectangles = [...rectangles]
-                                        newRectangles[index].color = color.rgba
-                                        setRectangles(newRectangles)
-                                    }, 10)()}
-                                />
-                            </div>
-                        }
+
+												{/* Color Pickers */}
+												<div
+													ref={(el) => colorPickerRefs.current[rectangle.id] = { ...colorPickerRefs.current[rectangle.id], rectangle: el }}
+													style={{ display: colorPickerVisibility[rectangle.id]?.rectangle ? 'block' : 'none' }}
+													className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+												>
+													<Chrome
+														// Color is averaged from the 4 corners
+														color={colorToHex({
+															r: Math.round((rectangle.vertexColors.tl.r + rectangle.vertexColors.tr.r + rectangle.vertexColors.bl.r + rectangle.vertexColors.br.r) / 4),
+															g: Math.round((rectangle.vertexColors.tl.g + rectangle.vertexColors.tr.g + rectangle.vertexColors.bl.g + rectangle.vertexColors.br.g) / 4),
+															b: Math.round((rectangle.vertexColors.tl.b + rectangle.vertexColors.tr.b + rectangle.vertexColors.bl.b + rectangle.vertexColors.br.b) / 4),
+															a: 1
+														})}
+														onChange={(color) => {
+																const newRectangles = [...rectangles]
+																newRectangles[index].vertexColors.tl = color.rgba
+																newRectangles[index].vertexColors.tr = color.rgba
+																newRectangles[index].vertexColors.bl = color.rgba
+																newRectangles[index].vertexColors.br = color.rgba
+																setRectangles(newRectangles)
+														}}
+													/>
+												</div>
+
+												<div
+														ref={(el) => colorPickerRefs.current[rectangle.id] = { ...colorPickerRefs.current[rectangle.id], tl: el }}
+														style={{ display: colorPickerVisibility[rectangle.id]?.tl ? 'block' : 'none' }}
+														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+												>
+													<Chrome
+														color={colorToHex(rectangle.vertexColors.tl)}
+														onChange={(color) => {
+																const newRectangles = [...rectangles]
+																newRectangles[index].vertexColors.tl = color.rgba
+																setRectangles(newRectangles)
+															}
+														}
+													/>
+												</div>
+
+												<div
+														ref={(el) => colorPickerRefs.current[rectangle.id] = { ...colorPickerRefs.current[rectangle.id], tr: el }}
+														style={{ display: colorPickerVisibility[rectangle.id]?.tr ? 'block' : 'none' }}
+														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+												>
+													<Chrome
+														color={colorToHex(rectangle.vertexColors.tr)}
+														onChange={(color) => {
+																const newRectangles = [...rectangles]
+																newRectangles[index].vertexColors.tr = color.rgba
+																setRectangles(newRectangles)
+															}
+														}
+													/>
+												</div>
+
+												<div
+														ref={(el) => colorPickerRefs.current[rectangle.id] = { ...colorPickerRefs.current[rectangle.id], bl: el }}
+														style={{ display: colorPickerVisibility[rectangle.id]?.bl ? 'block' : 'none' }}
+														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+												>
+													<Chrome
+														color={colorToHex(rectangle.vertexColors.bl)}
+														onChange={(color) => {
+																const newRectangles = [...rectangles]
+																newRectangles[index].vertexColors.bl = color.rgba
+																setRectangles(newRectangles)
+															}
+														}
+													/>
+												</div>
+
+												<div
+														ref={(el) => colorPickerRefs.current[rectangle.id] = { ...colorPickerRefs.current[rectangle.id], br: el }}
+														style={{ display: colorPickerVisibility[rectangle.id]?.br ? 'block' : 'none' }}
+														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
+												>
+													<Chrome
+														color={colorToHex(rectangle.vertexColors.br)}
+														onChange={(color) => {
+																const newRectangles = [...rectangles]
+																newRectangles[index].vertexColors.br = color.rgba
+																setRectangles(newRectangles)
+															}
+														}
+													/>
+												</div>	
+                        
                         <div className="flex w-full snap-start flex-col gap-3 pr-2">
                             <div className="mb-1 flex w-full justify-between">
                             <div className="flex items-center justify-center gap-2">
@@ -118,70 +221,93 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 </button>
                             </div>
 
-                            <div className="flex w-full items-center gap-6 rounded-lg border-[0.5px] border-gray-700 px-2 py-1">
-                                
-                                <div className="flex items-center gap-2.5">    
-                                    <button
-                                        onClick={() => setShowColorPicker(!showColorPicker)}
-                                        style={{ backgroundColor: colorToRGBA(rectangle.color) }}
-                                        className="mb-0.5 aspect-square size-3 rounded-full"
-                                    />
-                                    <p className="mb-1 font-mono">rgba</p>
-                                </div>
+                            <div className="my-2 flex items-center justify-between px-2">
+															<div className="flex items-center gap-2">
+																<button
+																		onClick={() => {
+																				setColorPickerVisibility({
+																						...colorPickerVisibility,
+																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], rectangle: !colorPickerVisibility[rectangle.id]?.rectangle }
+																				});
+																		}}
+																		style={{ backgroundColor: colorToRGBA({
+																			r: Math.round((rectangle.vertexColors.tl.r + rectangle.vertexColors.tr.r + rectangle.vertexColors.bl.r + rectangle.vertexColors.br.r) / 4),
+																			g: Math.round((rectangle.vertexColors.tl.g + rectangle.vertexColors.tr.g + rectangle.vertexColors.bl.g + rectangle.vertexColors.br.g) / 4),
+																			b: Math.round((rectangle.vertexColors.tl.b + rectangle.vertexColors.tr.b + rectangle.vertexColors.bl.b + rectangle.vertexColors.br.b) / 4),
+																			a: 1
+																		}) }}
+																		className="mb-0.5 aspect-square size-3 rounded-full"
+																/>
+																<p>
+																	<SquareIcon size={12} />
+																</p>
 
-                                <div className="flex w-full items-center gap-0.5">
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        min={0}
-                                        max={255}
-                                        value={rectangle.color.r}
-                                        onChange={(e) => {
-                                            const newrectangles = [...rectangles]
-                                            newrectangles[index].color.r = parseInt(e.target.value)
-                                            setRectangles(newrectangles)
-                                        }}
-                                    />
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        min={0}
-                                        max={255}
-                                        value={rectangle.color.g}
-                                        onChange={(e) => {
-                                            const newrectangles = [...rectangles]
-                                            newrectangles[index].color.g = parseInt(e.target.value)
-                                            setRectangles(newrectangles)
-                                        }}
-                                    />
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        min={0}
-                                        max={255}
-                                        value={rectangle.color.b}
-                                        onChange={(e) => {
-                                            const newrectangles = [...rectangles]
-                                            newrectangles[index].color.b = parseInt(e.target.value)
-                                            setRectangles(newrectangles)
-                                        }}
-                                    />
-                                    <Input
-                                        className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
-                                        type="number"
-                                        min={0}
-                                        max={1}
-                                        step={0.01}
-                                        value={rectangle.color.a}
-                                        onChange={(e) => {
-                                            const newrectangles = [...rectangles]
-                                            newrectangles[index].color.a = parseFloat(e.target.value)
-                                            setRectangles(newrectangles)
-                                        }}
-                                    />
-                                </div>
+															</div>
+															<div className="flex items-center gap-2">
+																<button
+																		onClick={() => {
+																				setColorPickerVisibility({
+																						...colorPickerVisibility,
+																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], tl: !colorPickerVisibility[rectangle.id]?.tl }
+																				});
+																		}}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.tl) }}
+																		className="mb-0.5 aspect-square size-3 rounded-full"
+																/>
+																<p className="text-xs">
+																	<CornerTopLeftIcon />
+																</p>
 
-                            </div> 
+															</div>
+															<div className="flex items-center gap-2">
+																<button
+																		onClick={() => {
+																				setColorPickerVisibility({
+																						...colorPickerVisibility,
+																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], tr: !colorPickerVisibility[rectangle.id]?.tr }
+																				});
+																		}}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.tr) }}
+																		className="mb-0.5 aspect-square size-3 rounded-full"
+																/>
+																<p className="text-xs">
+																	<CornerTopRightIcon />
+																</p>
+
+															</div>
+															<div className="flex items-center gap-2">
+																<button
+																		onClick={() => {
+																				setColorPickerVisibility({
+																						...colorPickerVisibility,
+																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], bl: !colorPickerVisibility[rectangle.id]?.bl }
+																				});
+																		}}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.bl) }}
+																		className="mb-0.5 aspect-square size-3 rounded-full"
+																/>
+																<p className="text-xs">
+																	<CornerBottomLeftIcon />
+																</p>
+
+															</div>
+															<div className="flex items-center gap-2">
+																<button
+																		onClick={() => {
+																				setColorPickerVisibility({
+																						...colorPickerVisibility,
+																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], br: !colorPickerVisibility[rectangle.id]?.br }
+																				});
+																		}}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.br) }}
+																		className="mb-0.5 aspect-square size-3 rounded-full"
+																/>
+																<p className="text-xs">
+																	<CornerBottomRightIcon />
+																</p>
+
+															</div>
+														</div>
 
                             <div className="flex w-full gap-4">
                                 <div className="flex items-center gap-2.5">
@@ -253,6 +379,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
+											const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
                         setRectangles([
                             ...rectangles,
                             {
@@ -261,7 +388,12 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 width: 12,
                                 height: 8,
-                                color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+																vertexColors: {
+																		tl: color,
+																		tr: color,
+																		bl: color,
+																		br: color,
+																},
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
                         ])
