@@ -73,14 +73,14 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         let isDraggingVertex = false;
         let dragShapeId: string | null = null;
         let lastMousePos = { x: 0, y: 0 };
-        let draggedVertexWithShape: VertexWithShape | null = null
+        let draggedVertexWithShape: VertexWithShape | null = null;
 
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
           if (shape.type === "line") {
             const line = transformLine(shape);
 
-            const hitTolerance = 2;
+            const hitTolerance = 1;
             const x0 = mousePos.x;
             const y0 = mousePos.y;
 
@@ -138,7 +138,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const hitVertexTest = (mousePos: Point, vertex: Point) => {
-          const hitTolerance = 2
+          const hitTolerance = 0.5
           const dx = mousePos.x - vertex.x
           const dy = mousePos.y - vertex.y
           const distance = Math.sqrt(dx*dx + dy*dy)
@@ -175,10 +175,9 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           const hitVertexWithShape = vertexWithShape.find(vertexWithShape => hitVertexTest(mousePos, vertexWithShape.vertex))
           const hitShape = shapes.slice().reverse().find(shape => hitTest(mousePos, shape));
 
-          console.log(`Hit vertex with shape: ${hitVertexWithShape}`)
-
           if (hitVertexWithShape) {
             isDraggingVertex = true;
+            draggedVertexWithShape = hitVertexWithShape;
             lastMousePos = mousePos;
 
             if (canvas.classList.contains("grabbable") || isDraggingVertex) {
@@ -203,15 +202,14 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           const dx = mousePos.x - lastMousePos.x;
           const dy = mousePos.y - lastMousePos.y;
 
-          if (isDraggingVertex) {
-            console.log("=== Is dragging vertex")
-            if (draggedVertexWithShape?.shape.type === "line") {
+          if (isDraggingVertex && draggedVertexWithShape) {
+            if (draggedVertexWithShape.shape.type === "line") {
               if (draggedVertexWithShape.vertex == draggedVertexWithShape.shape.start) {
-                draggedVertexWithShape.shape.start.x += dx
-                draggedVertexWithShape.shape.start.y += dy
+                draggedVertexWithShape.shape.start.x = mousePos.x
+                draggedVertexWithShape.shape.start.y = mousePos.y
               } else {
-                draggedVertexWithShape.shape.end.x += dx
-                draggedVertexWithShape.shape.end.y += dy
+                draggedVertexWithShape.shape.end.x = mousePos.x
+                draggedVertexWithShape.shape.end.y = mousePos.y
               }
             } else if (draggedVertexWithShape?.shape.type === "square") {
 
@@ -220,10 +218,13 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             } else if (draggedVertexWithShape?.shape.type === "polygon") {
               
             }
+            debouncedSetShapes([...shapes]);
+            drawShapes(gl, shapes);
+            lastMousePos = mousePos;
             return;
           }
+
           if (isDraggingShape) {
-            console.log("=== Is dragging shape")
             // Update the position of the dragged shape
             const draggedShape = shapes.find(shape => shape.id === dragShapeId);
             if (draggedShape) {
@@ -252,6 +253,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
 
         const mouseUpHandler = () => {
           isDraggingShape = false;
+          isDraggingVertex = false;
           dragShapeId = null;
 
           if (canvas.classList.contains("grabbing")) {

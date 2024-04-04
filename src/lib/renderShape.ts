@@ -13,12 +13,8 @@ export function renderLine(
         transformedLine.start.x, transformedLine.start.y,
         transformedLine.end.x, transformedLine.end.y,
     ];
-
-    console.log(`Before adjustments: ${verticesUncolored}`)
     
     adjustHorizontalStretch(gl, verticesUncolored)
-
-    console.log(`After adjustments: ${verticesUncolored}`)
 
     const colors = [
         line.start.color.r / 255.0, line.start.color.g / 255.0, line.start.color.b / 255.0,
@@ -228,7 +224,6 @@ export function renderPolygon(
  */
 function adjustHorizontalStretch(gl: WebGLRenderingContext, vertices: Float32Array | number[]) {
     const horizontalStretch = gl.canvas.width / gl.canvas.height
-    console.log(`Horizontal Stretch: ${horizontalStretch}`)
     
     vertices.forEach((_, index) => {
         if (index % 2 === 0) {
