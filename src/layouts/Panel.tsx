@@ -80,6 +80,12 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
 	}
 
     const handleCombineShapes = () => {
+
+        if (shapes.length < 2) {
+            toast.error('Have at least two shapes to combine!');
+            return;
+        }
+
         const newVertices = convexHull(shapes);
         const newPolygon = {
             id: `polygon-${uuidV4()}`,
