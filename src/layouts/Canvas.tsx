@@ -73,14 +73,15 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         let isDraggingVertex = false;
         let dragShapeId: string | null = null;
         let lastMousePos = { x: 0, y: 0 };
-        let draggedVertexWithShape: VertexWithShape | null = null
+        let draggedVertexWithShape: VertexWithShape | null = null;
+        let cornerDraggedForRect: 'tl' | 'tr' | 'bl' | 'br' | null = null;
 
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
           if (shape.type === "line") {
             const line = transformLine(shape);
 
-            const hitTolerance = 2;
+            const hitTolerance = 1;
             const x0 = mousePos.x;
             const y0 = mousePos.y;
 
@@ -138,7 +139,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const hitVertexTest = (mousePos: Point, vertex: Point) => {
-          const hitTolerance = 2
+          const hitTolerance = 0.5
           const dx = mousePos.x - vertex.x
           const dy = mousePos.y - vertex.y
           const distance = Math.sqrt(dx*dx + dy*dy)
@@ -177,7 +178,13 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
 
           if (hitVertexWithShape) {
             isDraggingVertex = true;
+            draggedVertexWithShape = hitVertexWithShape;
             lastMousePos = mousePos;
+
+            if (canvas.classList.contains("grabbable") || isDraggingVertex) {
+              canvas.classList.remove("grabbable");
+              canvas.classList.add("crosshair");
+            }
 
           } else if (hitShape) {
             isDraggingShape = true;
@@ -192,38 +199,117 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         };
 
         const mouseMoveHandler = (event: MouseEvent) => {
-          if (!isDraggingShape) return;
           const mousePos = getCanvasMousePosition(event);
           const dx = mousePos.x - lastMousePos.x;
           const dy = mousePos.y - lastMousePos.y;
 
-          // Update the position of the dragged shape
-          const draggedShape = shapes.find(shape => shape.id === dragShapeId);
-          if (draggedShape) {
-            if (draggedShape.type === "line") {
-              draggedShape.start.x += dx;
-              draggedShape.start.y += dy;
-              draggedShape.end.x += dx;
-              draggedShape.end.y += dy;
-            } else if (draggedShape.type === "square") {
-              draggedShape.start.x += dx;
-              draggedShape.start.y += dy;
-            } else if (draggedShape.type === "rectangle") {
-              draggedShape.start.x += dx;
-              draggedShape.start.y += dy;
-            } else {
-              draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy, color: point.color } as Point));
+          if (isDraggingVertex && draggedVertexWithShape) {
+            if (draggedVertexWithShape.shape.type === "line") {
+              if (draggedVertexWithShape.vertex == draggedVertexWithShape.shape.start) {
+                draggedVertexWithShape.shape.start.x = mousePos.x
+                draggedVertexWithShape.shape.start.y = mousePos.y
+              } else {
+                draggedVertexWithShape.shape.end.x = mousePos.x
+                draggedVertexWithShape.shape.end.y = mousePos.y
+              }
+            } else if (draggedVertexWithShape.shape.type === "square") {
+              const square = draggedVertexWithShape.shape;
+              if (draggedVertexWithShape.vertex === square.start || cornerDraggedForRect === 'bl') {
+                  // Adjust bottom left vertex
+                  cornerDraggedForRect = 'bl';
+                  square.sideLength = Math.abs(mousePos.x - (square.start.x + square.sideLength));
+                  square.start.x = mousePos.x;
+                  square.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === square.start.x + square.sideLength && draggedVertexWithShape.vertex.y === square.start.y) || cornerDraggedForRect === 'br') {
+                  // Adjust bottom right vertex
+                  cornerDraggedForRect = 'br';
+                  square.sideLength = Math.abs(mousePos.x - square.start.x);
+                  square.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === square.start.x && draggedVertexWithShape.vertex.y === square.start.y + square.sideLength) || cornerDraggedForRect === 'tl') {
+                  // Adjust top left vertex
+                  cornerDraggedForRect = 'tl';
+                  square.sideLength = Math.abs(mousePos.x - (square.start.x + square.sideLength));
+                  square.start.x = mousePos.x;
+                  square.start.y = mousePos.y - square.sideLength;
+              } else {
+                  // Adjust top right vertex
+                  cornerDraggedForRect = 'tr';
+                  square.sideLength = Math.abs(mousePos.x - square.start.x);
+                  square.start.y = mousePos.y - square.sideLength;
+              }
+              
+            } else if (draggedVertexWithShape.shape.type === "rectangle") {
+              const rectangle = draggedVertexWithShape.shape;
+              if (draggedVertexWithShape.vertex === rectangle.start || cornerDraggedForRect === 'bl') {
+                  // Adjust bottom left vertex
+                  cornerDraggedForRect = 'bl';
+                  rectangle.width = Math.abs(mousePos.x - (rectangle.start.x + rectangle.width));
+                  rectangle.height = Math.abs(mousePos.y - (rectangle.start.y + rectangle.height));
+                  rectangle.start.x = mousePos.x;
+                  rectangle.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === rectangle.start.x + rectangle.width && draggedVertexWithShape.vertex.y === rectangle.start.y) || cornerDraggedForRect === 'br') {
+                  // Adjust bottom right vertex
+                  cornerDraggedForRect = 'br';
+                  rectangle.width = Math.abs(mousePos.x - rectangle.start.x);
+                  rectangle.height = Math.abs(mousePos.y - (rectangle.start.y + rectangle.height));
+                  rectangle.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === rectangle.start.x && draggedVertexWithShape.vertex.y === rectangle.start.y + rectangle.height) || cornerDraggedForRect === 'tl') {
+                  // Adjust top left vertex
+                  cornerDraggedForRect = 'tl';
+                  rectangle.width = Math.abs(mousePos.x - (rectangle.start.x + rectangle.width));
+                  rectangle.height = Math.abs(mousePos.y - rectangle.start.y);
+                  rectangle.start.x = mousePos.x;
+              } else {
+                  // Adjust top right vertex
+                  cornerDraggedForRect = 'tr';
+                  rectangle.width = Math.abs(mousePos.x - rectangle.start.x);
+                  rectangle.height = Math.abs(mousePos.y - rectangle.start.y);
+                  rectangle.start.y = mousePos.y - rectangle.height;
+              }
+
+            } else if (draggedVertexWithShape.shape.type === "polygon") {
+              draggedVertexWithShape.vertex.x += dx;
+              draggedVertexWithShape.vertex.y += dy;
             }
+
             debouncedSetShapes([...shapes]);
             drawShapes(gl, shapes);
+            lastMousePos = mousePos;
+            return;
           }
 
-          lastMousePos = mousePos;
-        };
+          if (isDraggingShape) {
+            // Update the position of the dragged shape
+            const draggedShape = shapes.find(shape => shape.id === dragShapeId);
+            if (draggedShape) {
+              if (draggedShape.type === "line") {
+                draggedShape.start.x += dx;
+                draggedShape.start.y += dy;
+                draggedShape.end.x += dx;
+                draggedShape.end.y += dy;
+              } else if (draggedShape.type === "square") {
+                draggedShape.start.x += dx;
+                draggedShape.start.y += dy;
+              } else if (draggedShape.type === "rectangle") {
+                draggedShape.start.x += dx;
+                draggedShape.start.y += dy;
+              } else {
+                draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy, color: point.color } as Point));
+              }
+              debouncedSetShapes([...shapes]);
+              drawShapes(gl, shapes);
+            }
+  
+            lastMousePos = mousePos;
+            return;
+          } 
+        }; 
 
         const mouseUpHandler = () => {
           isDraggingShape = false;
+          isDraggingVertex = false;
           dragShapeId = null;
+          cornerDraggedForRect = null;
 
           if (canvas.classList.contains("grabbing")) {
             canvas.classList.remove("grabbing");
@@ -309,11 +395,17 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         canvas.addEventListener('mousemove', (event) => {
           const mousePos = getCanvasMousePosition(event) as Point;
           const hitShape = shapes.find(shape => hitTest(mousePos, shape));
-          if (hitShape) {
+          const vertexWithShape = shapes.slice().reverse().flatMap(shape => getVertexWithShapes(shape))
+          const hitVertexWithShape = vertexWithShape.find(vertexWithShape => hitVertexTest(mousePos, vertexWithShape.vertex))
+          if (hitVertexWithShape) {
+            canvas.classList.remove("pointer");
+            canvas.classList.add("crosshair")
+          } else if (hitShape) {
             canvas.classList.remove("pointer");
             canvas.classList.add("grabbable");
           } else {
             canvas.classList.remove("grabbable");
+            canvas.classList.remove("crosshair");
             canvas.classList.add("pointer");
           }
         });

@@ -198,6 +198,10 @@ input::-webkit-inner-spin-button {
   cursor: url('/cursor-grabbed.svg'), grabbing;
 }
 
+.crosshair {
+  cursor: crosshair;
+}
+
 @keyframes fadeIn {
   from { opacity: 0.5; }
   to { opacity: 1; }
