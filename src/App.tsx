@@ -4,6 +4,7 @@ import Panel from "./layouts/Panel"
 import { Shape } from "./types/Shapes"
 import { motion } from 'framer-motion';
 import logo from "./assets/logo.png";
+import MusicPlayer from "./components/player/MusicPlayer";
 
 function App(): JSX.Element {
 
@@ -43,6 +44,7 @@ function App(): JSX.Element {
         </div>
     </motion.div> :
     <div className="fadeIn flex h-screen w-screen overflow-hidden bg-zinc-950">
+      <MusicPlayer />
       <Panel shapePanel={shapePanel} setShapePanel={setShapePanel} shapes={shapes} setShapes={setShapes} />
       <Canvas shapePanel={shapePanel} shapes={shapes} setShapes={setShapes} />
     </div>
