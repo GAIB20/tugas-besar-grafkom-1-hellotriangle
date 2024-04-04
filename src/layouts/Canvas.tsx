@@ -220,8 +220,6 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                   square.sideLength = Math.abs(mousePos.x - (square.start.x + square.sideLength));
                   square.start.x = mousePos.x;
                   square.start.y = mousePos.y;
-                  draggedVertexWithShape.vertex.x = mousePos.x;
-                  draggedVertexWithShape.vertex.y = mousePos.y;
               } else if ((draggedVertexWithShape.vertex.x === square.start.x + square.sideLength && draggedVertexWithShape.vertex.y === square.start.y) || cornerDraggedForRect === 'br') {
                   // Adjust bottom right vertex
                   cornerDraggedForRect = 'br';
@@ -241,6 +239,33 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               }
               
             } else if (draggedVertexWithShape.shape.type === "rectangle") {
+              const rectangle = draggedVertexWithShape.shape;
+              if (draggedVertexWithShape.vertex === rectangle.start || cornerDraggedForRect === 'bl') {
+                  // Adjust bottom left vertex
+                  cornerDraggedForRect = 'bl';
+                  rectangle.width = Math.abs(mousePos.x - (rectangle.start.x + rectangle.width));
+                  rectangle.height = Math.abs(mousePos.y - (rectangle.start.y + rectangle.height));
+                  rectangle.start.x = mousePos.x;
+                  rectangle.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === rectangle.start.x + rectangle.width && draggedVertexWithShape.vertex.y === rectangle.start.y) || cornerDraggedForRect === 'br') {
+                  // Adjust bottom right vertex
+                  cornerDraggedForRect = 'br';
+                  rectangle.width = Math.abs(mousePos.x - rectangle.start.x);
+                  rectangle.height = Math.abs(mousePos.y - (rectangle.start.y + rectangle.height));
+                  rectangle.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === rectangle.start.x && draggedVertexWithShape.vertex.y === rectangle.start.y + rectangle.height) || cornerDraggedForRect === 'tl') {
+                  // Adjust top left vertex
+                  cornerDraggedForRect = 'tl';
+                  rectangle.width = Math.abs(mousePos.x - (rectangle.start.x + rectangle.width));
+                  rectangle.height = Math.abs(mousePos.y - rectangle.start.y);
+                  rectangle.start.x = mousePos.x;
+              } else {
+                  // Adjust top right vertex
+                  cornerDraggedForRect = 'tr';
+                  rectangle.width = Math.abs(mousePos.x - rectangle.start.x);
+                  rectangle.height = Math.abs(mousePos.y - rectangle.start.y);
+                  rectangle.start.y = mousePos.y - rectangle.height;
+              }
 
             } else if (draggedVertexWithShape.shape.type === "polygon") {
               
