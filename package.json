@@ -33,6 +33,7 @@
     "react-toastify": "^10.0.5",
     "tailwind-merge": "^2.2.2",
     "tailwindcss-animate": "^1.0.7",
+    "use-sound": "^4.0.1",
     "uuid": "^9.0.1"
   },
   "devDependencies": {

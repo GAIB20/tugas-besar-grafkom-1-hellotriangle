@@ -36,7 +36,7 @@ function App(): JSX.Element {
         transition={{ duration: 1 }}>
         <div style={containerStyles}>
           <motion.img src={logo} alt="Logo"
-            className="absolute"
+            className="absolute opacity-60"
             style={{ top: '50%', left: '50%', translate: '-50% -50%' }}
             initial={{ scale: 0.1 }}
             animate={{ scale: 0.16 }}

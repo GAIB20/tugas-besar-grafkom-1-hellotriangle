@@ -14,6 +14,8 @@ import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import { debounce } from "lodash"
+import buttonClick from '../../assets/button-click.mp3'
+import useSound from "use-sound"
 
 interface LineConfigProps {
     shapes: Shape[]
@@ -41,6 +43,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
     const [showModal, setShowModal] = useState<number>(-1)
     const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
     const colorPickerRefs = useRef<ColorPickerRefs>({});
+    const [play] = useSound(buttonClick);
     
     useEffect(() => {
         console.log("Lines Updated");
@@ -336,6 +339,8 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
+                        play();
+                        
                         const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
                         const id = `line-${uuidv4()}`;
                         colorPickerRefs.current[id] = { line: null, start: null, end: null };

@@ -5,6 +5,8 @@ import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
 import { transformLine, transformPolygon, transformRectangle, transformSquare } from "@/lib/transform";
+import useSound from 'use-sound'
+import bloop from '../assets/bloop.mp3'
 
 interface CanvasProps {
   shapePanel: 'line' | 'square' | 'rectangle' | 'polygon';
@@ -14,6 +16,7 @@ interface CanvasProps {
 
 export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [play] = useSound(bloop);
 
   const debouncedSetShapes = debounce(setShapes, 100);
 
@@ -230,6 +233,8 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
 
         const doubleClickHandler = (event: MouseEvent) => {
           event.preventDefault();
+
+          play();
 
           // Instantiate a shape based on the current tool
           const mousePos = getCanvasMousePosition(event) as Point;
