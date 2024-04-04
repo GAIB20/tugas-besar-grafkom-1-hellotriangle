@@ -268,7 +268,8 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               }
 
             } else if (draggedVertexWithShape.shape.type === "polygon") {
-              
+              draggedVertexWithShape.vertex.x += dx;
+              draggedVertexWithShape.vertex.y += dy;
             }
 
             debouncedSetShapes([...shapes]);
