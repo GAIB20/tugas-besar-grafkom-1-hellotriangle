@@ -87,6 +87,12 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
         }
 
         const newVertices = convexHull(shapes);
+
+        if (newVertices.length < 3) {
+            toast.error('Have at least three vertices to combine!');
+            return;
+        }
+
         const newPolygon = {
             id: `polygon-${uuidV4()}`,
             type: 'polygon',
