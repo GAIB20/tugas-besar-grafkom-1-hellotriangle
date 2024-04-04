@@ -74,6 +74,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
         let dragShapeId: string | null = null;
         let lastMousePos = { x: 0, y: 0 };
         let draggedVertexWithShape: VertexWithShape | null = null;
+        let cornerDraggedForRect: 'tl' | 'tr' | 'bl' | 'br' | null = null;
 
         // Function to check if a mouse position is within a shape
         const hitTest = (mousePos: Point, shape: Shape) => {
@@ -211,13 +212,40 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                 draggedVertexWithShape.shape.end.x = mousePos.x
                 draggedVertexWithShape.shape.end.y = mousePos.y
               }
-            } else if (draggedVertexWithShape?.shape.type === "square") {
+            } else if (draggedVertexWithShape.shape.type === "square") {
+              const square = draggedVertexWithShape.shape;
+              if (draggedVertexWithShape.vertex === square.start || cornerDraggedForRect === 'bl') {
+                  // Adjust bottom left vertex
+                  cornerDraggedForRect = 'bl';
+                  square.sideLength = Math.abs(mousePos.x - (square.start.x + square.sideLength));
+                  square.start.x = mousePos.x;
+                  square.start.y = mousePos.y;
+                  draggedVertexWithShape.vertex.x = mousePos.x;
+                  draggedVertexWithShape.vertex.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === square.start.x + square.sideLength && draggedVertexWithShape.vertex.y === square.start.y) || cornerDraggedForRect === 'br') {
+                  // Adjust bottom right vertex
+                  cornerDraggedForRect = 'br';
+                  square.sideLength = Math.abs(mousePos.x - square.start.x);
+                  square.start.y = mousePos.y;
+              } else if ((draggedVertexWithShape.vertex.x === square.start.x && draggedVertexWithShape.vertex.y === square.start.y + square.sideLength) || cornerDraggedForRect === 'tl') {
+                  // Adjust top left vertex
+                  cornerDraggedForRect = 'tl';
+                  square.sideLength = Math.abs(mousePos.x - (square.start.x + square.sideLength));
+                  square.start.x = mousePos.x;
+                  square.start.y = mousePos.y - square.sideLength;
+              } else {
+                  // Adjust top right vertex
+                  cornerDraggedForRect = 'tr';
+                  square.sideLength = Math.abs(mousePos.x - square.start.x);
+                  square.start.y = mousePos.y - square.sideLength;
+              }
+              
+            } else if (draggedVertexWithShape.shape.type === "rectangle") {
 
-            } else if (draggedVertexWithShape?.shape.type === "rectangle") {
-
-            } else if (draggedVertexWithShape?.shape.type === "polygon") {
+            } else if (draggedVertexWithShape.shape.type === "polygon") {
               
             }
+
             debouncedSetShapes([...shapes]);
             drawShapes(gl, shapes);
             lastMousePos = mousePos;
@@ -255,6 +283,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
           isDraggingShape = false;
           isDraggingVertex = false;
           dragShapeId = null;
+          cornerDraggedForRect = null;
 
           if (canvas.classList.contains("grabbing")) {
             canvas.classList.remove("grabbing");
