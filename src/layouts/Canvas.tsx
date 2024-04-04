@@ -5,6 +5,8 @@ import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
 import { transformLine, transformPolygon, transformRectangle, transformSquare } from "@/lib/transform";
+import useSound from 'use-sound'
+import bloop from '../assets/bloop.mp3'
 
 interface CanvasProps {
   shapePanel: 'line' | 'square' | 'rectangle' | 'polygon';
@@ -14,6 +16,7 @@ interface CanvasProps {
 
 export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const [play] = useSound(bloop);
 
   const debouncedSetShapes = debounce(setShapes, 100);
 
@@ -236,7 +239,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
                 draggedShape.start.x += dx;
                 draggedShape.start.y += dy;
               } else {
-                draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy } as Point));
+                draggedShape.vertices = draggedShape.vertices.map(point => ({ x: point.x + dx, y: point.y + dy, color: point.color } as Point));
               }
               debouncedSetShapes([...shapes]);
               drawShapes(gl, shapes);
@@ -259,6 +262,8 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
 
         const doubleClickHandler = (event: MouseEvent) => {
           event.preventDefault();
+
+          play();
 
           // Instantiate a shape based on the current tool
           const mousePos = getCanvasMousePosition(event) as Point;
@@ -304,22 +309,21 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
             debouncedSetShapes([...shapes, newRectangle]);
           } else {
             const polygonRadius = 5;
-            const polygonVertices = 8;
+            const polygonVertices = 5;
+            const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
             const newPolygon: Shape = {
               id: `polygon-${uuidv4()}`,
               type: "polygon",
               vertices: Array.from({ length: polygonVertices }, (_, i) => {
-                const angle = (Math.PI * 2 * i) / polygonVertices;
+                const angle = (Math.PI * 2 * i) / polygonVertices + Math.PI / 2;
                 return {
                   type: 'point',
                   x: mousePos.x + polygonRadius * Math.cos(angle),
                   y: mousePos.y + polygonRadius * Math.sin(angle),
                   z: 0,
-                  color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
+                  color: color,
                 };
               }),
-              edges: [],
-              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newPolygon]);

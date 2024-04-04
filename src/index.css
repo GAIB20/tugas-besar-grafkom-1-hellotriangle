@@ -111,6 +111,8 @@
   }
   body {
     @apply bg-background text-foreground;
+    background: rgb(17,17,17);
+    background: radial-gradient(circle, rgba(17,17,17,1) 0%, rgba(20,20,20,1) 50%, rgba(17,17,17,1) 100%);
     font-family: 'Maison Neue', 'jsMath-cmmi10', sans-serif;
   }
 }
@@ -198,4 +200,13 @@ input::-webkit-inner-spin-button {
 
 .crosshair {
   cursor: crosshair;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0.5; }
+  to { opacity: 1; }
+}
+
+.fadeIn {
+  animation: fadeIn 0.5s ease-out;
 }

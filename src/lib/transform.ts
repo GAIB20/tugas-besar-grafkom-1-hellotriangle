@@ -117,8 +117,7 @@ export function transformPolygon(polygon: Polygon): Polygon {
     const centerY = polygon.vertices.reduce((acc, vertex) => acc + vertex.y, 0) / polygon.vertices.length;
     const center = { x: centerX, y: centerY, z: 0 };
     const vertices = polygon.vertices.map((vertex) => applyEffect(vertex, polygon.effect, center as Point));
-    const edges = polygon.edges.map((edge) => transformLine(edge));
-    return { ...polygon, vertices, edges };
+    return { ...polygon, vertices };
 }
 
 export function transformLine(line: Line): Line {

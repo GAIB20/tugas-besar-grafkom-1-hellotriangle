@@ -16,6 +16,8 @@ import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import { CornerBottomLeftIcon, CornerBottomRightIcon, CornerTopLeftIcon, CornerTopRightIcon } from "@radix-ui/react-icons"
 import { Square as SquareIcon } from "lucide-react"
+import buttonClick from '../../assets/button-click.mp3'
+import useSound from "use-sound"
 
 interface SquareConfigProps {
     shapes: Shape[]
@@ -47,6 +49,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
     const [showModal, setShowModal] = useState<number>(-1)
     const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
     const colorPickerRefs = useRef<ColorPickerRefs>({});
+	const [playButtonClick] = useSound(buttonClick)
 
     useEffect(() => {
         console.log("Squares updated");
@@ -363,6 +366,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
+						playButtonClick();
                         const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 }
                         setSquares([
                             ...squares,
