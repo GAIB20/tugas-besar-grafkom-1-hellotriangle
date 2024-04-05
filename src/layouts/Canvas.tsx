@@ -54,6 +54,19 @@ export default function Canvas({ shapePanel, shapes, setShapes, polygonMode }: C
   };
 
   useEffect(() => {
+    // Redraw the shapes when the polygon mode changes
+    if (canvasRef.current) {
+      const canvas = canvasRef.current;
+      const gl = canvas.getContext("webgl", { antialias: true });
+
+      if (gl) {
+        debouncedSetShapes([...shapes]);
+        drawShapes(gl, shapes);
+      }
+    }
+  }, [polygonMode])
+
+  useEffect(() => {
     if (canvasRef.current) {
       const canvas = canvasRef.current;
       const gl = canvas.getContext("webgl", { antialias: true });
