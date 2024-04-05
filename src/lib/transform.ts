@@ -78,10 +78,11 @@ export function applyEffect(point: Point, effect?: Transformation, center?: Poin
     const translationBackFromCenter = center ? createTranslationMatrix(center.x, center.y, 0) : mat4.create();
 
     const transformationMatrix = mat4.create();
-    mat4.multiply(transformationMatrix, translationMatrix, translationToCenter);
-    mat4.multiply(transformationMatrix, transformationMatrix, rotationMatrix);
     mat4.multiply(transformationMatrix, transformationMatrix, translationBackFromCenter);
     mat4.multiply(transformationMatrix, transformationMatrix, scaleMatrix);
+    mat4.multiply(transformationMatrix, transformationMatrix, rotationMatrix);
+    mat4.multiply(transformationMatrix, transformationMatrix, translationToCenter);
+    mat4.multiply(transformationMatrix, transformationMatrix, translationMatrix);
 
     const vec = vec3.fromValues(point.x, point.y, 0);
     vec3.transformMat4(vec, vec, transformationMatrix);
@@ -93,11 +94,14 @@ export function transformSquare(square: Square): Square {
     const centerX = square.start.x + square.sideLength / 2;
     const centerY = square.start.y + square.sideLength / 2;
     const center = { x: centerX, y: centerY, z: 0 };
-
-    const start = applyEffect(square.start, square.effect, center as Point);
+    const bl = applyEffect({ x: square.start.x, y: square.start.y, z: 0, color: square.vertices.bl.color, type:'point' }, square.effect, center as Point);
+    const tl = applyEffect({ x: square.start.x, y: square.start.y + square.sideLength, z: 0, color: square.vertices.tl.color, type:'point' }, square.effect, center as Point);
+    const tr = applyEffect({ x: square.start.x + square.sideLength, y: square.start.y + square.sideLength, z: 0, color: square.vertices.tr.color, type:'point' }, square.effect, center as Point);
+    const br = applyEffect({ x: square.start.x + square.sideLength, y: square.start.y, z: 0, color: square.vertices.br.color, type:'point' }, square.effect, center as Point);
     const sideLength = square.sideLength * (square.effect?.scale || 1);
+    const start = applyEffect(square.start, square.effect, center as Point);
 
-    return { ...square, start, sideLength };
+    return { ...square, start, sideLength, vertices: { bl, tl, tr, br } };
 }
 
 export function transformRectangle(rectangle: Rectangle): Rectangle {
@@ -105,11 +109,17 @@ export function transformRectangle(rectangle: Rectangle): Rectangle {
     const centerY = rectangle.start.y + rectangle.height / 2;
     const center = { x: centerX, y: centerY, z: 0 };
 
-    const start = applyEffect(rectangle.start, rectangle.effect, center as Point);
+    const bl = applyEffect({ x: rectangle.start.x, y: rectangle.start.y, z: 0, color: rectangle.vertices.bl.color, type:'point' }, rectangle.effect, center as Point);
+    const tl = applyEffect({ x: rectangle.start.x, y: rectangle.start.y + rectangle.height, z: 0, color: rectangle.vertices.tl.color, type:'point' }, rectangle.effect, center as Point);
+    const tr = applyEffect({ x: rectangle.start.x + rectangle.width, y: rectangle.start.y + rectangle.height, z: 0, color: rectangle.vertices.tr.color, type:'point' }, rectangle.effect, center as Point);
+    const br = applyEffect({ x: rectangle.start.x + rectangle.width, y: rectangle.start.y, z: 0, color: rectangle.vertices.br.color, type:'point' }, rectangle.effect, center as Point);
+
     const width = rectangle.width * (rectangle.effect?.scale || 1);
     const height = rectangle.height * (rectangle.effect?.scale || 1);
 
-    return { ...rectangle, start, width, height };
+    const start = applyEffect(rectangle.start, rectangle.effect, center as Point);
+
+    return { ...rectangle, start, width, height, vertices: { bl, tl, tr, br } };
 }
 
 export function transformPolygon(polygon: Polygon): Polygon {

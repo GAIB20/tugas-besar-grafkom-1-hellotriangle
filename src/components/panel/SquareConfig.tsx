@@ -91,7 +91,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-8 text-gray-100">
                 {squares.map((square, index) => (
                     <div key={index} >
-												{/* Transform Modal */}
+						{/* Transform Modal */}
                         {(showModal === index) && 
                             <TransformModal
                                 shapes={squares}
@@ -109,17 +109,17 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 													<Chrome
 														// Color is averaged from the 4 corners
 														color={colorToHex({
-															r: Math.round((square.vertexColors.tl.r + square.vertexColors.tr.r + square.vertexColors.bl.r + square.vertexColors.br.r) / 4),
-															g: Math.round((square.vertexColors.tl.g + square.vertexColors.tr.g + square.vertexColors.bl.g + square.vertexColors.br.g) / 4),
-															b: Math.round((square.vertexColors.tl.b + square.vertexColors.tr.b + square.vertexColors.bl.b + square.vertexColors.br.b) / 4),
+															r: Math.round((square.vertices.tl.color.r + square.vertices.tr.color.r + square.vertices.bl.color.r + square.vertices.br.color.r) / 4),
+															g: Math.round((square.vertices.tl.color.g + square.vertices.tr.color.g + square.vertices.bl.color.g + square.vertices.br.color.g) / 4),
+															b: Math.round((square.vertices.tl.color.b + square.vertices.tr.color.b + square.vertices.bl.color.b + square.vertices.br.color.b) / 4),
 															a: 1
 														})}
 														onChange={(color) => {
 																const newSquares = [...squares]
-																newSquares[index].vertexColors.tl = color.rgba
-																newSquares[index].vertexColors.tr = color.rgba
-																newSquares[index].vertexColors.bl = color.rgba
-																newSquares[index].vertexColors.br = color.rgba
+																newSquares[index].vertices.tl.color = color.rgba
+																newSquares[index].vertices.tr.color = color.rgba
+																newSquares[index].vertices.bl.color = color.rgba
+																newSquares[index].vertices.br.color = color.rgba
 																setSquares(newSquares)
 														}}
 													/>
@@ -131,10 +131,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(square.vertexColors.tl)}
+														color={colorToHex(square.vertices.tl.color)}
 														onChange={(color) => {
 																const newSquares = [...squares]
-																newSquares[index].vertexColors.tl = color.rgba
+																newSquares[index].vertices.tl.color = color.rgba
 																setSquares(newSquares)
 															}
 														}
@@ -147,10 +147,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(square.vertexColors.tr)}
+														color={colorToHex(square.vertices.tr.color)}
 														onChange={(color) => {
 																const newSquares = [...squares]
-																newSquares[index].vertexColors.tr = color.rgba
+																newSquares[index].vertices.tr.color= color.rgba
 																setSquares(newSquares)
 															}
 														}
@@ -163,10 +163,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(square.vertexColors.bl)}
+														color={colorToHex(square.vertices.bl.color)}
 														onChange={(color) => {
 																const newSquares = [...squares]
-																newSquares[index].vertexColors.bl = color.rgba
+																newSquares[index].vertices.bl.color = color.rgba
 																setSquares(newSquares)
 															}
 														}
@@ -179,10 +179,10 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(square.vertexColors.br)}
+														color={colorToHex(square.vertices.br.color)}
 														onChange={(color) => {
 																const newSquares = [...squares]
-																newSquares[index].vertexColors.br = color.rgba
+																newSquares[index].vertices.br.color = color.rgba
 																setSquares(newSquares)
 															}
 														}
@@ -246,9 +246,9 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 																				});
 																		}}
 																		style={{ backgroundColor: colorToRGBA({
-																			r: Math.round((square.vertexColors.tl.r + square.vertexColors.tr.r + square.vertexColors.bl.r + square.vertexColors.br.r) / 4),
-																			g: Math.round((square.vertexColors.tl.g + square.vertexColors.tr.g + square.vertexColors.bl.g + square.vertexColors.br.g) / 4),
-																			b: Math.round((square.vertexColors.tl.b + square.vertexColors.tr.b + square.vertexColors.bl.b + square.vertexColors.br.b) / 4),
+																			r: Math.round((square.vertices.tl.color.r + square.vertices.tr.color.r + square.vertices.bl.color.r + square.vertices.br.color.r) / 4),
+																			g: Math.round((square.vertices.tl.color.g + square.vertices.tr.color.g + square.vertices.bl.color.g + square.vertices.br.color.g) / 4),
+																			b: Math.round((square.vertices.tl.color.b + square.vertices.tr.color.b + square.vertices.bl.color.b + square.vertices.br.color.b) / 4),
 																			a: 1
 																		}) }}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
@@ -266,7 +266,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 																						[square.id]: { ...colorPickerVisibility[square.id], tl: !colorPickerVisibility[square.id]?.tl }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(square.vertexColors.tl) }}
+																		style={{ backgroundColor: colorToRGBA(square.vertices.tl.color)}}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -282,7 +282,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 																						[square.id]: { ...colorPickerVisibility[square.id], tr: !colorPickerVisibility[square.id]?.tr }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(square.vertexColors.tr) }}
+																		style={{ backgroundColor: colorToRGBA(square.vertices.tr.color)}}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -298,7 +298,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 																						[square.id]: { ...colorPickerVisibility[square.id], bl: !colorPickerVisibility[square.id]?.bl }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(square.vertexColors.bl) }}
+																		style={{ backgroundColor: colorToRGBA(square.vertices.bl.color)}}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -314,7 +314,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 																						[square.id]: { ...colorPickerVisibility[square.id], br: !colorPickerVisibility[square.id]?.br }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(square.vertexColors.br) }}
+																		style={{ backgroundColor: colorToRGBA(square.vertices.br.color)}}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -387,7 +387,12 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
                                 type: 'square',
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 sideLength: 10,
-                                vertexColors: { tl: color, tr: color, bl: color, br: color },
+                                vertices: { 
+									bl: { x: -5, y: -5, color: color, z: 0, type: 'point' }, 
+									tl: { x: -5, y: 5, color: color, z: 0, type: 'point'}, 
+									tr: { x: 5, y: 5, color: color, z: 0, type: 'point'}, 
+									br: { x: 5, y: -5, color: color, z: 0, type: 'point'} 
+								},
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
                         ])

@@ -109,17 +109,17 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 													<Chrome
 														// Color is averaged from the 4 corners
 														color={colorToHex({
-															r: Math.round((rectangle.vertexColors.tl.r + rectangle.vertexColors.tr.r + rectangle.vertexColors.bl.r + rectangle.vertexColors.br.r) / 4),
-															g: Math.round((rectangle.vertexColors.tl.g + rectangle.vertexColors.tr.g + rectangle.vertexColors.bl.g + rectangle.vertexColors.br.g) / 4),
-															b: Math.round((rectangle.vertexColors.tl.b + rectangle.vertexColors.tr.b + rectangle.vertexColors.bl.b + rectangle.vertexColors.br.b) / 4),
+															r: Math.round((rectangle.vertices.tl.color.r + rectangle.vertices.tr.color.r + rectangle.vertices.bl.color.r + rectangle.vertices.br.color.r) / 4),
+															g: Math.round((rectangle.vertices.tl.color.g + rectangle.vertices.tr.color.g + rectangle.vertices.bl.color.g + rectangle.vertices.br.color.g) / 4),
+															b: Math.round((rectangle.vertices.tl.color.b + rectangle.vertices.tr.color.b + rectangle.vertices.bl.color.b + rectangle.vertices.br.color.b) / 4),
 															a: 1
 														})}
 														onChange={(color) => {
 																const newRectangles = [...rectangles]
-																newRectangles[index].vertexColors.tl = color.rgba
-																newRectangles[index].vertexColors.tr = color.rgba
-																newRectangles[index].vertexColors.bl = color.rgba
-																newRectangles[index].vertexColors.br = color.rgba
+																newRectangles[index].vertices.tl.color = color.rgba
+																newRectangles[index].vertices.tr.color = color.rgba
+																newRectangles[index].vertices.bl.color = color.rgba
+																newRectangles[index].vertices.br.color = color.rgba
 																setRectangles(newRectangles)
 														}}
 													/>
@@ -131,10 +131,10 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(rectangle.vertexColors.tl)}
+														color={colorToHex(rectangle.vertices.tl.color)}
 														onChange={(color) => {
 																const newRectangles = [...rectangles]
-																newRectangles[index].vertexColors.tl = color.rgba
+																newRectangles[index].vertices.tl.color = color.rgba
 																setRectangles(newRectangles)
 															}
 														}
@@ -147,10 +147,10 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(rectangle.vertexColors.tr)}
+														color={colorToHex(rectangle.vertices.tr.color)}
 														onChange={(color) => {
 																const newRectangles = [...rectangles]
-																newRectangles[index].vertexColors.tr = color.rgba
+																newRectangles[index].vertices.tr.color = color.rgba
 																setRectangles(newRectangles)
 															}
 														}
@@ -163,10 +163,10 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(rectangle.vertexColors.bl)}
+														color={colorToHex(rectangle.vertices.bl.color)}
 														onChange={(color) => {
 																const newRectangles = [...rectangles]
-																newRectangles[index].vertexColors.bl = color.rgba
+																newRectangles[index].vertices.bl.color = color.rgba
 																setRectangles(newRectangles)
 															}
 														}
@@ -179,10 +179,10 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 														className="absolute left-[356px] top-2 flex size-fit flex-col gap-4 rounded-lg bg-zinc-900 p-2"
 												>
 													<Chrome
-														color={colorToHex(rectangle.vertexColors.br)}
+														color={colorToHex(rectangle.vertices.br.color)}
 														onChange={(color) => {
 																const newRectangles = [...rectangles]
-																newRectangles[index].vertexColors.br = color.rgba
+																newRectangles[index].vertices.br.color = color.rgba
 																setRectangles(newRectangles)
 															}
 														}
@@ -246,9 +246,9 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																				});
 																		}}
 																		style={{ backgroundColor: colorToRGBA({
-																			r: Math.round((rectangle.vertexColors.tl.r + rectangle.vertexColors.tr.r + rectangle.vertexColors.bl.r + rectangle.vertexColors.br.r) / 4),
-																			g: Math.round((rectangle.vertexColors.tl.g + rectangle.vertexColors.tr.g + rectangle.vertexColors.bl.g + rectangle.vertexColors.br.g) / 4),
-																			b: Math.round((rectangle.vertexColors.tl.b + rectangle.vertexColors.tr.b + rectangle.vertexColors.bl.b + rectangle.vertexColors.br.b) / 4),
+																			r: Math.round((rectangle.vertices.tl.color.r + rectangle.vertices.tr.color.r + rectangle.vertices.bl.color.r + rectangle.vertices.br.color.r) / 4),
+																			g: Math.round((rectangle.vertices.tl.color.g + rectangle.vertices.tr.color.g + rectangle.vertices.bl.color.g + rectangle.vertices.br.color.g) / 4),
+																			b: Math.round((rectangle.vertices.tl.color.b + rectangle.vertices.tr.color.b + rectangle.vertices.bl.color.b + rectangle.vertices.br.color.b) / 4),
 																			a: 1
 																		}) }}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
@@ -266,7 +266,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], tl: !colorPickerVisibility[rectangle.id]?.tl }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.tl) }}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertices.tl.color) }}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -282,7 +282,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], tr: !colorPickerVisibility[rectangle.id]?.tr }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.tr) }}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertices.tr.color) }}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -298,7 +298,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], bl: !colorPickerVisibility[rectangle.id]?.bl }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.bl) }}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertices.bl.color) }}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -314,7 +314,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																						[rectangle.id]: { ...colorPickerVisibility[rectangle.id], br: !colorPickerVisibility[rectangle.id]?.br }
 																				});
 																		}}
-																		style={{ backgroundColor: colorToRGBA(rectangle.vertexColors.br) }}
+																		style={{ backgroundColor: colorToRGBA(rectangle.vertices.br.color) }}
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p className="text-xs">
@@ -396,19 +396,21 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                     onClick={() => {
 						playButtonClick();
 						const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
-                        setRectangles([
+                        const width = 12;
+						const height = 8;
+						setRectangles([
                             ...rectangles,
                             {
                                 id: `rectangle-${uuidv4()}`,
                                 type: 'rectangle',
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
-                                width: 12,
-                                height: 8,
-								vertexColors: {
-									tl: color,
-									tr: color,
-									bl: color,
-									br: color,
+                                width: width,
+                                height: height,
+								vertices: {
+									tl: { type: 'point', x: -width / 2, y: height / 2, z: 0, color },
+									tr: { type: 'point', x: width / 2, y: height / 2, z: 0, color },
+									bl: { type: 'point', x: -width / 2, y: -height / 2, z: 0, color },
+									br: { type: 'point', x: width / 2, y: -height / 2, z: 0, color }
 								},
                                 effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
                             }
