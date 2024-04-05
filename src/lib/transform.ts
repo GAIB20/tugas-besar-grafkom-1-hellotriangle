@@ -78,10 +78,11 @@ export function applyEffect(point: Point, effect?: Transformation, center?: Poin
     const translationBackFromCenter = center ? createTranslationMatrix(center.x, center.y, 0) : mat4.create();
 
     const transformationMatrix = mat4.create();
-    mat4.multiply(transformationMatrix, translationMatrix, translationToCenter);
-    mat4.multiply(transformationMatrix, transformationMatrix, rotationMatrix);
     mat4.multiply(transformationMatrix, transformationMatrix, translationBackFromCenter);
     mat4.multiply(transformationMatrix, transformationMatrix, scaleMatrix);
+    mat4.multiply(transformationMatrix, transformationMatrix, rotationMatrix);
+    mat4.multiply(transformationMatrix, transformationMatrix, translationToCenter);
+    mat4.multiply(transformationMatrix, transformationMatrix, translationMatrix);
 
     const vec = vec3.fromValues(point.x, point.y, 0);
     vec3.transformMat4(vec, vec, transformationMatrix);

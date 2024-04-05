@@ -91,7 +91,7 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
             <div className="flex size-full snap-y snap-mandatory flex-col gap-6 overflow-y-scroll pb-8 text-gray-100">
                 {squares.map((square, index) => (
                     <div key={index} >
-												{/* Transform Modal */}
+						{/* Transform Modal */}
                         {(showModal === index) && 
                             <TransformModal
                                 shapes={squares}
