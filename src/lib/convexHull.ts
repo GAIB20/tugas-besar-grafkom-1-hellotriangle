@@ -17,16 +17,16 @@ export function convexHull(shapes: Shape[]): Point[] {
             points.push(shape.end);
         } else if (shape.type === "square") {
             shape = transformSquare(shape);
-            points.push({ ...shape.start, color: shape.vertexColors.bl });
-            points.push({ ...shape.start, x: shape.start.x + shape.sideLength, color: shape.vertexColors.br });
-            points.push({ ...shape.start, y: shape.start.y + shape.sideLength, color: shape.vertexColors.tl });
-            points.push({ ...shape.start, x: shape.start.x + shape.sideLength, y: shape.start.y + shape.sideLength, color: shape.vertexColors.tr });
+            points.push({ ...shape.start, color: shape.vertices.bl.color });
+            points.push({ ...shape.start, x: shape.start.x + shape.sideLength, color: shape.vertices.br.color });
+            points.push({ ...shape.start, y: shape.start.y + shape.sideLength, color: shape.vertices.tl.color });
+            points.push({ ...shape.start, x: shape.start.x + shape.sideLength, y: shape.start.y + shape.sideLength, color: shape.vertices.tr.color });
         } else if (shape.type === "rectangle") {
             shape = transformRectangle(shape);
-            points.push({ ...shape.start, color: shape.vertexColors.bl });
-            points.push({ ...shape.start, x: shape.start.x + shape.width, color: shape.vertexColors.br });
-            points.push({ ...shape.start, y: shape.start.y + shape.height, color: shape.vertexColors.tl });
-            points.push({ ...shape.start, x: shape.start.x + shape.width, y: shape.start.y + shape.height, color: shape.vertexColors.tr });
+            points.push({ ...shape.start, color: shape.vertices.bl.color });
+            points.push({ ...shape.start, x: shape.start.x + shape.width, color: shape.vertices.br.color });
+            points.push({ ...shape.start, y: shape.start.y + shape.height, color: shape.vertices.tl.color });
+            points.push({ ...shape.start, x: shape.start.x + shape.width, y: shape.start.y + shape.height, color: shape.vertices.tr.color });
         } else if (shape.type === "polygon") {
             shape = transformPolygon(shape);
             points = points.concat(shape.vertices);
