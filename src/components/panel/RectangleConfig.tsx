@@ -196,7 +196,27 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 									<TooltipProvider>
                                         <Tooltip delayDuration={20}>
                                             <TooltipTrigger>
-                                                <button className="flex h-full flex-col items-center" onClick={() => {}} >
+                                                <button className="flex h-full flex-col items-center"
+													onClick={() => {
+														playButtonClick();
+														setRectangles([
+															...rectangles,
+															{
+																id: `rectangle-${uuidv4()}`,
+																type: 'rectangle',
+																start: { type: 'point', x: rectangle.start.x+rectangle.width+2, y: rectangle.start.y, z:0, color: rectangle.start.color },
+																width: rectangle.width,
+																height: rectangle.height,
+																vertices: {
+																	tl: { ...rectangle.vertices.tl }, 
+																	tr: { ...rectangle.vertices.tr }, 
+																	bl: { ...rectangle.vertices.bl }, 
+																	br: { ...rectangle.vertices.br }  
+																},
+																effect: rectangle.effect
+															}
+														])
+													}}>
                                                     <Copy className="mb-0.5 ml-1 text-gray-300" size={14} />
                                                 </button>
                                             </TooltipTrigger>

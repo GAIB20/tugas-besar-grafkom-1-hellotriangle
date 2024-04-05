@@ -196,7 +196,26 @@ export default function SquareConfig({ shapes, setShapes }: SquareConfigProps): 
 									<TooltipProvider>
                                         <Tooltip delayDuration={20}>
                                             <TooltipTrigger>
-                                                <button className="flex h-full flex-col items-center" onClick={() => {}} >
+                                                <button className="flex h-full flex-col items-center"
+													onClick={() => {
+														playButtonClick();
+														setSquares([
+															...squares,
+															{
+																id: `square-${uuidv4()}`,
+																type: 'square',
+																start: { type: 'point', x: square.start.x+square.sideLength+2, y: square.start.y, z:0, color: square.start.color },
+																sideLength: square.sideLength,
+																vertices: {
+																	tl: { ...square.vertices.tl }, 
+																	tr: { ...square.vertices.tr }, 
+																	bl: { ...square.vertices.bl }, 
+																	br: { ...square.vertices.br }  
+																},
+																effect: square.effect
+															}
+														])
+													}}>
                                                     <Copy className="mb-0.5 ml-1 text-gray-300" size={14} />
                                                 </button>
                                             </TooltipTrigger>

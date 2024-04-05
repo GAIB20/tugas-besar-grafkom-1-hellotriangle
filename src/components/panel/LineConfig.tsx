@@ -101,7 +101,25 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                     <TooltipProvider>
                                         <Tooltip delayDuration={20}>
                                             <TooltipTrigger>
-                                                <button className="flex h-full flex-col items-center" onClick={() => {}} >
+                                                <button className="flex h-full flex-col items-center"
+                                                        onClick={() => {
+                                                            play();
+                                                            const id = `line-${uuidv4()}`;
+                                                            colorPickerRefs.current[id] = { line: null, start: null, end: null };
+                                    
+                                                            setLines(
+                                                                [
+                                                                    ...lines,
+                                                                    {
+                                                                        type: 'line',
+                                                                        id: id,
+                                                                        start: { type: 'point', x: line.start.x+2, y: line.start.y+1, z:0, color: line.start.color },
+                                                                        end: { type: 'point', x: line.end.x+2, y: line.end.y+1, z:0, color: line.end.color },
+                                                                        effect: line.effect
+                                                                    }
+                                                                ]
+                                                            )
+                                                        }}>
                                                     <Copy className="mb-0.5 ml-1 text-gray-300" size={14} />
                                                 </button>
                                             </TooltipTrigger>
