@@ -15,7 +15,7 @@ import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import { CornerBottomLeftIcon, CornerBottomRightIcon, CornerTopLeftIcon, CornerTopRightIcon } from "@radix-ui/react-icons"
-import { RectangleHorizontal } from "lucide-react"
+import { Copy, RectangleHorizontal } from "lucide-react"
 import buttonClick from '../../assets/button-click.mp3'
 import useSound from "use-sound"
 
@@ -193,7 +193,19 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                             <div className="mb-1 flex w-full justify-between">
                             <div className="flex items-center justify-center gap-2">
                                     <h1 className="font-medium">Rectangle {index+1}</h1>
+									<TooltipProvider>
+                                        <Tooltip delayDuration={20}>
+                                            <TooltipTrigger>
+                                                <button className="flex h-full flex-col items-center" onClick={() => {}} >
+                                                    <Copy className="mb-0.5 ml-1 text-gray-300" size={14} />
+                                                </button>
+                                            </TooltipTrigger>
 
+                                            <TooltipContent side="bottom" className="border-0 bg-gray-700/95 text-sm text-white shadow-md">
+                                                <p>Duplicate</p>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
                                     <TooltipProvider>
                                         <Tooltip delayDuration={20}>
                                             <TooltipTrigger>
