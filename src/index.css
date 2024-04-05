@@ -210,3 +210,16 @@ input::-webkit-inner-spin-button {
 .fadeIn {
   animation: fadeIn 0.5s ease-out;
 }
+
+@keyframes pulseBeat {
+  0%, 100% {
+      transform: scale(1);
+  }
+  50% {
+      transform: scale(1.05);
+  }
+}
+
+.pulse {
+  animation: pulseBeat infinite;
+}

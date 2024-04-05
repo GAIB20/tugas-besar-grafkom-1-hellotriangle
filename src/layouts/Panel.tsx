@@ -23,9 +23,10 @@ interface PanelProps {
     setShapePanel: (shape: 'line' | 'square' | 'rectangle' | 'polygon') => void
     shapes: Shape[]
     setShapes: (shapes: Shape[]) => void
+    polygonMode: 'convex' | 'free'
 }
 
-export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: PanelProps): JSX.Element {
+export default function Panel({ shapePanel, setShapePanel, shapes, setShapes, polygonMode }: PanelProps): JSX.Element {
 
     const handleUploadShapes = () => {
 			const input = document.createElement('input');
@@ -240,7 +241,7 @@ export default function Panel({ shapePanel, setShapePanel, shapes, setShapes }: 
                 ) : shapePanel === "rectangle" ? (
                     <RectangleConfig shapes={shapes} setShapes={setShapes} />
                 ) : (
-                    <PolygonConfig shapes={shapes} setShapes={setShapes} />
+                    <PolygonConfig shapes={shapes} setShapes={setShapes} polygonMode={polygonMode} />
                 )}
             </div>
         </div>
