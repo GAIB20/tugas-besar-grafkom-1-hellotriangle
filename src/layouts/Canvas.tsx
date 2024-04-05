@@ -4,7 +4,7 @@ import { renderLine, renderPolygon, renderRectangle, renderSquare } from "@/lib/
 import { initShaders } from "@/lib/shaders";
 import { v4 as uuidv4 } from 'uuid';
 import debounce from 'lodash/debounce';
-import { transformLine, transformPolygon, transformRectangle, transformSquare } from "@/lib/transform";
+import { transformLine, transformPolygon, transformRectangle } from "@/lib/transform";
 import useSound from 'use-sound'
 import bloop from '../assets/bloop.mp3'
 
