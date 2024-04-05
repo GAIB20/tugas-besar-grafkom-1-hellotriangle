@@ -15,7 +15,9 @@ import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import { CornerBottomLeftIcon, CornerBottomRightIcon, CornerTopLeftIcon, CornerTopRightIcon } from "@radix-ui/react-icons"
-import { Square as SquareIcon } from "lucide-react"
+import { RectangleHorizontal } from "lucide-react"
+import buttonClick from '../../assets/button-click.mp3'
+import useSound from "use-sound"
 
 interface RectangleConfigProps {
     shapes: Shape[]
@@ -47,6 +49,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
     const [showModal, setShowModal] = useState<number>(-1)
     const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
     const colorPickerRefs = useRef<ColorPickerRefs>({});
+	const [playButtonClick] = useSound(buttonClick);
 
     useEffect(() => {
         console.log("Rectangles Updated")
@@ -239,7 +242,7 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
 																		className="mb-0.5 aspect-square size-3 rounded-full"
 																/>
 																<p>
-																	<SquareIcon size={12} />
+																	<RectangleHorizontal size={12} />
 																</p>
 
 															</div>
@@ -379,7 +382,8 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
-											const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
+						playButtonClick();
+						const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
                         setRectangles([
                             ...rectangles,
                             {
@@ -388,13 +392,19 @@ export default function RectangleConfig({ shapes, setShapes }: RectangleConfigPr
                                 start: { type: 'point', x: 0, y: 0, z:0, color: { r: 255, g: 255, b: 255, a: 1 } },
                                 width: 12,
                                 height: 8,
-																vertexColors: {
-																		tl: color,
-																		tr: color,
-																		bl: color,
-																		br: color,
-																},
-                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 }
+								vertexColors: {
+									tl: color,
+									tr: color,
+									bl: color,
+									br: color,
+								},
+                                effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
+								final: [
+                                    { type: 'point', x: 0, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    { type: 'point', x: 12, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    { type: 'point', x: 0, y: 8, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+                                    { type: 'point', x: 12, y: 8, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } }
+                                ]
                             }
                         ])
                     }}

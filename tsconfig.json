@@ -20,6 +20,8 @@
     "noUnusedParameters": true,
     "noFallthroughCasesInSwitch": true,
 
+    "typeRoots": ["./use-sound.d.ts"],
+
     "baseUrl": ".",
     "paths": {
       "@/*": [

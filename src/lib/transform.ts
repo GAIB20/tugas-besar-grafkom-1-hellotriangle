@@ -123,15 +123,37 @@ export function transformSquare(square: Square): Square {
 }
 
 export function transformRectangle(rectangle: Rectangle): Rectangle {
-    const centerX = rectangle.start.x + rectangle.width / 2;
-    const centerY = rectangle.start.y + rectangle.height / 2;
+    const color = rectangle.start.color;
+    const centerX = rectangle.final[0].x + rectangle.width / 2;
+    const centerY = rectangle.final[0].y + rectangle.height / 2;
     const center = { x: centerX, y: centerY, z: 0 };
 
-    const start = applyEffect(rectangle.start, rectangle.effect, center as Point);
+    // Transform vertices
+    const x1 = rectangle.final[0].x;
+    const y1 = rectangle.final[0].y;
+    const x2 = rectangle.final[1].x;
+    const y2 = rectangle.final[1].y;  
+    const x3 = rectangle.final[2].x;
+    const y3 = rectangle.final[2].y;
+    const x4 = rectangle.final[3].x;
+    const y4 = rectangle.final[3].y;
+
+    const vertex1: Point = {type: 'point', x: x1, y: y1, z: 0, color: color};
+    const vertex2: Point = {type: 'point', x: x2, y: y2, z: 0, color: color};
+    const vertex3: Point = {type: 'point', x: x3, y: y3, z: 0, color: color};
+    const vertex4: Point = {type: 'point', x: x4, y: y4, z: 0, color: color};
+
+    const final1 = applyEffect(vertex1, rectangle.effect, center as Point);
+    const final2 = applyEffect(vertex2, rectangle.effect, center as Point);
+    const final3 = applyEffect(vertex3, rectangle.effect, center as Point);
+    const final4 = applyEffect(vertex4, rectangle.effect, center as Point);
+
+    const final = [final1, final2, final3, final4]
+
     const width = rectangle.width * (rectangle.effect?.scale || 1);
     const height = rectangle.height * (rectangle.effect?.scale || 1);
 
-    return { ...rectangle, start, width, height };
+    return { ...rectangle, start: final1, width, height, final };
 }
 
 export function transformPolygon(polygon: Polygon): Polygon {
@@ -139,13 +161,26 @@ export function transformPolygon(polygon: Polygon): Polygon {
     const centerY = polygon.vertices.reduce((acc, vertex) => acc + vertex.y, 0) / polygon.vertices.length;
     const center = { x: centerX, y: centerY, z: 0 };
     const vertices = polygon.vertices.map((vertex) => applyEffect(vertex, polygon.effect, center as Point));
-    const edges = polygon.edges.map((edge) => transformLine(edge));
-    return { ...polygon, vertices, edges };
+    return { ...polygon, vertices };
 }
 
 export function transformLine(line: Line): Line {
-    const center = { x: (line.start.x + line.end.x) / 2, y: (line.start.y + line.end.y) / 2, z: 0 };
-    const start = applyEffect(line.start, line.effect, center as Point);
-    const end = applyEffect(line.end, line.effect, center as Point);
-    return { ...line, start, end };
+    const color = line.start.color;
+    const center = { x: (line.final[0].x + line.final[1].x) / 2, y: (line.final[0].y + line.final[1].y) / 2, z: 0 };
+
+    // Transform vertices
+    const x1 = line.final[0].x;
+    const y1 = line.final[0].y;
+    const x2 = line.final[1].x;
+    const y2 = line.final[1].y;
+
+    const vertex1: Point = {type: 'point', x: x1, y: y1, z: 0, color: color};
+    const vertex2: Point = {type: 'point', x: x2, y: y2, z: 0, color: color};
+
+    const final1 = applyEffect(vertex1, line.effect, center as Point);
+    const final2 = applyEffect(vertex2, line.effect, center as Point);
+
+    const final = [final1, final2]
+
+    return { ...line, start: line.final[0], end: line.final[1], final };
 }

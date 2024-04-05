@@ -1,5 +1,7 @@
-import { Line, Square, Rectangle, Polygon, Point } from "@/types/Shapes";
-import { applyEffect, transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
+import { Line, Square, Rectangle, Polygon, Color } from "@/types/Shapes";
+import { transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
+import { convexHull } from "./convexHull";
+import earcut from 'earcut';
 
 export function renderLine(
     gl: WebGLRenderingContext,
@@ -8,17 +10,15 @@ export function renderLine(
     scaleUniform: WebGLUniformLocation,
     vertexColorLocation: number
 ) {
-    const transformedLine = transformLine(line);
-    const verticesUncolored = [
-        transformedLine.start.x, transformedLine.start.y,
-        transformedLine.end.x, transformedLine.end.y,
-    ];
+    // const transformedLine = transformLine(line);
+    // const verticesUncolored = [
+    //     transformedLine.start.x, transformedLine.start.y,
+    //     transformedLine.end.x, transformedLine.end.y,
+    // ];
+    line = transformLine(line)
+    const verticesUncolored = [line.final[0].x, line.final[0].y, line.final[1].x, line.final[1].y]
 
-    console.log(`Before adjustments: ${verticesUncolored}`)
-    
     adjustHorizontalStretch(gl, verticesUncolored)
-
-    console.log(`After adjustments: ${verticesUncolored}`)
 
     const colors = [
         line.start.color.r / 255.0, line.start.color.g / 255.0, line.start.color.b / 255.0,
@@ -140,17 +140,18 @@ export function renderRectangle(
     scaleUniform: WebGLUniformLocation,
     vertexColorLocation: number
 ) {
-    const transformedRectangle = transformRectangle(rectangle);
-    const x1 = transformedRectangle.start.x;
-    const y1 = transformedRectangle.start.y;
-    const x2 = x1 + transformedRectangle.width;
-    const y2 = y1;
-    const x3 = x1;
-    const y3 = y1 + transformedRectangle.height;
-    const x4 = x2;
-    const y4 = y3;
+    rectangle = transformRectangle(rectangle)
+    // const transformedRectangle = transformRectangle(rectangle);
+    // const x1 = transformedRectangle.start.x;
+    // const y1 = transformedRectangle.start.y;
+    // const x2 = x1 + transformedRectangle.width;
+    // const y2 = y1;
+    // const x3 = x1;
+    // const y3 = y1 + transformedRectangle.height;
+    // const x4 = x2;
+    // const y4 = y3;
 
-    const verticesUncolored = [x1, y1, x2, y2, x3, y3, x4, y4]
+    const verticesUncolored = [rectangle.final[0].x, rectangle.final[0].y, rectangle.final[1].x, rectangle.final[1].y, rectangle.final[2].x, rectangle.final[2].y, rectangle.final[3].x, rectangle.final[3].y]
     adjustHorizontalStretch(gl, verticesUncolored)
 
     // Colors for each vertex
@@ -188,54 +189,98 @@ export function renderRectangle(
     gl.deleteBuffer(buffer);
 }
 
+function tessellatePolygon(polygon: Polygon) {
+    const vertices = polygon.vertices.flatMap(vertex => [vertex.x, vertex.y]);
+    
+    // Assuming no holes for simplicity
+    const trianglesIndices = earcut(vertices);
+
+    const triangles = [];
+    for (let i = 0; i < trianglesIndices.length; i += 3) {
+        triangles.push([
+            polygon.vertices[trianglesIndices[i]],
+            polygon.vertices[trianglesIndices[i + 1]],
+            polygon.vertices[trianglesIndices[i + 2]]
+        ]);
+    }
+
+    return triangles;
+}
+
 export function renderPolygon(
     gl: WebGLRenderingContext,
     polygon: Polygon,
     coordinatesAttributePointer: number,
     scaleUniform: WebGLUniformLocation,
-    vertexColorLocation: number
+    vertexColorLocation: number,
+    polygonMode: 'convex' | 'free'
 ) {
     const transformedPolygon = transformPolygon(polygon);
     const vertices: number[] = []
 
-    // const colors = [
-    //     1.0, 0.0, 0.0, // 1
-    //     0.0, 1.0, 0.0, // 2 
-    //     0.0, 0.0, 1.0, // 3
-    //     // 0.0, 1.0, 0.0, // 4
-    //     // 0.4, 0.7, 0.8, // 5
-    // ];
+    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r / 255.0, vertex.color.g / 255.0, vertex.color.b / 255.0]);
 
-    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r, vertex.color.g, vertex.color.b])
+    if (polygonMode === 'convex') {
+        transformedPolygon.vertices = convexHull([transformedPolygon]);
+        transformedPolygon.vertices.forEach((vertex, i) => {
+            const currentVertex = [vertex.x, vertex.y]
+            adjustHorizontalStretch(gl, currentVertex)
+            vertices.push(...currentVertex);
+            for (let j = 0; j < 3; j++) {
+                vertices.push(colors[i * 3 + j]);
+            }
+        });
 
-    console.log("Colors")
-    console.log(colors)
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
 
-    transformedPolygon.vertices.forEach((vertex, i) => {
-        const currentVertex = [vertex.x, vertex.y]
-        adjustHorizontalStretch(gl, currentVertex)
-        vertices.push(...currentVertex);
-        for (let j = 0; j < 3; j++) {
-            vertices.push(colors[i * 3 + j]);
-        }
-    });
+        gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
 
-    console.log("Vertices")
-    console.log(vertices)
+        gl.enableVertexAttribArray(coordinatesAttributePointer);
+        gl.enableVertexAttribArray(vertexColorLocation);
 
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+        gl.uniform1f(scaleUniform, 0.05);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, transformedPolygon.vertices.length);
+        gl.deleteBuffer(buffer);
+    } else {
+        // Tessellate the polygon for rendering
+        const triangles = tessellatePolygon(transformedPolygon);
 
-    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
-    gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+        triangles.forEach(triangle => {
+            const flatVertices: number[] = [];
+            const colors: Color[] = [];
 
-    gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.enableVertexAttribArray(vertexColorLocation);
+            triangle.forEach(vertex => {
+                const currentVertex = [vertex.x, vertex.y]
+                adjustHorizontalStretch(gl, currentVertex)
+                flatVertices.push(...currentVertex);
+                colors.push({r: vertex.color.r / 255.0, g: vertex.color.g / 255.0, b: vertex.color.b / 255.0, a: 1.0});
+            });
 
-    gl.uniform1f(scaleUniform, 0.05);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, transformedPolygon.vertices.length);
-    gl.deleteBuffer(buffer);
+            const vertexBuffer = new Float32Array(flatVertices);
+            const colorBuffer = new Float32Array(colors.flatMap(color => [color.r, color.g, color.b, color.a]));
+
+            const vBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertexBuffer, gl.STATIC_DRAW);
+            gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(coordinatesAttributePointer);
+
+            const cBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, colorBuffer, gl.STATIC_DRAW);
+            gl.vertexAttribPointer(vertexColorLocation, 4, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(vertexColorLocation);
+
+            gl.uniform1f(scaleUniform, 0.05);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+            gl.deleteBuffer(vBuffer);
+            gl.deleteBuffer(cBuffer);
+        });
+    }
 }
 
 /**
@@ -246,7 +291,6 @@ export function renderPolygon(
  */
 function adjustHorizontalStretch(gl: WebGLRenderingContext, vertices: Float32Array | number[]) {
     const horizontalStretch = gl.canvas.width / gl.canvas.height
-    console.log(`Horizontal Stretch: ${horizontalStretch}`)
     
     vertices.forEach((_, index) => {
         if (index % 2 === 0) {

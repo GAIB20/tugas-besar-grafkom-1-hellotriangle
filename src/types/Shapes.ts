@@ -26,6 +26,7 @@ type Line = {
     start: Point
     end: Point;
     effect: Transformation;
+    final: Point[]
 }
 
 type Square = {
@@ -56,14 +57,13 @@ type Rectangle = {
         br: Color;
     };
     effect: Transformation;
+    final: Point[]
 }
 
 type Polygon = {
     id: string;
     type: 'polygon';
     vertices: Point[];
-    edges: Line[];
-    color: Color;
     effect: Transformation;
 }
 
