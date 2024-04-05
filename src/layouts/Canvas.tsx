@@ -257,31 +257,29 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
               type: "square",
               start: { type: 'point', x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               sideLength: squareSize,
-              color: { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
               final: [
                 { type: 'point', x: 0, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                 { type: 'point', x: squareSize, y: 0, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                 { type: 'point', x: 0, y: squareSize, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
                 { type: 'point', x: squareSize, y: squareSize, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } }
-            ]
+              ],
               vertexColors: { tl: color, tr: color, bl: color, br: color },
-              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newSquare]);
           } else if (shapePanel === "rectangle") {
-            const rectangleSize = { width: 12, height: 8 };
-            const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
-            const newRectangle: Shape = {
-              id: `rectangle-${uuidv4()}`,
-              type: "rectangle",
-              start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
-              width: rectangleSize.width,
-              height: rectangleSize.height,
-              vertexColors: { tl: color, tr: color, bl: color, br: color },
-              effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
-            };
-            debouncedSetShapes([...shapes, newRectangle]);
+            // const rectangleSize = { width: 12, height: 8 };
+            // const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
+            // const newRectangle: Shape = {
+            //   id: `rectangle-${uuidv4()}`,
+            //   type: "rectangle",
+            //   start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
+            //   width: rectangleSize.width,
+            //   height: rectangleSize.height,
+            //   vertexColors: { tl: color, tr: color, bl: color, br: color },
+            //   effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
+            // };
+            // debouncedSetShapes([...shapes, newRectangle]);
           } else {
             const polygonRadius = 5;
             const polygonVertices = 8;
