@@ -62,8 +62,6 @@ type Polygon = {
     id: string;
     type: 'polygon';
     vertices: Point[];
-    edges: Line[];
-    color: Color;
     effect: Transformation;
 }
 

@@ -14,6 +14,8 @@ import TransformModal from "../modal/TransformModal"
 import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import { debounce } from "lodash"
+import buttonClick from '../../assets/button-click.mp3'
+import useSound from "use-sound"
 
 interface LineConfigProps {
     shapes: Shape[]
@@ -41,6 +43,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
     const [showModal, setShowModal] = useState<number>(-1)
     const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
     const colorPickerRefs = useRef<ColorPickerRefs>({});
+    const [play] = useSound(buttonClick);
     
     useEffect(() => {
         console.log("Lines Updated");
@@ -203,7 +206,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                         type="number"
                                         max={255}
-                                        value={line.start.color.r}
+                                        value={(line.start.color.r + line.end.color.r) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.r = parseInt(e.target.value)
@@ -215,7 +218,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                         type="number"
                                         max={255}
-                                        value={line.start.color.g}
+                                        value={(line.start.color.g + line.end.color.g) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.g = parseInt(e.target.value)
@@ -227,7 +230,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         className="w-full border-none p-0 text-center text-xs focus:border-none focus:ring-0"
                                         type="number"
                                         max={255}
-                                        value={line.start.color.b}
+                                        value={(line.start.color.b + line.end.color.b) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.b = parseInt(e.target.value)
@@ -240,7 +243,7 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
                                         type="number"
                                         max={1}
                                         step={0.01}
-                                        value={line.start.color.a}
+                                        value={(line.start.color.a + line.end.color.a) / 2}
                                         onChange={(e) => {
                                             const newLines = [...lines]
                                             newLines[index].start.color.a = parseFloat(e.target.value)
@@ -336,6 +339,8 @@ export default function LineConfig({ shapes, setShapes }: LineConfigProps): JSX.
             <div className="sticky bottom-0 flex w-full items-center justify-end bg-zinc-900 py-1 pr-2">
                 <Button className="w-fit bg-zinc-800 px-4 py-1 hover:bg-gray-700"
                     onClick={() => {
+                        play();
+                        
                         const color = { r: Math.floor(Math.random() * 255), g: Math.floor(Math.random() * 255), b: Math.floor(Math.random() * 255), a: 1 };
                         const id = `line-${uuidv4()}`;
                         colorPickerRefs.current[id] = { line: null, start: null, end: null };

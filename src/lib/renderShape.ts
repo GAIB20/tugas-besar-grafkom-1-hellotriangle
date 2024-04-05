@@ -1,5 +1,5 @@
 import { Line, Square, Rectangle, Polygon, Point } from "@/types/Shapes";
-import { applyEffect, transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
+import { transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
 
 export function renderLine(
     gl: WebGLRenderingContext,
@@ -13,12 +13,8 @@ export function renderLine(
         transformedLine.start.x, transformedLine.start.y,
         transformedLine.end.x, transformedLine.end.y,
     ];
-
-    console.log(`Before adjustments: ${verticesUncolored}`)
     
     adjustHorizontalStretch(gl, verticesUncolored)
-
-    console.log(`After adjustments: ${verticesUncolored}`)
 
     const colors = [
         line.start.color.r / 255.0, line.start.color.g / 255.0, line.start.color.b / 255.0,
@@ -198,18 +194,31 @@ export function renderPolygon(
     const transformedPolygon = transformPolygon(polygon);
     const vertices: number[] = []
 
-    // const colors = [
-    //     1.0, 0.0, 0.0, // 1
-    //     0.0, 1.0, 0.0, // 2 
-    //     0.0, 0.0, 1.0, // 3
-    //     // 0.0, 1.0, 0.0, // 4
-    //     // 0.4, 0.7, 0.8, // 5
-    // ];
+    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r / 255.0, vertex.color.g / 255.0, vertex.color.b / 255.0]);
 
-    const colors = polygon.vertices.flatMap(vertex => [vertex.color.r, vertex.color.g, vertex.color.b])
+    // Sort vertices in counter-clockwise order
+    function calculateCentroid(vertices: Point[]) {
+        const centroid = { x: 0, y: 0 };
+        vertices.forEach(vertex => {
+            centroid.x += vertex.x;
+            centroid.y += vertex.y;
+        });
+        centroid.x /= vertices.length;
+        centroid.y /= vertices.length;
+        return centroid;
+    }
 
-    console.log("Colors")
-    console.log(colors)
+    function sortVertices(vertices: Point[]) {
+        const centroid = calculateCentroid(vertices);
+        vertices.sort((a, b) => {
+            const angleA = Math.atan2(a.y - centroid.y, a.x - centroid.x);
+            const angleB = Math.atan2(b.y - centroid.y, b.x - centroid.x);
+            return angleA - angleB;
+        });
+        return vertices;
+    }
+
+    transformedPolygon.vertices = sortVertices(transformedPolygon.vertices);
 
     transformedPolygon.vertices.forEach((vertex, i) => {
         const currentVertex = [vertex.x, vertex.y]
@@ -219,9 +228,6 @@ export function renderPolygon(
             vertices.push(colors[i * 3 + j]);
         }
     });
-
-    console.log("Vertices")
-    console.log(vertices)
 
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -246,7 +252,6 @@ export function renderPolygon(
  */
 function adjustHorizontalStretch(gl: WebGLRenderingContext, vertices: Float32Array | number[]) {
     const horizontalStretch = gl.canvas.width / gl.canvas.height
-    console.log(`Horizontal Stretch: ${horizontalStretch}`)
     
     vertices.forEach((_, index) => {
         if (index % 2 === 0) {
