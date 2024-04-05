@@ -8,6 +8,8 @@ export default function MusicPlayer(): JSX.Element {
     const audioRef = useRef(new Audio(Song));
     const fadeIntervalRef = useRef<number | undefined>(undefined);
     const [progress, setProgress] = useState<number>(0);
+    const BPM = 130;
+    const pulseDuration = 60 / BPM;
 
     const fadeOut = () => {
         if (fadeIntervalRef.current !== undefined) {
@@ -74,7 +76,8 @@ export default function MusicPlayer(): JSX.Element {
     return (
         <button 
             onClick={() => setPlaying(!playing)}
-            className="absolute bottom-4 right-4 flex aspect-square size-fit items-center justify-center rounded-full bg-zinc-800 p-3 shadow-2xl">
+            className={`absolute bottom-4 right-4 flex aspect-square size-fit items-center justify-center rounded-full bg-zinc-800 p-3 shadow-2xl ${playing ? 'pulse' : ''}`}
+            style={{ animationDuration: `${pulseDuration}s` }}>
             <svg className="absolute" width="115%" height="115%" viewBox="0 0 120 120">
                 <circle
                     cx="60"
