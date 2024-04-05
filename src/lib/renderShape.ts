@@ -1,5 +1,7 @@
-import { Line, Square, Rectangle, Polygon, Point } from "@/types/Shapes";
+import { Line, Square, Rectangle, Polygon, Color } from "@/types/Shapes";
 import { transformLine, transformPolygon, transformRectangle, transformSquare } from "./transform";
+import { convexHull } from "./convexHull";
+import earcut from 'earcut';
 
 export function renderLine(
     gl: WebGLRenderingContext,
@@ -156,64 +158,98 @@ export function renderRectangle(
     gl.deleteBuffer(buffer);
 }
 
+function tessellatePolygon(polygon: Polygon) {
+    const vertices = polygon.vertices.flatMap(vertex => [vertex.x, vertex.y]);
+    
+    // Assuming no holes for simplicity
+    const trianglesIndices = earcut(vertices);
+
+    const triangles = [];
+    for (let i = 0; i < trianglesIndices.length; i += 3) {
+        triangles.push([
+            polygon.vertices[trianglesIndices[i]],
+            polygon.vertices[trianglesIndices[i + 1]],
+            polygon.vertices[trianglesIndices[i + 2]]
+        ]);
+    }
+
+    return triangles;
+}
+
 export function renderPolygon(
     gl: WebGLRenderingContext,
     polygon: Polygon,
     coordinatesAttributePointer: number,
     scaleUniform: WebGLUniformLocation,
-    vertexColorLocation: number
+    vertexColorLocation: number,
+    polygonMode: 'convex' | 'free'
 ) {
     const transformedPolygon = transformPolygon(polygon);
     const vertices: number[] = []
 
     const colors = polygon.vertices.flatMap(vertex => [vertex.color.r / 255.0, vertex.color.g / 255.0, vertex.color.b / 255.0]);
 
-    // Sort vertices in counter-clockwise order
-    function calculateCentroid(vertices: Point[]) {
-        const centroid = { x: 0, y: 0 };
-        vertices.forEach(vertex => {
-            centroid.x += vertex.x;
-            centroid.y += vertex.y;
+    if (polygonMode === 'convex') {
+        transformedPolygon.vertices = convexHull([transformedPolygon]);
+        transformedPolygon.vertices.forEach((vertex, i) => {
+            const currentVertex = [vertex.x, vertex.y]
+            adjustHorizontalStretch(gl, currentVertex)
+            vertices.push(...currentVertex);
+            for (let j = 0; j < 3; j++) {
+                vertices.push(colors[i * 3 + j]);
+            }
         });
-        centroid.x /= vertices.length;
-        centroid.y /= vertices.length;
-        return centroid;
-    }
 
-    function sortVertices(vertices: Point[]) {
-        const centroid = calculateCentroid(vertices);
-        vertices.sort((a, b) => {
-            const angleA = Math.atan2(a.y - centroid.y, a.x - centroid.x);
-            const angleB = Math.atan2(b.y - centroid.y, b.x - centroid.x);
-            return angleA - angleB;
+        const buffer = gl.createBuffer();
+        gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
+
+        gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
+        gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
+
+        gl.enableVertexAttribArray(coordinatesAttributePointer);
+        gl.enableVertexAttribArray(vertexColorLocation);
+
+        gl.uniform1f(scaleUniform, 0.05);
+        gl.drawArrays(gl.TRIANGLE_FAN, 0, transformedPolygon.vertices.length);
+        gl.deleteBuffer(buffer);
+    } else {
+        // Tessellate the polygon for rendering
+        const triangles = tessellatePolygon(transformedPolygon);
+
+        triangles.forEach(triangle => {
+            const flatVertices: number[] = [];
+            const colors: Color[] = [];
+
+            triangle.forEach(vertex => {
+                const currentVertex = [vertex.x, vertex.y]
+                adjustHorizontalStretch(gl, currentVertex)
+                flatVertices.push(...currentVertex);
+                colors.push({r: vertex.color.r / 255.0, g: vertex.color.g / 255.0, b: vertex.color.b / 255.0, a: 1.0});
+            });
+
+            const vertexBuffer = new Float32Array(flatVertices);
+            const colorBuffer = new Float32Array(colors.flatMap(color => [color.r, color.g, color.b, color.a]));
+
+            const vBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, vBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, vertexBuffer, gl.STATIC_DRAW);
+            gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(coordinatesAttributePointer);
+
+            const cBuffer = gl.createBuffer();
+            gl.bindBuffer(gl.ARRAY_BUFFER, cBuffer);
+            gl.bufferData(gl.ARRAY_BUFFER, colorBuffer, gl.STATIC_DRAW);
+            gl.vertexAttribPointer(vertexColorLocation, 4, gl.FLOAT, false, 0, 0);
+            gl.enableVertexAttribArray(vertexColorLocation);
+
+            gl.uniform1f(scaleUniform, 0.05);
+            gl.drawArrays(gl.TRIANGLES, 0, 3);
+
+            gl.deleteBuffer(vBuffer);
+            gl.deleteBuffer(cBuffer);
         });
-        return vertices;
     }
-
-    transformedPolygon.vertices = sortVertices(transformedPolygon.vertices);
-
-    transformedPolygon.vertices.forEach((vertex, i) => {
-        const currentVertex = [vertex.x, vertex.y]
-        adjustHorizontalStretch(gl, currentVertex)
-        vertices.push(...currentVertex);
-        for (let j = 0; j < 3; j++) {
-            vertices.push(colors[i * 3 + j]);
-        }
-    });
-
-    const buffer = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(vertices), gl.STATIC_DRAW);
-
-    gl.vertexAttribPointer(coordinatesAttributePointer, 2, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 0);
-    gl.vertexAttribPointer(vertexColorLocation, 3, gl.FLOAT, false, 5 * Float32Array.BYTES_PER_ELEMENT, 2 * Float32Array.BYTES_PER_ELEMENT);
-
-    gl.enableVertexAttribArray(coordinatesAttributePointer);
-    gl.enableVertexAttribArray(vertexColorLocation);
-
-    gl.uniform1f(scaleUniform, 0.05);
-    gl.drawArrays(gl.TRIANGLE_FAN, 0, transformedPolygon.vertices.length);
-    gl.deleteBuffer(buffer);
 }
 
 /**

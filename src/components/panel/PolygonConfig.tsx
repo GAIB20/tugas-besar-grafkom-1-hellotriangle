@@ -15,10 +15,12 @@ import Chrome from '@uiw/react-color-chrome';
 import { v4 as uuidv4 } from 'uuid';
 import buttonClick from '../../assets/button-click.mp3'
 import useSound from "use-sound"
+import { convexHull } from "@/lib/convexHull"
 
 interface PolygonConfigProps {
     shapes: Shape[]
     setShapes: (shapes: Shape[]) => void
+    polygonMode: 'convex' | 'free';
 }
 
 interface ColorPickerVisibility {
@@ -30,7 +32,7 @@ interface ColorPickerRefs {
 }
 
 
-export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps): JSX.Element {
+export default function PolygonConfig({ shapes, setShapes, polygonMode }: PolygonConfigProps): JSX.Element {
     const [polygons, setPolygons] = useState<Polygon[]>(shapes.filter(shape => shape.type === 'polygon') as Polygon[])
     const [showModal, setShowModal] = useState<number>(-1)
     const [colorPickerVisibility, setColorPickerVisibility] = useState<ColorPickerVisibility>({});
@@ -39,7 +41,15 @@ export default function PolygonConfig({ shapes, setShapes }: PolygonConfigProps)
 
     useEffect(() => {
         console.log("Polygons updated");
+
         const newShapes = shapes.filter(shape => shape.type === 'polygon') as Polygon[]
+
+        // Enforce all polygons to be convex if the mode is set to convex
+        if (polygonMode === "convex") {
+            newShapes.forEach(polygon => {
+                polygon.vertices = convexHull([polygon]);
+            })
+        }
 
         if (newShapes.length !== polygons.length) {
             setPolygons(newShapes)

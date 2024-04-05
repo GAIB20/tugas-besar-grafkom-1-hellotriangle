@@ -4,13 +4,15 @@ import Panel from "./layouts/Panel"
 import { Shape } from "./types/Shapes"
 import { motion } from 'framer-motion';
 import logo from "./assets/logo.png";
-import MusicPlayer from "./components/player/MusicPlayer";
+import MusicPlayer from "./components/floater/MusicPlayer";
+import PolygonModes from "./components/floater/PolygonModes";
 
 function App(): JSX.Element {
 
   const [shapePanel, setShapePanel] = useState<'line' | 'square' | 'rectangle' | 'polygon'>('line')
   const [shapes, setShapes] = useState<Shape[]>([])
   const [splash, setSplash] = useState<boolean>(true)
+  const [polygonMode, setPolygonMode] = useState<'convex' | 'free'>('convex');
 
   useEffect(() => {
     setTimeout(() => {
@@ -44,9 +46,12 @@ function App(): JSX.Element {
         </div>
     </motion.div> :
     <div className="fadeIn flex h-screen w-screen overflow-hidden bg-zinc-950">
+      {shapePanel === "polygon" && (
+        <PolygonModes polygonMode={polygonMode} onPolygonModeChange={setPolygonMode} />
+      )}
       <MusicPlayer />
-      <Panel shapePanel={shapePanel} setShapePanel={setShapePanel} shapes={shapes} setShapes={setShapes} />
-      <Canvas shapePanel={shapePanel} shapes={shapes} setShapes={setShapes} />
+      <Panel shapePanel={shapePanel} setShapePanel={setShapePanel} shapes={shapes} setShapes={setShapes} polygonMode={polygonMode} />
+      <Canvas shapePanel={shapePanel} shapes={shapes} setShapes={setShapes} polygonMode={polygonMode} />
     </div>
   )
 }

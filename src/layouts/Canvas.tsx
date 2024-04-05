@@ -12,9 +12,10 @@ interface CanvasProps {
   shapePanel: 'line' | 'square' | 'rectangle' | 'polygon';
   shapes: Shape[];
   setShapes: (shapes: Shape[]) => void;
+  polygonMode: 'convex' | 'free';
 }
 
-export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): JSX.Element {
+export default function Canvas({ shapePanel, shapes, setShapes, polygonMode }: CanvasProps): JSX.Element {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [play] = useSound(bloop);
 
@@ -47,7 +48,7 @@ export default function Canvas({ shapePanel, shapes, setShapes }: CanvasProps): 
       } else if (shape.type === "rectangle") {
         renderRectangle(gl, shape, coordinates, scaleUniform!, vertexColorLocation)
       } else {
-        renderPolygon(gl, shape, coordinates, scaleUniform!, vertexColorLocation)
+        renderPolygon(gl, shape, coordinates, scaleUniform!, vertexColorLocation, polygonMode)
       }
     });
   };
