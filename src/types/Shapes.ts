@@ -33,11 +33,11 @@ type Square = {
     type: 'square';
     start: Point;
     sideLength: number;
-    vertexColors: {
-        tl: Color;
-        tr: Color;
-        bl: Color;
-        br: Color;
+    vertices: {
+        tl: Point;
+        tr: Point;
+        bl: Point;
+        br: Point;
     };
     effect: Transformation;
 }
@@ -48,11 +48,11 @@ type Rectangle = {
     start: Point;
     width: number;
     height: number;
-    vertexColors: {
-        tl: Color;
-        tr: Color;
-        bl: Color;
-        br: Color;
+    vertices: {
+        tl: Point;
+        tr: Point;
+        bl: Point;
+        br: Point;
     };
     effect: Transformation;
 }

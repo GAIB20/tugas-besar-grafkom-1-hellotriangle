@@ -361,7 +361,12 @@ export default function Canvas({ shapePanel, shapes, setShapes, polygonMode }: C
               type: "square",
               start: { type: 'point', x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               sideLength: squareSize,
-              vertexColors: { tl: color, tr: color, bl: color, br: color },
+              vertices: { 
+                tl: { x: mousePos.x - squareSize / 2, y: mousePos.y - squareSize / 2, color: color, z: 0, type: 'point' }, 
+                tr: { x: mousePos.x + squareSize / 2, y: mousePos.y - squareSize / 2, color: color, z: 0, type: 'point' }, 
+                bl: { x: mousePos.x - squareSize / 2, y: mousePos.y + squareSize / 2, color: color, z: 0, type: 'point' }, 
+                br: { x: mousePos.x + squareSize / 2, y: mousePos.y + squareSize / 2, color: color, z: 0, type: 'point' } 
+              },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newSquare]);
@@ -374,7 +379,12 @@ export default function Canvas({ shapePanel, shapes, setShapes, polygonMode }: C
               start: { type: 'point', x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, z: 0, color: { r: 255, g: 255, b: 255, a: 1 } },
               width: rectangleSize.width,
               height: rectangleSize.height,
-              vertexColors: { tl: color, tr: color, bl: color, br: color },
+              vertices: { 
+                tl: { x: mousePos.x - rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, color: color, z: 0, type: 'point'}, 
+                tr: { x: mousePos.x + rectangleSize.width / 2, y: mousePos.y - rectangleSize.height / 2, color: color, z: 0, type: 'point' }, 
+                bl: { x: mousePos.x - rectangleSize.width / 2, y: mousePos.y + rectangleSize.height / 2, color: color, z: 0, type: 'point'}, 
+                br: { x: mousePos.x + rectangleSize.width / 2, y: mousePos.y + rectangleSize.height / 2, color: color, z: 0, type: 'point'} 
+              },
               effect: { dx: 0, dy: 0, rotate: 0, scale: 1 },
             };
             debouncedSetShapes([...shapes, newRectangle]);

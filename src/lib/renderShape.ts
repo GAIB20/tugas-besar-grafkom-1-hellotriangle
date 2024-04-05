@@ -56,26 +56,26 @@ export function renderSquare(
     vertexColorLocation: number
 ) {
     const transformedSquare = transformSquare(square);
-    const x1 = transformedSquare.start.x
+    const x1 = transformedSquare.start.x;
     const y1 = transformedSquare.start.y;
-    const x2 = x1 + transformedSquare.sideLength
-    const y2 = y1;
-    const x3 = x1
-    const y3 = y1 + transformedSquare.sideLength;
-    const x4 = x2
-    const y4 = y3;
+    const x2 = transformedSquare.vertices.br.x;
+    const y2 = transformedSquare.vertices.br.y;
+    const x3 = transformedSquare.vertices.tl.x;
+    const y3 = transformedSquare.vertices.tl.y;
+    const x4 = transformedSquare.vertices.tr.x;
+    const y4 = transformedSquare.vertices.tr.y;
     
     const verticesUncolored = [x1, y1, x2, y2, x3, y3, x4, y4]
     adjustHorizontalStretch(gl, verticesUncolored)
 
     // Colors for each vertex
     const colors = [
-        square.vertexColors.bl.r / 255.0, square.vertexColors.bl.g / 255.0, square.vertexColors.bl.b / 255.0, // 4
-        square.vertexColors.br.r / 255.0, square.vertexColors.br.g / 255.0, square.vertexColors.br.b / 255.0, // 3
-        square.vertexColors.tl.r / 255.0, square.vertexColors.tl.g / 255.0, square.vertexColors.tl.b / 255.0, // 1
-        square.vertexColors.br.r / 255.0, square.vertexColors.br.g / 255.0, square.vertexColors.br.b / 255.0, // 3
-        square.vertexColors.tr.r / 255.0, square.vertexColors.tr.g / 255.0, square.vertexColors.tr.b / 255.0, // 2 
-        square.vertexColors.tl.r / 255.0, square.vertexColors.tl.g / 255.0, square.vertexColors.tl.b / 255.0, // 2
+        square.vertices.bl.color.r / 255.0, square.vertices.bl.color.g / 255.0, square.vertices.bl.color.b / 255.0, // 4
+        square.vertices.br.color.r / 255.0, square.vertices.br.color.g / 255.0, square.vertices.br.color.b / 255.0, // 3
+        square.vertices.tl.color.r / 255.0, square.vertices.tl.color.g / 255.0, square.vertices.tl.color.b / 255.0, // 1
+        square.vertices.br.color.r / 255.0, square.vertices.br.color.g / 255.0, square.vertices.br.color.b / 255.0, // 3
+        square.vertices.tr.color.r / 255.0, square.vertices.tr.color.g / 255.0, square.vertices.tr.color.b / 255.0, // 2 
+        square.vertices.tl.color.r / 255.0, square.vertices.tl.color.g / 255.0, square.vertices.tl.color.b / 255.0, // 2
     ]
 
     // Combine position and color data
@@ -113,24 +113,24 @@ export function renderRectangle(
     const transformedRectangle = transformRectangle(rectangle);
     const x1 = transformedRectangle.start.x;
     const y1 = transformedRectangle.start.y;
-    const x2 = x1 + transformedRectangle.width;
-    const y2 = y1;
-    const x3 = x1;
-    const y3 = y1 + transformedRectangle.height;
-    const x4 = x2;
-    const y4 = y3;
+    const x2 = transformedRectangle.vertices.br.x;
+    const y2 = transformedRectangle.vertices.br.y;
+    const x3 = transformedRectangle.vertices.tl.x;
+    const y3 = transformedRectangle.vertices.tl.y;
+    const x4 = transformedRectangle.vertices.tr.x;
+    const y4 = transformedRectangle.vertices.tr.y;
 
     const verticesUncolored = [x1, y1, x2, y2, x3, y3, x4, y4]
     adjustHorizontalStretch(gl, verticesUncolored)
 
     // Colors for each vertex
     const colors = [
-        rectangle.vertexColors.bl.r / 255.0, rectangle.vertexColors.bl.g / 255.0, rectangle.vertexColors.bl.b / 255.0, // 4
-        rectangle.vertexColors.br.r / 255.0, rectangle.vertexColors.br.g / 255.0, rectangle.vertexColors.br.b / 255.0, // 3
-        rectangle.vertexColors.tl.r / 255.0, rectangle.vertexColors.tl.g / 255.0, rectangle.vertexColors.tl.b / 255.0, // 1
-        rectangle.vertexColors.br.r / 255.0, rectangle.vertexColors.br.g / 255.0, rectangle.vertexColors.br.b / 255.0, // 3
-        rectangle.vertexColors.tr.r / 255.0, rectangle.vertexColors.tr.g / 255.0, rectangle.vertexColors.tr.b / 255.0, // 2 
-        rectangle.vertexColors.tl.r / 255.0, rectangle.vertexColors.tl.g / 255.0, rectangle.vertexColors.tl.b / 255.0, // 2
+        rectangle.vertices.bl.color.r / 255.0, rectangle.vertices.bl.color.g / 255.0, rectangle.vertices.bl.color.b / 255.0, // 4
+        rectangle.vertices.br.color.r / 255.0, rectangle.vertices.br.color.g / 255.0, rectangle.vertices.br.color.b / 255.0, // 3
+        rectangle.vertices.tl.color.r / 255.0, rectangle.vertices.tl.color.g / 255.0, rectangle.vertices.tl.color.b / 255.0, // 1
+        rectangle.vertices.br.color.r / 255.0, rectangle.vertices.br.color.g / 255.0, rectangle.vertices.br.color.b / 255.0, // 3
+        rectangle.vertices.tr.color.r / 255.0, rectangle.vertices.tr.color.g / 255.0, rectangle.vertices.tr.color.b / 255.0, // 2 
+        rectangle.vertices.tl.color.r / 255.0, rectangle.vertices.tl.color.g / 255.0, rectangle.vertices.tl.color.b / 255.0, // 2
     ]
 
     // Combine position and color data
